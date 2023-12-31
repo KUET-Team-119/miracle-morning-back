@@ -1,13 +1,14 @@
-package com.miracle.miraclemorningback;
+package com.miracle.miraclemorningback.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class MainController {
+public class HomeController {
 
+    // 메인 페이지 출력
     @GetMapping("/")
-    public String index() {
+    public String indexPage() {
         return "index";
     }
 }
