@@ -1,11 +1,14 @@
 package com.miracle.miraclemorningback.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.miracle.miraclemorningback.dto.MemberDTO;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
+import com.miracle.miraclemorningback.dto.MemberRequestDto;
+import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.repository.MemberRepository;
 
@@ -15,56 +18,60 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor // controller와 같이 final 멤버 변수 생성자를 만드는 역할
 public class MemberService {
 
-    private final MemberRepository memberRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
-    public void addMember(MemberDTO memberDTO) {
-        // repsitory의 save 메서드 호출
-        MemberEntity memberEntity = MemberEntity.toMemberEntity(memberDTO);
-        // repository의 save메서드 호출 (인자로 entity객체를 넘겨줘야 함)
+    // 전체 회원 조회
+    @Transactional(readOnly = true)
+    public List<MemberResponseDto> getMembers() {
+        return memberRepository.findAll().stream().map(MemberResponseDto::new).toList();
+    }
+
+    // 회원 등록
+    @Transactional
+    public MemberResponseDto registerMember(MemberRequestDto requestDto) {
+        MemberEntity memberEntity = new MemberEntity(requestDto);
         memberRepository.save(memberEntity);
+        return new MemberResponseDto(memberEntity);
     }
 
-    public MemberDTO signIn(MemberDTO memberDTO) { // entity 객체는 service에서만
-        Optional<MemberEntity> byNickname = memberRepository.findByNickname(memberDTO.getNickname());
-        if (byNickname.isPresent()) { // 조회 결과가 있는 경우
-            MemberEntity memberEntity = byNickname.get(); // Optional에서 꺼냄
-            if (memberEntity.getPassword().equals(memberDTO.getPassword())) {
-                // 비밀번호 일치
-                // entity -> dto 변환 후 리턴
-                MemberDTO dto = MemberDTO.toMemberDTO(memberEntity);
-                return dto;
-            } else {
-                // 비밀번호 불일치
-                return null;
-            }
-        } else { // 조회 결과가 없는 경우
-            return null;
-        }
+    // 특정 회원 검색
+    @Transactional
+    public MemberResponseDto getMember(Long member_id) {
+        return memberRepository.findById(member_id).map(MemberResponseDto::new).orElseThrow(
+                // 아이디가 존재하지 않으면 예외 처리
+                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
     }
 
-    public List<MemberDTO> findAll() {
-        List<MemberEntity> memberEntityList = memberRepository.findAll();
-        // Controller에 dto로 변환해서 넘기기
-        List<MemberDTO> memberDTOList = new ArrayList<>();
+    // 회원 정보 수정
+    @Transactional
+    public MemberResponseDto updateMember(Long member_id, MemberRequestDto requestDto) throws Exception {
+        MemberEntity memberEntity = memberRepository.findById(member_id).orElseThrow(
+                // 아이디가 존재하지 않으면 예외 처리
+                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
-        for (MemberEntity memberEntity : memberEntityList) {
-            memberDTOList.add(MemberDTO.toMemberDTO(memberEntity));
+        // 비밀번호가 일치하지 않으면 예외 처리
+        if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
+            throw new Exception("비밀번호가 일치하지 않습니다.");
         }
 
-        return memberDTOList;
+        memberEntity.update(requestDto);
+        return new MemberResponseDto(memberEntity);
     }
 
-    public MemberDTO findById(Long id) {
-        // 하나 조회할 때 optional로 감싸기
-        Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(id);
-        if (optionalMemberEntity.isPresent()) {
-            return MemberDTO.toMemberDTO(optionalMemberEntity.get());
-        } else {
-            return null;
+    // 회원 삭제
+    @Transactional
+    public MemberDeleteSuccessResponseDto deleteMember(Long member_id, MemberRequestDto requestDto) throws Exception {
+        MemberEntity memberEntity = memberRepository.findById(member_id).orElseThrow(
+                // 아이디가 존재하지 않으면 예외 처리
+                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+
+        // 닉네임이 일치하지 않으면 예외 처리
+        if (!requestDto.getNickname().equals(memberEntity.getNickname())) {
+            throw new Exception("닉네임이 일치하지 않습니다.");
         }
-    }
 
-    public void deleteByid(Long id) {
-        memberRepository.deleteById(id);
+        memberRepository.deleteById(member_id);
+        return new MemberDeleteSuccessResponseDto(true);
     }
 }
