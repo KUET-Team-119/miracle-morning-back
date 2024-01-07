@@ -31,10 +31,10 @@ public class RoutineController {
         return routineService.getRoutines();
     }
 
-    // 루틴 등록
+    // 루틴 추가
     @PostMapping("/api/routine")
-    public RoutineResponseDto registerRoutine(@RequestBody RoutineRequestDto requestDto) {
-        return routineService.registerRoutine(requestDto);
+    public RoutineResponseDto addRoutine(@RequestBody RoutineRequestDto requestDto) {
+        return routineService.addRoutine(requestDto);
     }
 
     // 특정 회원 루틴 검색
@@ -52,8 +52,7 @@ public class RoutineController {
 
     // 회원 삭제
     @DeleteMapping("/api/routine/{routine_id}")
-    public RoutineDeleteSuccessResponseDto deleteRoutine(@PathVariable Long routine_id,
-            @RequestBody RoutineRequestDto requestDto) throws Exception {
-        return routineService.deleteRoutine(routine_id, requestDto);
+    public RoutineDeleteSuccessResponseDto deleteRoutine(@PathVariable Long routine_id) throws Exception {
+        return routineService.deleteRoutine(routine_id);
     }
 }

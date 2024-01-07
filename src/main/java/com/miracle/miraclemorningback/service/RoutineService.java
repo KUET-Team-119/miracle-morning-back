@@ -27,9 +27,9 @@ public class RoutineService {
         return routineRepository.findAll().stream().map(RoutineResponseDto::new).toList();
     }
 
-    // 루틴 등록
+    // 루틴 추가
     @Transactional
-    public RoutineResponseDto registerRoutine(RoutineRequestDto requestDto) {
+    public RoutineResponseDto addRoutine(RoutineRequestDto requestDto) {
         RoutineEntity routineEntity = new RoutineEntity(requestDto);
         routineRepository.save(routineEntity);
         return new RoutineResponseDto(routineEntity);
@@ -56,9 +56,9 @@ public class RoutineService {
 
     // 루틴 삭제
     @Transactional
-    public RoutineDeleteSuccessResponseDto deleteRoutine(Long routine_id, RoutineRequestDto requestDto)
+    public RoutineDeleteSuccessResponseDto deleteRoutine(Long routine_id)
             throws Exception {
-        RoutineEntity routineEntity = routineRepository.findById(routine_id).orElseThrow(
+        routineRepository.findById(routine_id).orElseThrow(
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
