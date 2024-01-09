@@ -16,4 +16,8 @@ public class RoutineRequestDto {
     private Time startTime;
     private Time endTime;
     private Boolean isActivated;
+
+    public RoutineRequestDto(MemberResponseDto responseDto) {
+        this.nickname = responseDto.getNickname();
+    }
 }

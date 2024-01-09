@@ -9,10 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
+import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.repository.MemberRepository;
-import com.miracle.miraclemorningback.repository.RoutineRepository;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service // 스프링이 관리해주는 객체, 스프링 빈
@@ -23,7 +24,7 @@ public class MemberService {
     private MemberRepository memberRepository;
 
     @Autowired
-    private RoutineRepository routineRepository;
+    private RoutineService routineService;
 
     // 전체 회원 조회
     @Transactional(readOnly = true)
@@ -63,10 +64,11 @@ public class MemberService {
         // 닉네임 변경 쿼리 실행
         // memberEntity.update(requestDto);
         memberRepository.updateNickname(nickname, requestDto.getNickname());
+        MemberResponseDto responseDto = new MemberResponseDto(memberEntity);
 
         // 루틴 테이블에서 사용자 닉네임 변경
-        MemberResponseDto responseDto = new MemberResponseDto(memberEntity);
-        routineRepository.updateNickname(nickname, responseDto.getNickname());
+        RoutineRequestDto routineRequestDto = new RoutineRequestDto(responseDto);
+        routineService.updateNickname(nickname, routineRequestDto);
 
         return responseDto;
     }
