@@ -5,11 +5,12 @@ import java.time.LocalDateTime;
 
 import com.miracle.miraclemorningback.entity.RoutineEntity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoutineResponseDto {
     private String routineName;
     private String nickname;

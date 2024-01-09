@@ -38,16 +38,16 @@ public class MemberController {
     }
 
     // 특정 회원 검색
-    @GetMapping("/api/member/{member_id}")
-    public MemberResponseDto getMember(@PathVariable Long member_id) {
-        return memberService.getMember(member_id);
+    @GetMapping("/api/member/{nickname}")
+    public MemberResponseDto getMember(@PathVariable String nickname) {
+        return memberService.getMember(nickname);
     }
 
     // 회원 정보 수정
-    @PutMapping("/api/member/{member_id}")
-    public MemberResponseDto updateMember(@PathVariable Long member_id, @RequestBody MemberRequestDto requestDto)
+    @PutMapping("/api/member/{nickname}")
+    public MemberResponseDto updateMember(@PathVariable String nickname, @RequestBody MemberRequestDto requestDto)
             throws Exception {
-        return memberService.updateMember(member_id, requestDto);
+        return memberService.updateMember(nickname, requestDto);
     }
 
     // 회원 삭제

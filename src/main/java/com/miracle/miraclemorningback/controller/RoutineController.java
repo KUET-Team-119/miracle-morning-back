@@ -38,9 +38,9 @@ public class RoutineController {
     }
 
     // 특정 회원 루틴 검색
-    @GetMapping("/api/routine/{routine_id}")
-    public RoutineResponseDto getRoutine(@PathVariable Long routine_id) {
-        return routineService.getRoutine(routine_id);
+    @GetMapping("/api/routine/{nickname}")
+    public List<RoutineResponseDto> getRoutine(@PathVariable String nickname) {
+        return routineService.getRoutine(nickname);
     }
 
     // 루틴 정보 수정
@@ -54,5 +54,13 @@ public class RoutineController {
     @DeleteMapping("/api/routine/{routine_id}")
     public RoutineDeleteSuccessResponseDto deleteRoutine(@PathVariable Long routine_id) throws Exception {
         return routineService.deleteRoutine(routine_id);
+    }
+
+    // 루틴의 사용자 닉네임 변경
+    @PutMapping("/api/routine/nickname/{nickname}")
+    public void updateNickname(@PathVariable String nickname,
+            @RequestBody RoutineRequestDto requestDto)
+            throws Exception {
+        routineService.updateNickname(nickname, requestDto);
     }
 }

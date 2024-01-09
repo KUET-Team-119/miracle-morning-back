@@ -11,6 +11,7 @@ import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.repository.MemberRepository;
+import com.miracle.miraclemorningback.repository.RoutineRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +21,9 @@ public class MemberService {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private RoutineRepository routineRepository;
 
     // 전체 회원 조회
     @Transactional(readOnly = true)
@@ -31,32 +35,40 @@ public class MemberService {
     @Transactional
     public MemberResponseDto registerMember(MemberRequestDto requestDto) {
         MemberEntity memberEntity = new MemberEntity(requestDto);
+
         memberRepository.save(memberEntity);
         return new MemberResponseDto(memberEntity);
     }
 
     // 특정 회원 검색
     @Transactional
-    public MemberResponseDto getMember(Long member_id) {
-        return memberRepository.findById(member_id).map(MemberResponseDto::new).orElseThrow(
-                // 아이디가 존재하지 않으면 예외 처리
-                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+    public MemberResponseDto getMember(String nickname) {
+        return memberRepository.findByNickname(nickname).map(MemberResponseDto::new).orElseThrow(
+                // 닉네임이 존재하지 않으면 예외 처리
+                () -> new IllegalArgumentException("존재하지 않은 닉네임입니다."));
     }
 
     // 회원 정보 수정
     @Transactional
-    public MemberResponseDto updateMember(Long member_id, MemberRequestDto requestDto) throws Exception {
-        MemberEntity memberEntity = memberRepository.findById(member_id).orElseThrow(
-                // 아이디가 존재하지 않으면 예외 처리
-                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+    public MemberResponseDto updateMember(String nickname, MemberRequestDto requestDto) throws Exception {
+        MemberEntity memberEntity = memberRepository.findByNickname(nickname).orElseThrow(
+                // 닉네임이 존재하지 않으면 예외 처리
+                () -> new IllegalArgumentException("존재하지 않은 닉네임입니다."));
 
         // 비밀번호가 일치하지 않으면 예외 처리
         if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
             throw new Exception("비밀번호가 일치하지 않습니다.");
         }
 
-        memberEntity.update(requestDto);
-        return new MemberResponseDto(memberEntity);
+        // 닉네임 변경 쿼리 실행
+        // memberEntity.update(requestDto);
+        memberRepository.updateNickname(nickname, requestDto.getNickname());
+
+        // 루틴 테이블에서 사용자 닉네임 변경
+        MemberResponseDto responseDto = new MemberResponseDto(memberEntity);
+        routineRepository.updateNickname(nickname, responseDto.getNickname());
+
+        return responseDto;
     }
 
     // 회원 삭제

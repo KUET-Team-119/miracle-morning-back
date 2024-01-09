@@ -36,8 +36,8 @@ public class ResultController {
         return resultService.addResult(requestDto);
     }
 
-    // 특정 기록 검색
-    @GetMapping("/api/result/{result_id}")
+    // 특정 기간 기록 검색
+    @GetMapping("/api/result/{date}")
     public ResultResponseDto getResult(@PathVariable Long result_id) {
         return resultService.getResult(result_id);
     }

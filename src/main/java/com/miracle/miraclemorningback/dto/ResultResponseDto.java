@@ -4,11 +4,12 @@ import java.time.LocalDateTime;
 
 import com.miracle.miraclemorningback.entity.ResultEntity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResultResponseDto {
     private String routineName;
     private String nickname;

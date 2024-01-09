@@ -37,10 +37,8 @@ public class RoutineService {
 
     // 특정 회원 루틴 검색
     @Transactional
-    public RoutineResponseDto getRoutine(Long routine_id) {
-        return routineRepository.findById(routine_id).map(RoutineResponseDto::new).orElseThrow(
-                // 아이디가 존재하지 않으면 예외 처리
-                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+    public List<RoutineResponseDto> getRoutine(String nickname) {
+        return routineRepository.findAllByNickname(nickname).stream().map(RoutineResponseDto::new).toList();
     }
 
     // 루틴 정보 수정
@@ -50,7 +48,10 @@ public class RoutineService {
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
-        routineEntity.update(requestDto);
+        routineRepository.updateSetting(requestDto.getRoutineName(), requestDto.getStrategy(),
+                requestDto.getCertification(), requestDto.getStartTime(), requestDto.getEndTime(),
+                requestDto.getIsActivated());
+
         return new RoutineResponseDto(routineEntity);
     }
 
@@ -66,4 +67,9 @@ public class RoutineService {
         return new RoutineDeleteSuccessResponseDto(true);
     }
 
+    // 루틴의 사용자 닉네임 변경
+    @Transactional
+    public void updateNickname(String nickname, RoutineRequestDto requestDto) throws Exception {
+        routineRepository.updateNickname(nickname, requestDto.getNickname());
+    }
 }
