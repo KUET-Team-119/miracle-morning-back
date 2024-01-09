@@ -37,8 +37,8 @@ public class RoutineService {
 
     // 특정 회원 루틴 검색
     @Transactional
-    public List<RoutineResponseDto> getRoutine(String nickname) {
-        return routineRepository.findAllByNickname(nickname).stream().map(RoutineResponseDto::new).toList();
+    public List<RoutineResponseDto> getRoutine(String memberName) {
+        return routineRepository.findAllByMemberName(memberName).stream().map(RoutineResponseDto::new).toList();
     }
 
     // 루틴 정보 수정
@@ -69,7 +69,7 @@ public class RoutineService {
 
     // 루틴의 사용자 닉네임 변경
     @Transactional
-    public void updateNickname(String nickname, RoutineRequestDto requestDto) throws Exception {
-        routineRepository.updateNickname(nickname, requestDto.getNickname());
+    public void updateMemberName(String memberName, RoutineRequestDto requestDto) throws Exception {
+        routineRepository.updateMemberName(memberName, requestDto.getMemberName());
     }
 }

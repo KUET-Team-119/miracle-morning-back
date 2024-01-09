@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
-    List<RoutineEntity> findAllByNickname(String nickname);
+    List<RoutineEntity> findAllByMemberName(String memberName);
 
     @Modifying
     @Query("UPDATE RoutineEntity r set r.routineName = :routine_name, r.strategy = :strategy, r.certification = :certification, startTime = :start_time, endTime = :end_time, isActivated = :is_activated")
@@ -22,6 +22,7 @@ public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
             @Param("end_time") Time endTime, @Param("is_activated") Boolean isActivated);
 
     @Modifying
-    @Query("UPDATE RoutineEntity r set r.nickname = :new_nickname WHERE r.nickname = :old_nickname")
-    void updateNickname(@Param("old_nickname") String oldNickname, @Param("new_nickname") String newNickname);
+    @Query("UPDATE RoutineEntity r set r.memberName = :new_member_name WHERE r.memberName = :old_member_name")
+    void updateMemberName(@Param("old_member_name") String oldMemberName,
+            @Param("new_member_name") String newMemberName);
 }

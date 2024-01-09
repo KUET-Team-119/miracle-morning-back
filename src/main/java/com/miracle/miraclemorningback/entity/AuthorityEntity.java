@@ -9,8 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,15 +24,15 @@ public class AuthorityEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
-	private Long authority_id;  // 권한 아이디
-	
+	private Long authority_id; // 권한 아이디
+
 	@Column
-	@ManyToOne
-	@JoinColumn(name = "member_id")
-	private Long member_id;  // 사용자 아이디
-	
+	// @ManyToOne
+	// @JoinColumn(name = "member_id")
+	private Long member_id; // 사용자 아이디
+
 	@Column
-	private String authority_name;  // 권한명
+	private String authority_name; // 권한명
 
 	public AuthorityEntity(AuthorityRequestDto requestDto) {
 		this.authority_id = requestDto.getAuthority_id();

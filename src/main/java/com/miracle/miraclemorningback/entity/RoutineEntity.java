@@ -39,7 +39,7 @@ public class RoutineEntity extends Timestamped {
     private Long routineId; // 루틴 아이디
 
     @Column
-    private String nickname; // 닉네임
+    private String memberName; // 사용자명
 
     @Column
     private String routineName; // 루틴명
@@ -62,7 +62,7 @@ public class RoutineEntity extends Timestamped {
     public RoutineEntity(RoutineRequestDto requestDto) {
         // this.routinePK.setRoutineName(requestDto.getRoutineName());
         this.routineName = requestDto.getRoutineName();
-        this.nickname = requestDto.getNickname();
+        this.memberName = requestDto.getMemberName();
         this.strategy = requestDto.getStrategy();
         this.certification = requestDto.getCertification();
         this.startTime = requestDto.getStartTime();

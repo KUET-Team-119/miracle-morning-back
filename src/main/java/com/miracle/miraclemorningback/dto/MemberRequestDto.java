@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberRequestDto {
-    private String nickname; // 닉네임
+    private String memberName; // 사용자명
     private String password; // 비밀번호
 }

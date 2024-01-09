@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResultRequestDto {
     private String routineName; // 루틴명
-    private String nickname; // 닉네임
+    private String memberName; // 사용자명
 }

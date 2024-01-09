@@ -10,14 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoutineRequestDto {
     private String routineName;
-    private String nickname;
+    private String memberName;
     private String strategy;
     private String certification;
     private Time startTime;
     private Time endTime;
     private Boolean isActivated;
-
-    public RoutineRequestDto(MemberResponseDto responseDto) {
-        this.nickname = responseDto.getNickname();
-    }
 }

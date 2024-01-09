@@ -11,9 +11,10 @@ import com.miracle.miraclemorningback.entity.MemberEntity;
 
 @Repository
 public interface MemberRepository extends JpaRepository<MemberEntity, Long> { // 어떤 entity인지, pk 어떤 타입인지
-    Optional<MemberEntity> findByNickname(String nickname);
+    Optional<MemberEntity> findByMemberName(String memberName);
 
     @Modifying
-    @Query("UPDATE MemberEntity m set m.nickname = :new_nickname WHERE m.nickname = :old_nickname")
-    void updateNickname(@Param("old_nickname") String oldNickname, @Param("new_nickname") String newNickname);
+    @Query("UPDATE MemberEntity m set m.memberName = :new_member_name WHERE m.memberName = :old_member_name")
+    void updateMemberName(@Param("old_member_name") String oldMemberName,
+            @Param("new_member_name") String newMemberName);
 }

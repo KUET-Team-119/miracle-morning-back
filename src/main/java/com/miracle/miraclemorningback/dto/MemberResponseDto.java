@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberResponseDto {
     private Long memberId;
-    private String nickname;
+    private String memberName;
     private String password;
     private Boolean isAdmin;
     private LocalDateTime createdAt;
@@ -39,7 +39,7 @@ public class MemberResponseDto {
 
     public MemberResponseDto(MemberEntity memberEntity) {
         this.memberId = memberEntity.getMemberId();
-        this.nickname = memberEntity.getNickname();
+        this.memberName = memberEntity.getMemberName();
         this.password = memberEntity.getPassword();
         this.isAdmin = memberEntity.getIsAdmin();
         this.createdAt = memberEntity.getCreatedAt();

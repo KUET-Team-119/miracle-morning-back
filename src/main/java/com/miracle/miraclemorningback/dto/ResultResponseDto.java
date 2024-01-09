@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResultResponseDto {
     private String routineName;
-    private String nickname;
+    private String memberName;
     private LocalDateTime createdAt;
 
     public ResultResponseDto(ResultEntity resultEntity) {
         this.routineName = resultEntity.getRoutineName();
-        this.nickname = resultEntity.getNickName();
+        this.memberName = resultEntity.getMemberName();
         this.createdAt = resultEntity.getCreatedAt();
     }
 }

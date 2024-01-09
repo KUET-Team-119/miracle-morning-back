@@ -28,27 +28,16 @@ public class MemberEntity extends Timestamped { // table 역할
     private Long memberId; // 유저 아이디
 
     @Column(nullable = false, unique = true, columnDefinition = "varchar(10)")
-    private String nickname; // 닉네임
+    private String memberName; // 사용자명
 
-    @Column(nullable = false, columnDefinition = "char(6)")
+    @Column(nullable = false, columnDefinition = "char(5)")
     private String password; // 비밀번호
 
     @Column(columnDefinition = "boolean default false")
     private Boolean isAdmin; // 관리자여부
 
-    // 빌더 패턴
-    // @Builder
-    // public MemberEntity(String nickname, String password) {
-    // this.nickname = nickname;
-    // this.password = password;
-    // }
-
-    // public void update(MemberRequestDto requestDto) {
-    // this.nickname = requestDto.getNickname();
-    // }
-
     public MemberEntity(MemberRequestDto requestDto) {
-        this.nickname = requestDto.getNickname();
+        this.memberName = requestDto.getMemberName();
         this.password = requestDto.getPassword();
     }
 }

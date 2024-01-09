@@ -24,13 +24,13 @@ public class ResultEntity extends Timestamped {
     private Long resultId; // 기록 아이디
 
     @Column
-    private String nickName; // 닉네임
+    private String memberName; // 사용자명
 
     @Column
     private String routineName; // 루틴명
 
     public ResultEntity(ResultRequestDto requestDto) {
-        this.nickName = requestDto.getNickname();
+        this.memberName = requestDto.getMemberName();
         this.routineName = requestDto.getRoutineName();
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
-import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.repository.MemberRepository;
 
@@ -21,9 +20,6 @@ public class MemberService {
 
     @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private RoutineService routineService;
 
     // 전체 회원 조회
     @Transactional(readOnly = true)
@@ -42,34 +38,27 @@ public class MemberService {
 
     // 특정 회원 검색
     @Transactional
-    public MemberResponseDto getMember(String nickname) {
-        return memberRepository.findByNickname(nickname).map(MemberResponseDto::new).orElseThrow(
-                // 닉네임이 존재하지 않으면 예외 처리
-                () -> new IllegalArgumentException("존재하지 않은 닉네임입니다."));
+    public MemberResponseDto getMember(String memberName) {
+        return memberRepository.findByMemberName(memberName).map(MemberResponseDto::new).orElseThrow(
+                // 사용자명이 존재하지 않으면 예외 처리
+                () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
     }
 
     // 회원 정보 수정
     @Transactional
-    public MemberResponseDto updateMember(String nickname, MemberRequestDto requestDto) throws Exception {
-        MemberEntity memberEntity = memberRepository.findByNickname(nickname).orElseThrow(
-                // 닉네임이 존재하지 않으면 예외 처리
-                () -> new IllegalArgumentException("존재하지 않은 닉네임입니다."));
+    public MemberResponseDto updateMember(String memberName, MemberRequestDto requestDto) throws Exception {
+        MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElseThrow(
+                // 사용자명이 존재하지 않으면 예외 처리
+                () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
 
         // 비밀번호가 일치하지 않으면 예외 처리
         if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
             throw new Exception("비밀번호가 일치하지 않습니다.");
         }
 
-        // 닉네임 변경 쿼리 실행
-        // memberEntity.update(requestDto);
-        memberRepository.updateNickname(nickname, requestDto.getNickname());
-        MemberResponseDto responseDto = new MemberResponseDto(memberEntity);
+        memberRepository.updateMemberName(memberName, requestDto.getMemberName());
 
-        // 루틴 테이블에서 사용자 닉네임 변경
-        RoutineRequestDto routineRequestDto = new RoutineRequestDto(responseDto);
-        routineService.updateNickname(nickname, routineRequestDto);
-
-        return responseDto;
+        return new MemberResponseDto(memberEntity);
     }
 
     // 회원 삭제
@@ -79,9 +68,9 @@ public class MemberService {
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
-        // 닉네임이 일치하지 않으면 예외 처리
-        if (!requestDto.getNickname().equals(memberEntity.getNickname())) {
-            throw new Exception("닉네임이 일치하지 않습니다.");
+        // 사용자명이 일치하지 않으면 예외 처리
+        if (!requestDto.getMemberName().equals(memberEntity.getMemberName())) {
+            throw new Exception("사용자명이 일치하지 않습니다.");
         }
 
         memberRepository.deleteById(member_id);
