@@ -13,7 +13,6 @@ import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.repository.MemberRepository;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service // 스프링이 관리해주는 객체, 스프링 빈
