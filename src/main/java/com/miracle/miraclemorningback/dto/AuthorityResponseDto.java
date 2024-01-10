@@ -2,17 +2,18 @@ package com.miracle.miraclemorningback.dto;
 
 import com.miracle.miraclemorningback.entity.AuthorityEntity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuthorityResponseDto {
-	private Long authority_id;
-    private String authority_name;
+    private Long authorityId;
+    private String authorityName;
 
     public AuthorityResponseDto(AuthorityEntity authorityEntity) {
-    	this.authority_id = authorityEntity.getAuthority_id();
-        this.authority_name = authorityEntity.getAuthority_name();
+        this.authorityId = authorityEntity.getAuthorityId();
+        this.authorityName = authorityEntity.getAuthorityName();
     }
 }

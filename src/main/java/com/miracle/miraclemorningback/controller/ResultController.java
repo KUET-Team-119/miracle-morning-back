@@ -43,8 +43,8 @@ public class ResultController {
     }
 
     // 기록 삭제
-    @DeleteMapping("/api/result/{result_id}")
-    public ResultDeleteSuccessResponseDto deleteResult(@PathVariable Long result_id) throws Exception {
-        return resultService.deleteResult(result_id);
+    @DeleteMapping("/api/result/{resultId}")
+    public ResultDeleteSuccessResponseDto deleteResult(@PathVariable Long resultId) throws Exception {
+        return resultService.deleteResult(resultId);
     }
 }

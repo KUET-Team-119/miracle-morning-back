@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class AuthorityRequestDto {
-	private Long authority_id;
-    private Long member_id;
+    private Long authorityId;
+    private Long memberId;
 }

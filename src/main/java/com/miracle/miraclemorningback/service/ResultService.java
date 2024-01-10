@@ -37,20 +37,20 @@ public class ResultService {
 
     // 특정 기록 검색
     @Transactional
-    public ResultResponseDto getResult(Long result_id) {
-        return resultRepository.findById(result_id).map(ResultResponseDto::new).orElseThrow(
+    public ResultResponseDto getResult(Long resultId) {
+        return resultRepository.findById(resultId).map(ResultResponseDto::new).orElseThrow(
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
     }
 
     // 기록 삭제
     @Transactional
-    public ResultDeleteSuccessResponseDto deleteResult(Long result_id) throws Exception {
-        resultRepository.findById(result_id).orElseThrow(
+    public ResultDeleteSuccessResponseDto deleteResult(Long resultId) throws Exception {
+        resultRepository.findById(resultId).orElseThrow(
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
-        resultRepository.deleteById(result_id);
+        resultRepository.deleteById(resultId);
         return new ResultDeleteSuccessResponseDto(true);
     }
 }

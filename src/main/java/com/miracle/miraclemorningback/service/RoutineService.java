@@ -43,8 +43,8 @@ public class RoutineService {
 
     // 루틴 정보 수정
     @Transactional
-    public RoutineResponseDto updateRoutine(Long routine_id, RoutineRequestDto requestDto) throws Exception {
-        RoutineEntity routineEntity = routineRepository.findById(routine_id).orElseThrow(
+    public RoutineResponseDto updateRoutine(Long routineId, RoutineRequestDto requestDto) throws Exception {
+        RoutineEntity routineEntity = routineRepository.findById(routineId).orElseThrow(
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
@@ -57,13 +57,13 @@ public class RoutineService {
 
     // 루틴 삭제
     @Transactional
-    public RoutineDeleteSuccessResponseDto deleteRoutine(Long routine_id)
+    public RoutineDeleteSuccessResponseDto deleteRoutine(Long routineId)
             throws Exception {
-        routineRepository.findById(routine_id).orElseThrow(
+        routineRepository.findById(routineId).orElseThrow(
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
-        routineRepository.deleteById(routine_id);
+        routineRepository.deleteById(routineId);
         return new RoutineDeleteSuccessResponseDto(true);
     }
 

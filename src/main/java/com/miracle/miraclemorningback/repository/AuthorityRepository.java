@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.miracle.miraclemorningback.entity.AuthorityEntity;
 
 @Repository
-public interface AuthorityRepository extends JpaRepository<AuthorityEntity,Long> {
+public interface AuthorityRepository extends JpaRepository<AuthorityEntity, Long> {
 }

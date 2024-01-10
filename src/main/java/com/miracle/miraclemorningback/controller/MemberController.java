@@ -38,23 +38,23 @@ public class MemberController {
     }
 
     // 특정 회원 검색
-    @GetMapping("/api/member/{member_name}")
+    @GetMapping("/api/member/{memberName}")
     public MemberResponseDto getMember(@PathVariable String memberName) {
         return memberService.getMember(memberName);
     }
 
     // 회원 정보 수정
-    @PutMapping("/api/member/{member_name}")
+    @PutMapping("/api/member/{memberName}")
     public MemberResponseDto updateMember(@PathVariable String memberName, @RequestBody MemberRequestDto requestDto)
             throws Exception {
         return memberService.updateMember(memberName, requestDto);
     }
 
     // 회원 삭제
-    @DeleteMapping("/api/member/{member_id}")
-    public MemberDeleteSuccessResponseDto deleteMember(@PathVariable Long member_id,
+    @DeleteMapping("/api/member/{memberId}")
+    public MemberDeleteSuccessResponseDto deleteMember(@PathVariable Long memberId,
             @RequestBody MemberRequestDto requestDto)
             throws Exception {
-        return memberService.deleteMember(member_id, requestDto);
+        return memberService.deleteMember(memberId, requestDto);
     }
 }

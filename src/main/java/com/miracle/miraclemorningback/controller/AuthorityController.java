@@ -11,11 +11,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class AuthorityController {
-	// 회원 관리 열람
+
 	@Autowired
 	AuthorityService authorityService;
 
-	@GetMapping("/api/manager")
+	// 회원 관리 페이지 출력
+	@GetMapping("/manager")
 	public String managerPage() {
 		return "Welcome to manager page";
 	}

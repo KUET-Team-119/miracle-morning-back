@@ -63,8 +63,8 @@ public class MemberService {
 
     // 회원 삭제
     @Transactional
-    public MemberDeleteSuccessResponseDto deleteMember(Long member_id, MemberRequestDto requestDto) throws Exception {
-        MemberEntity memberEntity = memberRepository.findById(member_id).orElseThrow(
+    public MemberDeleteSuccessResponseDto deleteMember(Long memberId, MemberRequestDto requestDto) throws Exception {
+        MemberEntity memberEntity = memberRepository.findById(memberId).orElseThrow(
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
@@ -73,7 +73,7 @@ public class MemberService {
             throw new Exception("사용자명이 일치하지 않습니다.");
         }
 
-        memberRepository.deleteById(member_id);
+        memberRepository.deleteById(memberId);
         return new MemberDeleteSuccessResponseDto(true);
     }
 }
