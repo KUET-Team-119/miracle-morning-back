@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
+import com.miracle.miraclemorningback.dto.MemberLoginSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
@@ -75,5 +76,19 @@ public class MemberService {
 
         memberRepository.deleteById(memberId);
         return new MemberDeleteSuccessResponseDto(true);
+    }
+
+    @Transactional
+    public MemberLoginSuccessResponseDto loginMember(MemberRequestDto requestDto) throws Exception {
+        MemberEntity memberEntity = memberRepository.findByMemberName(requestDto.getMemberName()).orElseThrow(
+                // 사용자명이 일치하지 않으면 예외 처리
+                () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
+
+        // 비밀번호가 일치하지 않으면 예외 처리
+        if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
+            throw new Exception("비밀번호가 일치하지 않습니다.");
+        }
+
+        return new MemberLoginSuccessResponseDto(true);
     }
 }
