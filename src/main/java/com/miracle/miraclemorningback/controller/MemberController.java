@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
-import com.miracle.miraclemorningback.dto.MemberLoginSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.service.MemberService;
@@ -61,7 +60,7 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/api/member/login")
-    public MemberLoginSuccessResponseDto loginMember(@RequestBody MemberRequestDto requestDto) throws Exception {
+    public MemberResponseDto loginMember(@RequestBody MemberRequestDto requestDto) throws Exception {
         return memberService.loginMember(requestDto);
     }
 }

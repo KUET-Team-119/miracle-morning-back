@@ -13,16 +13,17 @@ import java.util.List;
 
 @Repository
 public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
-    List<RoutineEntity> findAllByMemberName(String memberName);
+        List<RoutineEntity> findAllByMemberName(String memberName);
 
-    @Modifying
-    @Query("UPDATE RoutineEntity r set r.routineName = :routine_name, r.strategy = :strategy, r.certification = :certification, startTime = :start_time, endTime = :end_time, isActivated = :is_activated")
-    void updateSetting(@Param("routine_name") String routineName, @Param("strategy") String strategy,
-            @Param("certification") String certification, @Param("start_time") Time startTime,
-            @Param("end_time") Time endTime, @Param("is_activated") Boolean isActivated);
+        @Modifying
+        @Query("UPDATE RoutineEntity r set r.routineName = :routine_name, r.strategy = :strategy, r.certification = :certification, startTime = :start_time, endTime = :end_time, isActivated = :is_activated WHERE r.routineId = :routine_id")
+        void updateSetting(@Param("routine_id") Long routineId, @Param("routine_name") String routineName,
+                        @Param("strategy") String strategy,
+                        @Param("certification") String certification, @Param("start_time") Time startTime,
+                        @Param("end_time") Time endTime, @Param("is_activated") Boolean isActivated);
 
-    @Modifying
-    @Query("UPDATE RoutineEntity r set r.memberName = :new_member_name WHERE r.memberName = :old_member_name")
-    void updateMemberName(@Param("old_member_name") String oldMemberName,
-            @Param("new_member_name") String newMemberName);
+        @Modifying
+        @Query("UPDATE RoutineEntity r set r.memberName = :new_member_name WHERE r.memberName = :old_member_name")
+        void updateMemberName(@Param("old_member_name") String oldMemberName,
+                        @Param("new_member_name") String newMemberName);
 }

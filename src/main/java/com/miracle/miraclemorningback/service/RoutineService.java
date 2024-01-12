@@ -48,7 +48,7 @@ public class RoutineService {
                 // 아이디가 존재하지 않으면 예외 처리
                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
-        routineRepository.updateSetting(requestDto.getRoutineName(), requestDto.getStrategy(),
+        routineRepository.updateSetting(routineId, requestDto.getRoutineName(), requestDto.getStrategy(),
                 requestDto.getCertification(), requestDto.getStartTime(), requestDto.getEndTime(),
                 requestDto.getIsActivated());
 

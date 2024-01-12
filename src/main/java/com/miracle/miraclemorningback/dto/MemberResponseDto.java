@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberResponseDto {
+    // To-do 불필요한 데이터(isAdmin 등)를 Response하는 것은 아닌지 확인하기
     private Long memberId;
     private String memberName;
     private String password;
