@@ -36,6 +36,7 @@ public class ResultService {
     }
 
     // 특정 기록 검색
+    // To-do resultId에서 날짜 데이터로 변경
     @Transactional
     public ResultResponseDto getResult(Long resultId) {
         return resultRepository.findById(resultId).map(ResultResponseDto::new).orElseThrow(
@@ -52,5 +53,11 @@ public class ResultService {
 
         resultRepository.deleteById(resultId);
         return new ResultDeleteSuccessResponseDto(true);
+    }
+
+    // 오늘 날짜의 기록만 조회
+    @Transactional
+    public List<ResultResponseDto> getTodayResult() {
+        return resultRepository.findAllByCurrentDate().stream().map(ResultResponseDto::new).toList();
     }
 }

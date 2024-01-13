@@ -13,3 +13,7 @@ Content-Type: application/json; charset=UTF-8
     "startTime": "10:15:00",
     "endTime": "10:20:00"
 }
+
+###
+
+GET http://localhost:8080/api/result/today HTTP/1.1

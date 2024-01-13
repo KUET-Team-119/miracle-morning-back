@@ -37,14 +37,21 @@ public class ResultController {
     }
 
     // 특정 기간 기록 검색
+    // To-do resultId에서 날짜 데이터로 변경
     @GetMapping("/api/result/{date}")
-    public ResultResponseDto getResult(@PathVariable Long result_id) {
-        return resultService.getResult(result_id);
+    public ResultResponseDto getResult(@PathVariable Long resultId) {
+        return resultService.getResult(resultId);
     }
 
     // 기록 삭제
     @DeleteMapping("/api/result/{resultId}")
     public ResultDeleteSuccessResponseDto deleteResult(@PathVariable Long resultId) throws Exception {
         return resultService.deleteResult(resultId);
+    }
+
+    // 오늘 날짜의 기록만 조회
+    @GetMapping("/api/result/today")
+    public List<ResultResponseDto> getTodayResult() {
+        return resultService.getTodayResult();
     }
 }
