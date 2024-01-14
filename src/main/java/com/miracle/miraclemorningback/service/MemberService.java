@@ -77,6 +77,7 @@ public class MemberService {
         return new MemberDeleteSuccessResponseDto(true);
     }
 
+    // 로그인
     @Transactional
     public MemberResponseDto loginMember(MemberRequestDto requestDto) throws Exception {
         MemberEntity memberEntity = memberRepository.findByMemberName(requestDto.getMemberName()).orElseThrow(

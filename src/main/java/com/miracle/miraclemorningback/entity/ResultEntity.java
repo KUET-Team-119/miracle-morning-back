@@ -29,8 +29,12 @@ public class ResultEntity extends Timestamped {
     @Column
     private String routineName; // 루틴명
 
-    public ResultEntity(ResultRequestDto requestDto) {
+    @Column
+    private String proofFilePath; // 인증 사진 파일 경로
+
+    public ResultEntity(ResultRequestDto requestDto, String filePath) {
         this.memberName = requestDto.getMemberName();
         this.routineName = requestDto.getRoutineName();
+        this.proofFilePath = filePath;
     }
 }

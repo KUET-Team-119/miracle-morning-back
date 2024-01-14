@@ -1,10 +1,15 @@
 package com.miracle.miraclemorningback.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.miracle.miraclemorningback.dto.ResultDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
@@ -21,6 +26,9 @@ public class ResultService {
     @Autowired
     private ResultRepository resultRepository;
 
+    // 인증 사진 저장 경로
+    private final String DIR_PATH = "/home/chori/workspace/project/miracle-morning/miracle-morning-back/src/main/resources/proofImage/";
+
     // 전체 기록 조회
     @Transactional(readOnly = true)
     public List<ResultResponseDto> getResults() {
@@ -29,9 +37,23 @@ public class ResultService {
 
     // 기록 추가
     @Transactional
-    public ResultResponseDto addResult(ResultRequestDto requestDto) {
-        ResultEntity resultEntity = new ResultEntity(requestDto);
+    public ResultResponseDto addResult(ResultRequestDto requestDto, MultipartFile file) throws IOException {
+
+        // 파일 업로드 시간
+        LocalDateTime dateTime = LocalDateTime.now();
+        String timeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(dateTime);
+
+        // 파일명: 닉네임 + 루틴명 + 업로드 시간 + 원본 파일명
+        String fileName = requestDto.getMemberName() + "_" + requestDto.getRoutineName() + "_" + timeStamp
+                + "_" + file.getOriginalFilename();
+
+        // 파일 경로
+        String filePath = DIR_PATH + fileName;
+        file.transferTo(new File(DIR_PATH, fileName));
+
+        ResultEntity resultEntity = new ResultEntity(requestDto, filePath);
         resultRepository.save(resultEntity);
+
         return new ResultResponseDto(resultEntity);
     }
 
@@ -60,4 +82,12 @@ public class ResultService {
     public List<ResultResponseDto> getTodayResult() {
         return resultRepository.findAllByCurrentDate().stream().map(ResultResponseDto::new).toList();
     }
+
+    // // 인증 사진 다운
+    // @Transactional
+    // public List<ResultResponseDto> getProofFiles() {
+    // List<ResultResponseDto> resultEntity =
+    // resultRepository.findAll().stream().map(ResultResponseDto::new).toList();
+    // String filePath =
+    // }
 }
