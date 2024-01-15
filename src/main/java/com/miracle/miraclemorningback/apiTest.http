@@ -17,3 +17,7 @@ Content-Type: application/json; charset=UTF-8
 ###
 
 GET http://localhost:8080/api/result/today HTTP/1.1
+
+###
+
+GET http://localhost:8080/api/routines/rest/초리 HTTP/1.1

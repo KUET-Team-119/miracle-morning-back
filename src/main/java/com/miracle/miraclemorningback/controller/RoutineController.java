@@ -63,4 +63,16 @@ public class RoutineController {
             throws Exception {
         routineService.updateMemberName(memberName, requestDto);
     }
+
+    // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
+    @GetMapping("/api/routines/rest/{memberName}")
+    public List<RoutineResponseDto> getActivatedAndUnfinishedRoutines(@PathVariable String memberName) {
+        return routineService.getActivatedAndUnfinishedRoutines(memberName);
+    }
+
+    // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
+    @GetMapping("/api/routines/clear/{memberName}")
+    public List<RoutineResponseDto> getActivatedAndFinishedRoutines(@PathVariable String memberName) {
+        return routineService.getActivatedAndFinishedRoutines(memberName);
+    }
 }

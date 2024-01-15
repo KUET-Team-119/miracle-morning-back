@@ -72,4 +72,18 @@ public class RoutineService {
     public void updateMemberName(String memberName, RoutineRequestDto requestDto) throws Exception {
         routineRepository.updateMemberName(memberName, requestDto.getMemberName());
     }
+
+    // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
+    @Transactional
+    public List<RoutineResponseDto> getActivatedAndUnfinishedRoutines(String memberName) {
+        return routineRepository.getActivatedAndUnfinishedRoutines(memberName).stream().map(RoutineResponseDto::new)
+                .toList();
+    }
+
+    // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
+    @Transactional
+    public List<RoutineResponseDto> getActivatedAndFinishedRoutines(String memberName) {
+        return routineRepository.getActivatedAndFinishedRoutines(memberName).stream().map(RoutineResponseDto::new)
+                .toList();
+    }
 }
