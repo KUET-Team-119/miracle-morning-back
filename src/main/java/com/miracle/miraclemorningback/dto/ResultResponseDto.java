@@ -2,9 +2,8 @@ package com.miracle.miraclemorningback.dto;
 
 import java.time.LocalDateTime;
 
-import com.miracle.miraclemorningback.entity.ResultEntity;
-
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,10 +15,11 @@ public class ResultResponseDto {
     private String memberName;
     private LocalDateTime createdAt;
 
-    public ResultResponseDto(ResultEntity resultEntity) {
-        this.resultId = resultEntity.getResultId();
-        this.routineName = resultEntity.getRoutineName();
-        this.memberName = resultEntity.getMemberName();
-        this.createdAt = resultEntity.getCreatedAt();
+    @Builder
+    public ResultResponseDto(Long resultId, String routineName, String memberName, LocalDateTime createdAt) {
+        this.resultId = resultId;
+        this.routineName = routineName;
+        this.memberName = memberName;
+        this.createdAt = createdAt;
     }
 }

@@ -3,9 +3,8 @@ package com.miracle.miraclemorningback.dto;
 import java.sql.Time;
 import java.time.LocalDateTime;
 
-import com.miracle.miraclemorningback.entity.RoutineEntity;
-
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,16 +22,19 @@ public class RoutineResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public RoutineResponseDto(RoutineEntity routineEntity) {
-        this.routineId = routineEntity.getRoutineId();
-        this.routineName = routineEntity.getRoutineName();
-        this.memberName = routineEntity.getMemberName();
-        this.strategy = routineEntity.getStrategy();
-        this.certification = routineEntity.getCertification();
-        this.startTime = routineEntity.getStartTime();
-        this.endTime = routineEntity.getEndTime();
-        this.isActivated = routineEntity.getIsActivated();
-        this.createdAt = routineEntity.getCreatedAt();
-        this.modifiedAt = routineEntity.getModifiedAt();
+    @Builder
+    public RoutineResponseDto(Long routineId, String routineName, String memberName, String strategy,
+            String certification, Time startTime, Time endTime, Boolean isActivated, LocalDateTime createdAt,
+            LocalDateTime modifiedAt) {
+        this.routineId = routineId;
+        this.routineName = routineName;
+        this.memberName = memberName;
+        this.strategy = strategy;
+        this.certification = certification;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.isActivated = isActivated;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
     }
 }

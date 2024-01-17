@@ -32,7 +32,11 @@ public class ResultService {
     // 전체 기록 조회
     @Transactional(readOnly = true)
     public List<ResultResponseDto> getResults() {
-        return resultRepository.findAll().stream().map(ResultResponseDto::new).toList();
+        return resultRepository.findAll().stream()
+                .map(resultEntity -> ResultResponseDto.builder().resultId(resultEntity.getResultId())
+                        .routineName(resultEntity.getRoutineName()).memberName(resultEntity.getMemberName())
+                        .createdAt(resultEntity.getCreatedAt()).build())
+                .toList();
     }
 
     // 기록 추가
@@ -54,16 +58,22 @@ public class ResultService {
         ResultEntity resultEntity = new ResultEntity(requestDto, filePath);
         resultRepository.save(resultEntity);
 
-        return new ResultResponseDto(resultEntity);
+        return ResultResponseDto.builder().resultId(resultEntity.getResultId())
+                .routineName(resultEntity.getRoutineName()).memberName(resultEntity.getMemberName())
+                .createdAt(resultEntity.getCreatedAt()).build();
     }
 
     // 특정 기록 검색
     // To-do resultId에서 날짜 데이터로 변경
     @Transactional
     public ResultResponseDto getResult(Long resultId) {
-        return resultRepository.findById(resultId).map(ResultResponseDto::new).orElseThrow(
-                // 아이디가 존재하지 않으면 예외 처리
-                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+        return resultRepository.findById(resultId)
+                .map(resultEntity -> ResultResponseDto.builder().resultId(resultEntity.getResultId())
+                        .routineName(resultEntity.getRoutineName()).memberName(resultEntity.getMemberName())
+                        .createdAt(resultEntity.getCreatedAt()).build())
+                .orElseThrow(
+                        // 아이디가 존재하지 않으면 예외 처리
+                        () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
     }
 
     // 기록 삭제
@@ -80,7 +90,11 @@ public class ResultService {
     // 오늘 날짜의 기록만 조회
     @Transactional
     public List<ResultResponseDto> getTodayResult() {
-        return resultRepository.findAllByCurrentDate().stream().map(ResultResponseDto::new).toList();
+        return resultRepository.findAllByCurrentDate().stream()
+                .map(resultEntity -> ResultResponseDto.builder().resultId(resultEntity.getResultId())
+                        .routineName(resultEntity.getRoutineName()).memberName(resultEntity.getMemberName())
+                        .createdAt(resultEntity.getCreatedAt()).build())
+                .toList();
     }
 
     // // 인증 사진 다운

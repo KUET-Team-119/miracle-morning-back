@@ -24,7 +24,18 @@ public class RoutineService {
     // 전체 루틴 조회
     @Transactional(readOnly = true)
     public List<RoutineResponseDto> getRoutines() {
-        return routineRepository.findAll().stream().map(RoutineResponseDto::new).toList();
+        return routineRepository.findAll().stream()
+                .map(routineEntity -> RoutineResponseDto.builder().routineId(routineEntity.getRoutineId())
+                        .routineName(routineEntity.getRoutineName()).memberName(routineEntity.getMemberName())
+                        .strategy(routineEntity.getStrategy()).certification(routineEntity.getCertification())
+                        .startTime(routineEntity.getStartTime()).endTime(routineEntity.getEndTime())
+                        .isActivated(routineEntity.getIsActivated()).createdAt(routineEntity.getCreatedAt())
+                        .modifiedAt(routineEntity.getModifiedAt()).build())
+                .toList();
+
+        // 빌더 패턴 이전
+        // return
+        // routineRepository.findAll().stream().map(RoutineResponseDto::new).toList();
     }
 
     // 루틴 추가
@@ -32,13 +43,25 @@ public class RoutineService {
     public RoutineResponseDto addRoutine(RoutineRequestDto requestDto) {
         RoutineEntity routineEntity = new RoutineEntity(requestDto);
         routineRepository.save(routineEntity);
-        return new RoutineResponseDto(routineEntity);
+        return RoutineResponseDto.builder().routineId(routineEntity.getRoutineId())
+                .routineName(routineEntity.getRoutineName()).memberName(routineEntity.getMemberName())
+                .strategy(routineEntity.getStrategy()).certification(routineEntity.getCertification())
+                .startTime(routineEntity.getStartTime()).endTime(routineEntity.getEndTime())
+                .isActivated(routineEntity.getIsActivated()).createdAt(routineEntity.getCreatedAt())
+                .modifiedAt(routineEntity.getModifiedAt()).build();
     }
 
     // 특정 회원 루틴 검색
     @Transactional
     public List<RoutineResponseDto> getRoutine(String memberName) {
-        return routineRepository.findAllByMemberName(memberName).stream().map(RoutineResponseDto::new).toList();
+        return routineRepository.findAllByMemberName(memberName).stream()
+                .map(routineEntity -> RoutineResponseDto.builder().routineId(routineEntity.getRoutineId())
+                        .routineName(routineEntity.getRoutineName()).memberName(routineEntity.getMemberName())
+                        .strategy(routineEntity.getStrategy()).certification(routineEntity.getCertification())
+                        .startTime(routineEntity.getStartTime()).endTime(routineEntity.getEndTime())
+                        .isActivated(routineEntity.getIsActivated()).createdAt(routineEntity.getCreatedAt())
+                        .modifiedAt(routineEntity.getModifiedAt()).build())
+                .toList();
     }
 
     // 루틴 정보 수정
@@ -52,7 +75,12 @@ public class RoutineService {
                 requestDto.getCertification(), requestDto.getStartTime(), requestDto.getEndTime(),
                 requestDto.getIsActivated());
 
-        return new RoutineResponseDto(routineEntity);
+        return RoutineResponseDto.builder().routineId(routineEntity.getRoutineId())
+                .routineName(routineEntity.getRoutineName()).memberName(routineEntity.getMemberName())
+                .strategy(routineEntity.getStrategy()).certification(routineEntity.getCertification())
+                .startTime(routineEntity.getStartTime()).endTime(routineEntity.getEndTime())
+                .isActivated(routineEntity.getIsActivated()).createdAt(routineEntity.getCreatedAt())
+                .modifiedAt(routineEntity.getModifiedAt()).build();
     }
 
     // 루틴 삭제
@@ -76,14 +104,26 @@ public class RoutineService {
     // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
     @Transactional
     public List<RoutineResponseDto> getActivatedAndUnfinishedRoutines(String memberName) {
-        return routineRepository.getActivatedAndUnfinishedRoutines(memberName).stream().map(RoutineResponseDto::new)
+        return routineRepository.getActivatedAndUnfinishedRoutines(memberName).stream()
+                .map(routineEntity -> RoutineResponseDto.builder().routineId(routineEntity.getRoutineId())
+                        .routineName(routineEntity.getRoutineName()).memberName(routineEntity.getMemberName())
+                        .strategy(routineEntity.getStrategy()).certification(routineEntity.getCertification())
+                        .startTime(routineEntity.getStartTime()).endTime(routineEntity.getEndTime())
+                        .isActivated(routineEntity.getIsActivated()).createdAt(routineEntity.getCreatedAt())
+                        .modifiedAt(routineEntity.getModifiedAt()).build())
                 .toList();
     }
 
     // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
     @Transactional
     public List<RoutineResponseDto> getActivatedAndFinishedRoutines(String memberName) {
-        return routineRepository.getActivatedAndFinishedRoutines(memberName).stream().map(RoutineResponseDto::new)
+        return routineRepository.getActivatedAndFinishedRoutines(memberName).stream()
+                .map(routineEntity -> RoutineResponseDto.builder().routineId(routineEntity.getRoutineId())
+                        .routineName(routineEntity.getRoutineName()).memberName(routineEntity.getMemberName())
+                        .strategy(routineEntity.getStrategy()).certification(routineEntity.getCertification())
+                        .startTime(routineEntity.getStartTime()).endTime(routineEntity.getEndTime())
+                        .isActivated(routineEntity.getIsActivated()).createdAt(routineEntity.getCreatedAt())
+                        .modifiedAt(routineEntity.getModifiedAt()).build())
                 .toList();
     }
 }

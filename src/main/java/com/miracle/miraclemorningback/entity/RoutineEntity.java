@@ -25,14 +25,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "routine") // database에 해당 이름의 테이블 생성
 public class RoutineEntity extends Timestamped {
 
-    // @EmbeddedId
-    // private RoutinePK routinePK;
-
-    // @MapsId("memberId")
-    // @ManyToOne
-    // @JoinColumn(name = "MEMBER_ID")
-    // private MemberEntity memberEntity;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "routine_id")
@@ -60,7 +52,6 @@ public class RoutineEntity extends Timestamped {
     private Boolean isActivated; // 활성화여부
 
     public RoutineEntity(RoutineRequestDto requestDto) {
-        // this.routinePK.setRoutineName(requestDto.getRoutineName());
         this.routineName = requestDto.getRoutineName();
         this.memberName = requestDto.getMemberName();
         this.strategy = requestDto.getStrategy();

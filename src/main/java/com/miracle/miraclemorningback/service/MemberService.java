@@ -1,6 +1,7 @@
 package com.miracle.miraclemorningback.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,12 @@ public class MemberService {
     // 전체 회원 조회
     @Transactional(readOnly = true)
     public List<MemberResponseDto> getMembers() {
-        return memberRepository.findAll().stream().map(MemberResponseDto::new).toList();
+
+        return memberRepository.findAll().stream()
+                .map(memberEntity -> MemberResponseDto.builder().memberId(memberEntity.getMemberId())
+                        .memberName(memberEntity.getMemberName()).password(memberEntity.getPassword())
+                        .isAdmin(memberEntity.getIsAdmin()).createdAt(memberEntity.getCreatedAt()).build())
+                .collect(Collectors.toList());
     }
 
     // 회원 등록
@@ -33,15 +39,22 @@ public class MemberService {
         MemberEntity memberEntity = new MemberEntity(requestDto);
 
         memberRepository.save(memberEntity);
-        return new MemberResponseDto(memberEntity);
+
+        return MemberResponseDto.builder().memberId(memberEntity.getMemberId()).memberName(memberEntity.getMemberName())
+                .password(memberEntity.getPassword()).isAdmin(memberEntity.getIsAdmin())
+                .createdAt(memberEntity.getCreatedAt()).build();
     }
 
     // 특정 회원 검색
     @Transactional
     public MemberResponseDto getMember(String memberName) {
-        return memberRepository.findByMemberName(memberName).map(MemberResponseDto::new).orElseThrow(
-                // 사용자명이 존재하지 않으면 예외 처리
-                () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
+        return memberRepository.findByMemberName(memberName)
+                .map(memberEntity -> MemberResponseDto.builder().memberId(memberEntity.getMemberId())
+                        .memberName(memberEntity.getMemberName()).password(memberEntity.getPassword())
+                        .isAdmin(memberEntity.getIsAdmin()).createdAt(memberEntity.getCreatedAt()).build())
+                .orElseThrow(
+                        // 사용자명이 존재하지 않으면 예외 처리
+                        () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
     }
 
     // 회원 정보 수정
@@ -58,7 +71,9 @@ public class MemberService {
 
         memberRepository.updateMemberName(memberName, requestDto.getMemberName());
 
-        return new MemberResponseDto(memberEntity);
+        return MemberResponseDto.builder().memberId(memberEntity.getMemberId()).memberName(memberEntity.getMemberName())
+                .password(memberEntity.getPassword()).isAdmin(memberEntity.getIsAdmin())
+                .createdAt(memberEntity.getCreatedAt()).build();
     }
 
     // 회원 삭제
@@ -89,6 +104,8 @@ public class MemberService {
             throw new Exception("비밀번호가 일치하지 않습니다.");
         }
 
-        return new MemberResponseDto(memberEntity);
+        return MemberResponseDto.builder().memberId(memberEntity.getMemberId()).memberName(memberEntity.getMemberName())
+                .password(memberEntity.getPassword()).isAdmin(memberEntity.getIsAdmin())
+                .createdAt(memberEntity.getCreatedAt()).build();
     }
 }
