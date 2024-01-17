@@ -9,4 +9,10 @@ import lombok.NoArgsConstructor;
 public class MemberRequestDto {
     private String memberName; // 사용자명
     private String password; // 비밀번호
+    
+	public MemberRequestDto(String memberName, String password) {
+		super();
+		this.memberName = memberName;
+		this.password = password;
+	}
 }

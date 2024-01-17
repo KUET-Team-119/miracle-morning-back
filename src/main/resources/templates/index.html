@@ -9,13 +9,13 @@
   <body>
     <div class="container" id="container">
       <div class="form-container sign-up-container">
-        <form action="/member/sign-up" method="post">
+        <form action="/sign-up" method="post">
           <h1>Create Account</h1>
-          <input type="text" name="Nickname" placeholder="Nickname" />
+          <input type="text" name="memberName" placeholder="Nickname" />
           <div class="password-container">
             <input
               type="text"
-              name="Password"
+              name="password"
               id="password"
               placeholder="Password"
               readonly
@@ -26,10 +26,10 @@
         </form>
       </div>
       <div class="form-container sign-in-container">
-        <form action="/member/sign-in" method="post">
+        <form action="/sign-in" method="post">
           <h1>Sign in</h1>
-          <input type="text" name="Nickname" placeholder="Nickname" />
-          <input type="password" name="Password" placeholder="Password" />
+          <input type="text" name="memberName" placeholder="Nickname" />
+          <input type="password" name="password" placeholder="Password" />
           <a href="#">비밀번호를 잊으셨나요?</a>
           <button type="submit">Sign In</button>
         </form>

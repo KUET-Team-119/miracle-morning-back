@@ -6,6 +6,7 @@
     <title>홈</title>
   </head>
   <body>
-    <h1>좋은 아침입니다 <span th:text="${session.nickname}"></span>님</h1>
+    <h1>좋은 아침입니다 <span th:text="${session.memberResponseDto.memberName}"></span>님</h1>
+    <button type="button" onclick="location.href='http://localhost:8080/sign-out'">Logout</button>
   </body>
 </html>

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoutineResponseDto {
+	private Long routineId;
     private String routineName;
     private String memberName;
     private String strategy;
@@ -23,7 +24,8 @@ public class RoutineResponseDto {
     private LocalDateTime modifiedAt;
 
     public RoutineResponseDto(RoutineEntity routineEntity) {
-        this.routineName = routineEntity.getRoutineName();
+        this.routineId = routineEntity.getRoutineId();
+    	this.routineName = routineEntity.getRoutineName();
         this.memberName = routineEntity.getMemberName();
         this.strategy = routineEntity.getStrategy();
         this.certification = routineEntity.getCertification();

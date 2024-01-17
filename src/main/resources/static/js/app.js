@@ -13,6 +13,14 @@ signInButton.addEventListener("click", () => {
 });
 
 generatePasswordBtn.addEventListener("click", () => {
-  const randomStr = Math.random().toString(36).substring(2, 8);
-  password.value = randomStr;
+	const characters = "abcdefghijklmnopqrstuvwxyz";
+	const randomNum = Math.floor(Math.random() * 10).toString();
+	let randomChar = '';
+	    
+	for (let i = 0; i < 4; i++) {
+	    randomChar += characters.charAt(Math.floor(Math.random() * characters.length));
+	}
+	
+	const randomStr = randomNum + randomChar;
+	password.value = randomStr;
 });

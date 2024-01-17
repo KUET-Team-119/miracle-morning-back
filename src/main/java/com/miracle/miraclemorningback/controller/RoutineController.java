@@ -26,38 +26,38 @@ public class RoutineController {
     private RoutineService routineService;
 
     // 전체 루틴 조회
-    @GetMapping("/api/routines")
+    @GetMapping("/routines")
     public List<RoutineResponseDto> getRoutines() {
         return routineService.getRoutines();
     }
 
     // 루틴 추가
-    @PostMapping("/api/routine")
+    @PostMapping("/routines/add")
     public RoutineResponseDto addRoutine(@RequestBody RoutineRequestDto requestDto) {
         return routineService.addRoutine(requestDto);
     }
 
     // 특정 회원 루틴 검색
-    @GetMapping("/api/routine/{memberName}")
+    @GetMapping("/routines/{memberName}")
     public List<RoutineResponseDto> getRoutine(@PathVariable String memberName) {
         return routineService.getRoutine(memberName);
     }
 
     // 루틴 정보 수정
-    @PutMapping("/api/routine/{routineId}")
+    @PutMapping("/routines/update/{routineId}")
     public RoutineResponseDto updateRoutine(@PathVariable Long routineId, @RequestBody RoutineRequestDto requestDto)
             throws Exception {
         return routineService.updateRoutine(routineId, requestDto);
     }
 
     // 회원 삭제
-    @DeleteMapping("/api/routine/{routineId}")
+    @DeleteMapping("/routines/delete/{routineId}")
     public RoutineDeleteSuccessResponseDto deleteRoutine(@PathVariable Long routineId) throws Exception {
         return routineService.deleteRoutine(routineId);
     }
 
     // 루틴의 사용자 닉네임 변경
-    @PutMapping("/api/routine/nickname/{memberName}")
+    @PutMapping("/routines/nickname/{memberName}")
     public void updateNickname(@PathVariable String memberName,
             @RequestBody RoutineRequestDto requestDto)
             throws Exception {

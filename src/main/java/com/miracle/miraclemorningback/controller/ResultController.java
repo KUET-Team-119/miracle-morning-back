@@ -25,25 +25,25 @@ public class ResultController {
     private ResultService resultService;
 
     // 전체 기록 조회
-    @GetMapping("/api/results")
+    @GetMapping("/statistics")
     public List<ResultResponseDto> getResults() {
         return resultService.getResults();
     }
 
     // 기록 추가
-    @PostMapping("/api/result")
+    @PostMapping("/statistics/add")
     public ResultResponseDto addResult(@RequestBody ResultRequestDto requestDto) {
         return resultService.addResult(requestDto);
     }
 
     // 특정 기간 기록 검색
-    @GetMapping("/api/result/{date}")
+    @GetMapping("/statistics/{date}")
     public ResultResponseDto getResult(@PathVariable Long result_id) {
         return resultService.getResult(result_id);
     }
 
     // 기록 삭제
-    @DeleteMapping("/api/result/{resultId}")
+    @DeleteMapping("/statistics/delete/{resultId}")
     public ResultDeleteSuccessResponseDto deleteResult(@PathVariable Long resultId) throws Exception {
         return resultService.deleteResult(resultId);
     }

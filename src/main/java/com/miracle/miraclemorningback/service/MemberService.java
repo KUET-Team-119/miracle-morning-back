@@ -1,6 +1,7 @@
 package com.miracle.miraclemorningback.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,8 @@ public class MemberService {
     }
 
     // 회원 등록
-    @Transactional
     public MemberResponseDto registerMember(MemberRequestDto requestDto) {
-        MemberEntity memberEntity = new MemberEntity(requestDto);
+    	MemberEntity memberEntity = new MemberEntity(requestDto);
 
         memberRepository.save(memberEntity);
         return new MemberResponseDto(memberEntity);
