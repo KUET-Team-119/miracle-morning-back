@@ -1,22 +1,20 @@
 package com.miracle.miraclemorningback.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-
-import com.miracle.miraclemorningback.dto.MemberRequestDto;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "member") // database에 해당 이름의 테이블 생성
 public class MemberEntity extends Timestamped { // table 역할
@@ -33,11 +31,14 @@ public class MemberEntity extends Timestamped { // table 역할
     @Column(nullable = false, columnDefinition = "char(5)")
     private String password; // 비밀번호
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean isAdmin; // 관리자여부
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    public MemberEntity(MemberRequestDto requestDto) {
-        this.memberName = requestDto.getMemberName();
-        this.password = requestDto.getPassword();
+    @Builder
+    public MemberEntity(String memberName, String password, Role role) {
+        this.memberName = memberName;
+        this.password = password;
+        this.role = role;
     }
 }

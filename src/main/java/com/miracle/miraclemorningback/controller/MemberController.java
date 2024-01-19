@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.miracle.miraclemorningback.dto.LoginResultDto;
 import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
@@ -32,7 +33,7 @@ public class MemberController {
     }
 
     // 회원 등록
-    @PostMapping("/api/member")
+    @PostMapping("/api/auth/member/new")
     public MemberResponseDto registerMember(@RequestBody MemberRequestDto requestDto) {
         return memberService.registerMember(requestDto);
     }
@@ -59,8 +60,8 @@ public class MemberController {
     }
 
     // 로그인
-    @PostMapping("/api/member/login")
-    public MemberResponseDto loginMember(@RequestBody MemberRequestDto requestDto) throws Exception {
+    @PostMapping("/api/auth/member")
+    public LoginResultDto loginMember(@RequestBody MemberRequestDto requestDto) throws Exception {
         return memberService.loginMember(requestDto);
     }
 }

@@ -1,7 +1,5 @@
 package com.miracle.miraclemorningback.entity;
 
-import com.miracle.miraclemorningback.dto.ResultRequestDto;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,9 +31,10 @@ public class ResultEntity extends Timestamped {
     @Column
     private String proofFilePath; // 인증 사진 파일 경로
 
-    public ResultEntity(ResultRequestDto requestDto, String filePath) {
-        this.memberName = requestDto.getMemberName();
-        this.routineName = requestDto.getRoutineName();
+    @Builder
+    public ResultEntity(String memberName, String routineName, String filePath) {
+        this.memberName = memberName;
+        this.routineName = routineName;
         this.proofFilePath = filePath;
     }
 }
