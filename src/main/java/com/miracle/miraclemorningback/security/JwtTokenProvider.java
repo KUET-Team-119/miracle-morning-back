@@ -11,16 +11,22 @@ import org.springframework.stereotype.Component;
 import com.miracle.miraclemorningback.entity.Role;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 import javax.crypto.SecretKey;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider { // JWT 토큰 생성 및 검증
@@ -63,7 +69,7 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken).getPayload().getSubject();
     }
 
-    // Request Header에서 token 값 추출 : "X-AUTH-TOKEN: jwt토큰"
+    // Request Header에서 token 값 추출
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
@@ -77,8 +83,15 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
         try {
             Jws<Claims> claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken);
             return !claims.getPayload().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
+        } catch (SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
         }
+        return false;
     }
 }

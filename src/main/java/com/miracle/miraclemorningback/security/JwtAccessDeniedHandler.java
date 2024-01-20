@@ -16,6 +16,10 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
             AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        response.sendRedirect("/");
+        response.setStatus(403);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write("권한이 없습니다.");
+        // response.sendRedirect("/");
     }
 }
