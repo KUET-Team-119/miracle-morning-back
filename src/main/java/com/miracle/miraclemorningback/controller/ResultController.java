@@ -41,7 +41,7 @@ public class ResultController {
     }
 
     // 특정 기간 기록 검색
-    // To-do resultId에서 날짜 데이터로 변경
+    // TODO resultId에서 날짜 데이터로 변경 / 쿼리 파라미터 형식으로 바꾸는 방향도 고려
     @GetMapping("/api/result/{date}")
     public ResultResponseDto getResult(@PathVariable Long resultId) {
         return resultService.getResult(resultId);

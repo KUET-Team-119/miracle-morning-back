@@ -35,7 +35,8 @@ public class RoutineService {
                                                 .endTime(routineEntity.getEndTime())
                                                 .isActivated(routineEntity.getIsActivated())
                                                 .createdAt(routineEntity.getCreatedAt())
-                                                .modifiedAt(routineEntity.getModifiedAt()).build())
+                                                .modifiedAt(routineEntity.getModifiedAt())
+                                                .build())
                                 .toList();
 
                 // 빌더 패턴 이전
@@ -46,17 +47,29 @@ public class RoutineService {
         // 루틴 추가
         @Transactional
         public RoutineResponseDto addRoutine(RoutineRequestDto requestDto) {
-                RoutineEntity routineEntity = RoutineEntity.builder().routineName(requestDto.getRoutineName())
-                                .memberName(requestDto.getMemberName()).strategy(requestDto.getStrategy())
-                                .certification(requestDto.getCertification()).startTime(requestDto.getStartTime())
-                                .endTime(requestDto.getEndTime()).isActivated(requestDto.getIsActivated()).build();
+                RoutineEntity routineEntity = RoutineEntity.builder()
+                                .routineName(requestDto.getRoutineName())
+                                .memberName(requestDto.getMemberName())
+                                .strategy(requestDto.getStrategy())
+                                .certification(requestDto.getCertification())
+                                .startTime(requestDto.getStartTime())
+                                .endTime(requestDto.getEndTime())
+                                .isActivated(requestDto.getIsActivated())
+                                .build();
                 routineRepository.save(routineEntity);
-                return RoutineResponseDto.builder().routineId(routineEntity.getRoutineId())
-                                .routineName(routineEntity.getRoutineName()).memberName(routineEntity.getMemberName())
-                                .strategy(routineEntity.getStrategy()).certification(routineEntity.getCertification())
-                                .startTime(routineEntity.getStartTime()).endTime(routineEntity.getEndTime())
-                                .isActivated(routineEntity.getIsActivated()).createdAt(routineEntity.getCreatedAt())
-                                .modifiedAt(routineEntity.getModifiedAt()).build();
+
+                return RoutineResponseDto.builder()
+                                .routineId(routineEntity.getRoutineId())
+                                .routineName(routineEntity.getRoutineName())
+                                .memberName(routineEntity.getMemberName())
+                                .strategy(routineEntity.getStrategy())
+                                .certification(routineEntity.getCertification())
+                                .startTime(routineEntity.getStartTime())
+                                .endTime(routineEntity.getEndTime())
+                                .isActivated(routineEntity.getIsActivated())
+                                .createdAt(routineEntity.getCreatedAt())
+                                .modifiedAt(routineEntity.getModifiedAt())
+                                .build();
         }
 
         // 특정 회원 루틴 검색
@@ -73,7 +86,8 @@ public class RoutineService {
                                                 .endTime(routineEntity.getEndTime())
                                                 .isActivated(routineEntity.getIsActivated())
                                                 .createdAt(routineEntity.getCreatedAt())
-                                                .modifiedAt(routineEntity.getModifiedAt()).build())
+                                                .modifiedAt(routineEntity.getModifiedAt())
+                                                .build())
                                 .toList();
         }
 
@@ -88,12 +102,18 @@ public class RoutineService {
                                 requestDto.getCertification(), requestDto.getStartTime(), requestDto.getEndTime(),
                                 requestDto.getIsActivated());
 
-                return RoutineResponseDto.builder().routineId(routineEntity.getRoutineId())
-                                .routineName(routineEntity.getRoutineName()).memberName(routineEntity.getMemberName())
-                                .strategy(routineEntity.getStrategy()).certification(routineEntity.getCertification())
-                                .startTime(routineEntity.getStartTime()).endTime(routineEntity.getEndTime())
-                                .isActivated(routineEntity.getIsActivated()).createdAt(routineEntity.getCreatedAt())
-                                .modifiedAt(routineEntity.getModifiedAt()).build();
+                return RoutineResponseDto.builder()
+                                .routineId(routineEntity.getRoutineId())
+                                .routineName(routineEntity.getRoutineName())
+                                .memberName(routineEntity.getMemberName())
+                                .strategy(routineEntity.getStrategy())
+                                .certification(routineEntity.getCertification())
+                                .startTime(routineEntity.getStartTime())
+                                .endTime(routineEntity.getEndTime())
+                                .isActivated(routineEntity.getIsActivated())
+                                .createdAt(routineEntity.getCreatedAt())
+                                .modifiedAt(routineEntity.getModifiedAt())
+                                .build();
         }
 
         // 루틴 삭제
@@ -128,7 +148,8 @@ public class RoutineService {
                                                 .endTime(routineEntity.getEndTime())
                                                 .isActivated(routineEntity.getIsActivated())
                                                 .createdAt(routineEntity.getCreatedAt())
-                                                .modifiedAt(routineEntity.getModifiedAt()).build())
+                                                .modifiedAt(routineEntity.getModifiedAt())
+                                                .build())
                                 .toList();
         }
 
@@ -146,7 +167,8 @@ public class RoutineService {
                                                 .endTime(routineEntity.getEndTime())
                                                 .isActivated(routineEntity.getIsActivated())
                                                 .createdAt(routineEntity.getCreatedAt())
-                                                .modifiedAt(routineEntity.getModifiedAt()).build())
+                                                .modifiedAt(routineEntity.getModifiedAt())
+                                                .build())
                                 .toList();
         }
 }

@@ -19,7 +19,6 @@ public class SecurityConfiguration {
         @Bean
         protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
-                                .cors(Customizer -> Customizer.disable())
                                 .csrf(Customizer -> Customizer.disable())
                                 .httpBasic(Customizer -> Customizer.disable()) // UI를 사용하는 것을 기본값으로 가진 시큐리티 설정을 비활성화
                                 .sessionManagement( // 세션 사용 안함, STATELESS로 설정

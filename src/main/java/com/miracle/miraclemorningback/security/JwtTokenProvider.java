@@ -58,7 +58,7 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
     }
 
     // Jwt 토큰으로 인증 정보 조회
-    // 필터에서 인증 성공 시 SecurityContextHolder에 저장할 Authentication 생성
+    // 필터에서 인증 성공 시 SecurityContextHolder에 저장할 인증 객체 Authentication 생성
     public Authentication getAuthentication(String accessToken) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getMemberName(accessToken));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

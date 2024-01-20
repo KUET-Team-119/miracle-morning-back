@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LoginResultDto {
+public class TokenDto {
 
-    private String token;
+    private String memberName;
+    private String accessToken;
 
     @Builder
-    public LoginResultDto(String token) {
-        this.token = token;
+    public TokenDto(String memberName, String accessToken) {
+        this.memberName = memberName;
+        this.accessToken = accessToken;
     }
 }

@@ -33,10 +33,12 @@ public class ResultService {
         @Transactional(readOnly = true)
         public List<ResultResponseDto> getResults() {
                 return resultRepository.findAll().stream()
-                                .map(resultEntity -> ResultResponseDto.builder().resultId(resultEntity.getResultId())
+                                .map(resultEntity -> ResultResponseDto.builder()
+                                                .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
                                                 .memberName(resultEntity.getMemberName())
-                                                .createdAt(resultEntity.getCreatedAt()).build())
+                                                .createdAt(resultEntity.getCreatedAt())
+                                                .build())
                                 .toList();
         }
 
@@ -56,24 +58,32 @@ public class ResultService {
                 String filePath = DIR_PATH + fileName;
                 file.transferTo(new File(DIR_PATH, fileName));
 
-                ResultEntity resultEntity = ResultEntity.builder().memberName(requestDto.getMemberName())
-                                .routineName(requestDto.getRoutineName()).filePath(filePath).build();
+                ResultEntity resultEntity = ResultEntity.builder()
+                                .memberName(requestDto.getMemberName())
+                                .routineName(requestDto.getRoutineName())
+                                .filePath(filePath)
+                                .build();
                 resultRepository.save(resultEntity);
 
-                return ResultResponseDto.builder().resultId(resultEntity.getResultId())
-                                .routineName(resultEntity.getRoutineName()).memberName(resultEntity.getMemberName())
-                                .createdAt(resultEntity.getCreatedAt()).build();
+                return ResultResponseDto.builder()
+                                .resultId(resultEntity.getResultId())
+                                .routineName(resultEntity.getRoutineName())
+                                .memberName(resultEntity.getMemberName())
+                                .createdAt(resultEntity.getCreatedAt())
+                                .build();
         }
 
         // 특정 기록 검색
-        // To-do resultId에서 날짜 데이터로 변경
+        // TODO resultId에서 날짜 데이터로 변경 / 쿼리 파라미터 형식으로 바꾸는 방향도 고려
         @Transactional
         public ResultResponseDto getResult(Long resultId) {
                 return resultRepository.findById(resultId)
-                                .map(resultEntity -> ResultResponseDto.builder().resultId(resultEntity.getResultId())
+                                .map(resultEntity -> ResultResponseDto.builder()
+                                                .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
                                                 .memberName(resultEntity.getMemberName())
-                                                .createdAt(resultEntity.getCreatedAt()).build())
+                                                .createdAt(resultEntity.getCreatedAt())
+                                                .build())
                                 .orElseThrow(
                                                 // 아이디가 존재하지 않으면 예외 처리
                                                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
@@ -94,10 +104,12 @@ public class ResultService {
         @Transactional
         public List<ResultResponseDto> getTodayResult() {
                 return resultRepository.findAllByCurrentDate().stream()
-                                .map(resultEntity -> ResultResponseDto.builder().resultId(resultEntity.getResultId())
+                                .map(resultEntity -> ResultResponseDto.builder()
+                                                .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
                                                 .memberName(resultEntity.getMemberName())
-                                                .createdAt(resultEntity.getCreatedAt()).build())
+                                                .createdAt(resultEntity.getCreatedAt())
+                                                .build())
                                 .toList();
         }
 
