@@ -20,8 +20,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // Request로 들어오는 JWT Token의 유효성을 검증(jwtTokenProvider.validateToken)하는
-    // filter를 filterChan에 등록
+    // Request로 들어오는 JWT Token의 유효성을 검증하는 filter를 filterChan에 등록
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain)
