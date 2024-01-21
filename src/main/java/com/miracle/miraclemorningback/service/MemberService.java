@@ -47,7 +47,7 @@ public class MemberService {
                 MemberEntity memberEntity = MemberEntity.builder()
                                 .memberName(requestDto.getMemberName())
                                 .password(requestDto.getPassword())
-                                .role(Role.ROLE_TEMPORARY_USER)
+                                .role(Role.TEMP_USER)
                                 .build();
 
                 memberRepository.save(memberEntity);
@@ -126,7 +126,7 @@ public class MemberService {
 
                 // 비밀번호가 일치하지 않으면 예외 처리
                 if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
-                        throw new Exception("비밀번호가 일치하지 않습니다.");
+                        throw new Exception(memberEntity.getPassword());
                 }
 
                 TokenDto tokenDto = TokenDto.builder()
