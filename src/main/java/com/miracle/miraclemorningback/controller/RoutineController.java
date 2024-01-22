@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.miracle.miraclemorningback.dto.RoutineDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.dto.RoutineResponseDto;
+import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.service.RoutineService;
 
 import lombok.RequiredArgsConstructor;
@@ -67,12 +68,18 @@ public class RoutineController {
     // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
     @GetMapping("/api/routines/rest/{memberName}")
     public List<RoutineResponseDto> getActivatedAndUnfinishedRoutines(@PathVariable String memberName) {
-        return routineService.getActivatedAndUnfinishedRoutines(memberName);
+        return routineService.getActivatedAndIncompleteRoutines(memberName);
     }
 
     // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
     @GetMapping("/api/routines/clear/{memberName}")
     public List<RoutineResponseDto> getActivatedAndFinishedRoutines(@PathVariable String memberName) {
-        return routineService.getActivatedAndFinishedRoutines(memberName);
+        return routineService.getActivatedAndCompleteRoutines(memberName);
+    }
+
+    // 오늘 날짜의 기록만 조회
+    @GetMapping("/api/routines/today/{memberName}")
+    public List<TodayRoutinesDto> getTodayRoutines(@PathVariable String memberName) {
+        return routineService.getTodayRoutines(memberName);
     }
 }

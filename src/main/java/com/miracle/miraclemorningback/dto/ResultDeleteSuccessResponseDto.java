@@ -1,6 +1,7 @@
 package com.miracle.miraclemorningback.dto;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ResultDeleteSuccessResponseDto {
     private Boolean success;
 
+    @Builder
     public ResultDeleteSuccessResponseDto(Boolean success) {
         this.success = success;
     }

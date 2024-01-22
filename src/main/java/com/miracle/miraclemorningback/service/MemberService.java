@@ -114,7 +114,7 @@ public class MemberService {
                 }
 
                 memberRepository.deleteById(memberId);
-                return new MemberDeleteSuccessResponseDto(true);
+                return MemberDeleteSuccessResponseDto.builder().success(true).build();
         }
 
         // 로그인

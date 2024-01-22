@@ -1,6 +1,7 @@
 package com.miracle.miraclemorningback.service;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.miracle.miraclemorningback.dto.RoutineDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.dto.RoutineResponseDto;
+import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.entity.RoutineEntity;
 import com.miracle.miraclemorningback.repository.RoutineRepository;
 
@@ -125,7 +127,7 @@ public class RoutineService {
                                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
                 routineRepository.deleteById(routineId);
-                return new RoutineDeleteSuccessResponseDto(true);
+                return RoutineDeleteSuccessResponseDto.builder().success(true).build();
         }
 
         // 루틴의 사용자 닉네임 변경
@@ -136,8 +138,8 @@ public class RoutineService {
 
         // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
         @Transactional
-        public List<RoutineResponseDto> getActivatedAndUnfinishedRoutines(String memberName) {
-                return routineRepository.getActivatedAndUnfinishedRoutines(memberName).stream()
+        public List<RoutineResponseDto> getActivatedAndIncompleteRoutines(String memberName) {
+                return routineRepository.getActivatedAndIncompleteRoutines(memberName).stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
@@ -155,8 +157,8 @@ public class RoutineService {
 
         // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
         @Transactional
-        public List<RoutineResponseDto> getActivatedAndFinishedRoutines(String memberName) {
-                return routineRepository.getActivatedAndFinishedRoutines(memberName).stream()
+        public List<RoutineResponseDto> getActivatedAndCompleteRoutines(String memberName) {
+                return routineRepository.getActivatedAndCompleteRoutines(memberName).stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
@@ -170,5 +172,50 @@ public class RoutineService {
                                                 .modifiedAt(routineEntity.getModifiedAt())
                                                 .build())
                                 .toList();
+        }
+
+        // 오늘 날짜의 기록만 조회
+        @Transactional
+        public List<TodayRoutinesDto> getTodayRoutines(String memberName) {
+
+                List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
+
+                List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
+                List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
+
+                // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
+                incompleteRoutines = routineRepository.getActivatedAndIncompleteRoutines(memberName).stream()
+                                .map(routineEntity -> TodayRoutinesDto.builder()
+                                                .routineId(routineEntity.getRoutineId())
+                                                .routineName(routineEntity.getRoutineName())
+                                                .memberName(routineEntity.getMemberName())
+                                                .strategy(routineEntity.getStrategy())
+                                                .certification(routineEntity.getCertification())
+                                                .startTime(routineEntity.getStartTime())
+                                                .endTime(routineEntity.getEndTime())
+                                                .createdAt(routineEntity.getCreatedAt())
+                                                .complete(false)
+                                                .build())
+                                .toList();
+
+                // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
+                completeRoutines = routineRepository.getActivatedAndCompleteRoutines(memberName).stream()
+                                .map(routineEntity -> TodayRoutinesDto.builder()
+                                                .routineId(routineEntity.getRoutineId())
+                                                .routineName(routineEntity.getRoutineName())
+                                                .memberName(routineEntity.getMemberName())
+                                                .strategy(routineEntity.getStrategy())
+                                                .certification(routineEntity.getCertification())
+                                                .startTime(routineEntity.getStartTime())
+                                                .endTime(routineEntity.getEndTime())
+                                                .createdAt(routineEntity.getCreatedAt())
+                                                .complete(true)
+                                                .build())
+                                .toList();
+
+                todayRoutinesDto.addAll(incompleteRoutines);
+                todayRoutinesDto.addAll(completeRoutines);
+
+                return todayRoutinesDto;
         }
 }

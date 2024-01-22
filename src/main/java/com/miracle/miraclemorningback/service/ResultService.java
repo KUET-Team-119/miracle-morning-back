@@ -97,7 +97,7 @@ public class ResultService {
                                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
 
                 resultRepository.deleteById(resultId);
-                return new ResultDeleteSuccessResponseDto(true);
+                return ResultDeleteSuccessResponseDto.builder().success(true).build();
         }
 
         // 오늘 날짜의 기록만 조회
