@@ -37,21 +37,24 @@ public class ResultService {
                                                 .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
                                                 .memberName(resultEntity.getMemberName())
+                                                .doneAt(resultEntity.getDoneAt())
                                                 .createdAt(resultEntity.getCreatedAt())
                                                 .build())
                                 .toList();
         }
 
+        // TODO 완료한 루틴의 루틴명이 바뀌어도 계속 완료되어 있도록 루틴id 사용!!
         // 기록 추가
         @Transactional
-        public ResultResponseDto addResult(ResultRequestDto requestDto, MultipartFile file) throws IOException {
+        public ResultResponseDto addResult(String memberName, ResultRequestDto requestDto, MultipartFile file)
+                        throws IOException {
 
                 // 파일 업로드 시간
                 LocalDateTime dateTime = LocalDateTime.now();
                 String timeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(dateTime);
 
                 // 파일명: 닉네임 + 루틴명 + 업로드 시간 + 원본 파일명
-                String fileName = requestDto.getMemberName() + "_" + requestDto.getRoutineName() + "_" + timeStamp
+                String fileName = memberName + "_" + requestDto.getRoutineName() + "_" + timeStamp
                                 + "_" + file.getOriginalFilename();
 
                 // 파일 경로
@@ -59,9 +62,10 @@ public class ResultService {
                 file.transferTo(new File(DIR_PATH, fileName));
 
                 ResultEntity resultEntity = ResultEntity.builder()
-                                .memberName(requestDto.getMemberName())
+                                .memberName(memberName)
                                 .routineName(requestDto.getRoutineName())
                                 .filePath(filePath)
+                                .doneAt(requestDto.getDoneAt())
                                 .build();
                 resultRepository.save(resultEntity);
 
@@ -69,6 +73,7 @@ public class ResultService {
                                 .resultId(resultEntity.getResultId())
                                 .routineName(resultEntity.getRoutineName())
                                 .memberName(resultEntity.getMemberName())
+                                .doneAt(resultEntity.getDoneAt())
                                 .createdAt(resultEntity.getCreatedAt())
                                 .build();
         }
@@ -83,6 +88,7 @@ public class ResultService {
                                                 .routineName(resultEntity.getRoutineName())
                                                 .memberName(resultEntity.getMemberName())
                                                 .createdAt(resultEntity.getCreatedAt())
+                                                .doneAt(resultEntity.getDoneAt())
                                                 .build())
                                 .orElseThrow(
                                                 // 아이디가 존재하지 않으면 예외 처리
@@ -109,6 +115,7 @@ public class ResultService {
                                                 .routineName(resultEntity.getRoutineName())
                                                 .memberName(resultEntity.getMemberName())
                                                 .createdAt(resultEntity.getCreatedAt())
+                                                .doneAt(resultEntity.getDoneAt())
                                                 .build())
                                 .toList();
         }

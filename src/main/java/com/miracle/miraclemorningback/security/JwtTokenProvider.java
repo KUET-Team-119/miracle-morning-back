@@ -78,7 +78,7 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
         return null;
     }
 
-    // Jwt 토큰의 유효 기간 만료 검사
+    // Jwt 토큰의 유효성 검사
     public Boolean validateToken(String accessToken) {
         try {
             Jws<Claims> claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken);

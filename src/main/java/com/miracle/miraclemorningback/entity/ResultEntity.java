@@ -31,10 +31,14 @@ public class ResultEntity extends Timestamped {
     @Column
     private String proofFilePath; // 인증 사진 파일 경로
 
+    @Column
+    private String doneAt; // 사진 촬영 시간
+
     @Builder
-    public ResultEntity(String memberName, String routineName, String filePath) {
+    public ResultEntity(String memberName, String routineName, String filePath, String doneAt) {
         this.memberName = memberName;
         this.routineName = routineName;
         this.proofFilePath = filePath;
+        this.doneAt = doneAt;
     }
 }

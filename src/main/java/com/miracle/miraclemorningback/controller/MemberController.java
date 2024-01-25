@@ -3,6 +3,7 @@ package com.miracle.miraclemorningback.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +35,7 @@ public class MemberController {
 
     // 회원 등록
     @PostMapping("/api/auth/member/new")
-    public MemberResponseDto registerMember(@RequestBody MemberRequestDto requestDto) {
+    public ResponseEntity<Object> registerMember(@RequestBody MemberRequestDto requestDto) {
         return memberService.registerMember(requestDto);
     }
 

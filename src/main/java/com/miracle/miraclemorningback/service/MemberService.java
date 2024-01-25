@@ -3,6 +3,8 @@ package com.miracle.miraclemorningback.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +45,16 @@ public class MemberService {
 
         // 회원 등록
         @Transactional
-        public MemberResponseDto registerMember(MemberRequestDto requestDto) {
+        public ResponseEntity<Object> registerMember(MemberRequestDto requestDto) {
+
+                String memberName = requestDto.getMemberName();
+
+                // 중복된 memberName 확인
+                if (memberRepository.existsByMemberName(memberName)) {
+                        // 이미 존재하는 닉네임인 경우 예외 처리 및 409 Conflict 반환
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 닉네임입니다.");
+                }
+
                 MemberEntity memberEntity = MemberEntity.builder()
                                 .memberName(requestDto.getMemberName())
                                 .password(requestDto.getPassword())
@@ -52,13 +63,15 @@ public class MemberService {
 
                 memberRepository.save(memberEntity);
 
-                return MemberResponseDto.builder()
+                MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                                 .memberId(memberEntity.getMemberId())
                                 .memberName(memberEntity.getMemberName())
                                 .password(memberEntity.getPassword())
                                 .role(memberEntity.getRole())
                                 .createdAt(memberEntity.getCreatedAt())
                                 .build();
+
+                return ResponseEntity.ok().body(memberResponseDto);
         }
 
         // 특정 회원 검색
@@ -130,7 +143,6 @@ public class MemberService {
                 }
 
                 TokenDto tokenDto = TokenDto.builder()
-                                .memberName(memberEntity.getMemberName())
                                 .accessToken(jwtTokenProvider.generateToken(memberEntity.getMemberName(),
                                                 memberEntity.getRole()))
                                 .build();

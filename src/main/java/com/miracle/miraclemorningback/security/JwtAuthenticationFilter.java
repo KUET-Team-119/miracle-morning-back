@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // resolveToken: Request의 Header에서 token 값 추출
         String token = jwtTokenProvider.resolveToken(request);
 
-        // validateToken: Jwt 토큰의 유효 기간 만료 검사
+        // validateToken: Jwt 토큰의 유효성 검사
         if (token != null && jwtTokenProvider.validateToken(token)) {
             // getAuthentication : Jwt 토큰으로 인증 정보 조회
             Authentication authentication = jwtTokenProvider.getAuthentication(token);

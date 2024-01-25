@@ -8,9 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Builder;
-import lombok.Getter;
 
-@Getter
 public class UserDetailsImpl implements UserDetails {
 
     private final MemberEntity memberEntity;

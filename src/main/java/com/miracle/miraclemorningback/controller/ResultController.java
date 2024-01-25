@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.miracle.miraclemorningback.dto.ResultDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
 import com.miracle.miraclemorningback.dto.ResultResponseDto;
+import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.ResultService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,10 +36,12 @@ public class ResultController {
 
     // 기록 추가
     @PostMapping("/api/result")
-    public ResultResponseDto addResult(@RequestPart("data") ResultRequestDto requestDto,
+    public ResultResponseDto addResult(Authentication authentication, @RequestPart("data") ResultRequestDto requestDto,
             @RequestPart("file") MultipartFile file) throws IOException {
 
-        return resultService.addResult(requestDto, file);
+        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+
+        return resultService.addResult(memberName, requestDto, file);
     }
 
     // 특정 기간 기록 검색

@@ -14,12 +14,15 @@ public class ResultResponseDto {
     private String routineName;
     private String memberName;
     private LocalDateTime createdAt;
+    private String doneAt;
 
     @Builder
-    public ResultResponseDto(Long resultId, String routineName, String memberName, LocalDateTime createdAt) {
+    public ResultResponseDto(Long resultId, String routineName, String memberName, LocalDateTime createdAt,
+            String doneAt) {
         this.resultId = resultId;
         this.routineName = routineName;
         this.memberName = memberName;
         this.createdAt = createdAt;
+        this.doneAt = doneAt;
     }
 }
