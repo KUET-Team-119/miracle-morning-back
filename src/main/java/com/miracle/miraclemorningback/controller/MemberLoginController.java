@@ -1,17 +1,20 @@
 package com.miracle.miraclemorningback.controller;
 
-import java.util.List;
-
+import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.miracle.miraclemorningback.dto.MemberResponseDto;
+import com.miracle.miraclemorningback.dto.MemberRequestDto;
+import com.miracle.miraclemorningback.dto.TokenDto;
 import com.miracle.miraclemorningback.service.MemberService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -21,37 +24,30 @@ public class MemberLoginController {
 
     @Autowired
     private MemberService memberService;
-    
+
     // 로그인
     @PostMapping("/sign-in")
-    public ModelAndView signIn(HttpServletRequest request, HttpSession session, ModelAndView mav) {
+    public ModelAndView signIn(HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelAndView mav) throws Exception{
     	String memberName = request.getParameter("memberName");
     	String password = request.getParameter("password");
-    	List<MemberResponseDto> members = memberService.getMembers();
-    	MemberResponseDto compare;
-
-    	for (int i=0; i<members.size(); i++) {
-    		compare = members.get(i);
-    		if (compare.getMemberName().equals(memberName)) {
-    			if (compare.getPassword().equals(password) && !compare.getIsAdmin()) {
-    				mav.setViewName("redirect:/home");
-    				session.setAttribute("memberResponseDto", compare);
-    				// 세션 만료기간 : 분 단위. 30 * 60 = 30분
-    				session.setMaxInactiveInterval(30 * 60);
-    			}else {
-    				mav.setViewName("redirect:/welcome");
-    			}
-    			break;
-    		}
+    	TokenDto tokenDto = memberService.memberLogin(new MemberRequestDto(memberName, password));
+    	if (tokenDto != null) {
+    		Cookie cookie = new Cookie("token", "Bearer" + tokenDto);
+    		cookie.setPath("/");
+    		cookie.setMaxAge(60 * 60 * 24 * 7);
+    		response.addCookie(cookie);
+    		session.setAttribute("memberName", memberName);
+    		mav.setViewName("redirect:/home");
     	}
     	return mav;
     }
     
     // 로그아웃
-    @GetMapping("/sign-out")
-    public ModelAndView memberSignOut(HttpSession session, ModelAndView mav) {
+    @GetMapping("/logout")
+    public ModelAndView signOut(HttpSession session, ModelAndView mav) {
     	session.invalidate();
     	mav.setViewName("redirect:/welcome");
     	return mav;
     }
+
 }

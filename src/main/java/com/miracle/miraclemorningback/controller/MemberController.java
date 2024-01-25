@@ -18,7 +18,6 @@ import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -56,7 +55,7 @@ public class MemberController {
     }
     
     // 회원 등록
-    @PostMapping("/sign-up")
+    @PostMapping("/register")
 	public ModelAndView signUp(HttpServletRequest request, ModelAndView mav) {
     	String memberName = request.getParameter("memberName");
     	String password = request.getParameter("password");

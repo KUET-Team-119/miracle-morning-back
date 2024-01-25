@@ -3,6 +3,7 @@ package com.miracle.miraclemorningback.dto;
 import java.time.LocalDateTime;
 
 import com.miracle.miraclemorningback.entity.MemberEntity;
+import com.miracle.miraclemorningback.entity.Role;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,7 +15,7 @@ public class MemberResponseDto {
     private Long memberId;
     private String memberName;
     private String password;
-    private Boolean isAdmin;
+    private Role role;
     private LocalDateTime createdAt;
 
     // 빌더 패턴
@@ -41,7 +42,7 @@ public class MemberResponseDto {
         this.memberId = memberEntity.getMemberId();
         this.memberName = memberEntity.getMemberName();
         this.password = memberEntity.getPassword();
-        this.isAdmin = memberEntity.getIsAdmin();
+        this.role = memberEntity.getRole();
         this.createdAt = memberEntity.getCreatedAt();
     }
 }

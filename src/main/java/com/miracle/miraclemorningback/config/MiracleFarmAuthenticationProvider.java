@@ -32,8 +32,8 @@ public class MiracleFarmAuthenticationProvider implements AuthenticationProvider
 		if(member.size() > 0) {
 			if(password.equals(member.get(0).getPassword())) {
 				List<GrantedAuthority> authorities = new ArrayList<>();
-				authority = String.valueOf(member.get(0).getIsAdmin());
-				if(authority.equals("true")) {
+				authority = member.get(0).getRole().getAuthority();
+				if(authority.equals("ROLE_ADMIN")) {
 					authorities.add(new SimpleGrantedAuthority(authority));
 					return new UsernamePasswordAuthenticationToken(memberName, password, authorities);
 				}else {

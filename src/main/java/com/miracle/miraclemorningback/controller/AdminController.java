@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpSession;
 @RestController
 public class AdminController {
 	
-	@GetMapping("/admin/sign-out")
+	@GetMapping("/admin/logout")
 	public ModelAndView adminSignOut(HttpSession session, ModelAndView mav) {
     	session.invalidate();
     	mav.setViewName("redirect:/admin");
