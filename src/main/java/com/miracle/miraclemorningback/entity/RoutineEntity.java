@@ -1,6 +1,7 @@
 package com.miracle.miraclemorningback.entity;
 
 import java.sql.Time;
+import java.util.Date;
 
 import org.hibernate.annotations.DynamicInsert;
 
@@ -58,6 +59,9 @@ public class RoutineEntity extends Timestamped {
 
     @Column(columnDefinition = "boolean default true")
     private Boolean isActivated; // 활성화여부
+    
+    @Column
+    private Date join_date; // 등록일자
 
     public RoutineEntity(RoutineRequestDto requestDto) {
         // this.routinePK.setRoutineName(requestDto.getRoutineName());

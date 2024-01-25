@@ -2,6 +2,7 @@ package com.miracle.miraclemorningback.dto;
 
 import java.sql.Time;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import com.miracle.miraclemorningback.entity.RoutineEntity;
 
@@ -22,6 +23,7 @@ public class RoutineResponseDto {
     private Boolean isActivated;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private Date joinDate;
 
     public RoutineResponseDto(RoutineEntity routineEntity) {
         this.routineId = routineEntity.getRoutineId();
@@ -34,5 +36,6 @@ public class RoutineResponseDto {
         this.isActivated = routineEntity.getIsActivated();
         this.createdAt = routineEntity.getCreatedAt();
         this.modifiedAt = routineEntity.getModifiedAt();
+        this.joinDate = routineEntity.getJoin_date();
     }
 }
