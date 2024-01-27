@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                                                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll() // 회원가입,
                                                                                                               // 로그인은 모두
                                                                                                               // 허용
+                                                .requestMatchers("/", "/**").permitAll()
                                                 .anyRequest().hasRole("USER")) // 그 외에 리소스는 모두 회원만 사용 가능
                                 .exceptionHandling(Customizer -> Customizer
                                                 // 인증 과정에서 발생하는 예외 처리

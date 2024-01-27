@@ -17,9 +17,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint { /
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authenticationException) throws IOException, ServletException {
 
-        response.setStatus(401);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().write("인증에 실패했습니다.");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+
+        String jsonErrorMessage = "{ \"message\": \"인증에 실패했습니다.\" }";
+        response.getWriter().write(jsonErrorMessage);
     }
 }

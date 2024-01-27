@@ -16,10 +16,11 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
             AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        response.setStatus(403);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().write("권한이 없습니다.");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden
+        response.setContentType("application/json;charset=UTF-8");
+
+        String jsonErrorMessage = "{ \"message\": \"권한이 없습니다.\" }";
+        response.getWriter().write(jsonErrorMessage);
         // response.sendRedirect("/");
     }
 }
