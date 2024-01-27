@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ScheduledTasks { // To-do 실제로 작동하는지 확인 필요!!
+public class ScheduledTasks { // TODO 실제로 작동하는지 확인 필요!!
 
     @Scheduled(cron = "0 0 4 * * *") // 매일 새벽 4시에 작동
     public void LegacyFilesDelete() {

@@ -54,10 +54,9 @@ public class MemberController {
 
     // 회원 삭제
     @DeleteMapping("/api/member/{memberId}")
-    public MemberDeleteSuccessResponseDto deleteMember(@PathVariable Long memberId,
-            @RequestBody MemberRequestDto requestDto)
+    public MemberDeleteSuccessResponseDto deleteMember(@PathVariable Long memberId)
             throws Exception {
-        return memberService.deleteMember(memberId, requestDto);
+        return memberService.deleteMember(memberId);
     }
 
     // 로그인

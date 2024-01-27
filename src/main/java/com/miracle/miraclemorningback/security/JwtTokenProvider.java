@@ -49,10 +49,12 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
     }
 
     // Jwt 토큰 생성
-    public String generateToken(String memberName, Role roles) {
+    public String generateToken(Long memberId, String memberName, Role roles) {
         Date now = new Date();
         String accessToken = Jwts.builder().claims().issuer(issuer).subject(memberName).issuedAt(now)
-                .expiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME)).add("roles", roles).and()
+                .expiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
+                .add("id", memberId)
+                .add("roles", roles).and()
                 .signWith(secretKey).compact();
         return accessToken;
     }

@@ -115,16 +115,11 @@ public class MemberService {
 
         // 회원 삭제
         @Transactional
-        public MemberDeleteSuccessResponseDto deleteMember(Long memberId, MemberRequestDto requestDto)
+        public MemberDeleteSuccessResponseDto deleteMember(Long memberId)
                         throws Exception {
-                MemberEntity memberEntity = memberRepository.findById(memberId).orElseThrow(
+                memberRepository.findById(memberId).orElseThrow(
                                 // 아이디가 존재하지 않으면 예외 처리
                                 () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
-
-                // 사용자명이 일치하지 않으면 예외 처리
-                if (!requestDto.getMemberName().equals(memberEntity.getMemberName())) {
-                        throw new Exception("사용자명이 일치하지 않습니다.");
-                }
 
                 memberRepository.deleteById(memberId);
                 return MemberDeleteSuccessResponseDto.builder().success(true).build();
@@ -143,7 +138,9 @@ public class MemberService {
                 }
 
                 TokenDto tokenDto = TokenDto.builder()
-                                .accessToken(jwtTokenProvider.generateToken(memberEntity.getMemberName(),
+                                .accessToken(jwtTokenProvider.generateToken(
+                                                memberEntity.getMemberId(),
+                                                memberEntity.getMemberName(),
                                                 memberEntity.getRole()))
                                 .build();
 

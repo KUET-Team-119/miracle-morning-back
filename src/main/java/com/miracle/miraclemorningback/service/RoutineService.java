@@ -135,11 +135,16 @@ public class RoutineService {
                 return RoutineDeleteSuccessResponseDto.builder().success(true).build();
         }
 
-        // 루틴의 사용자 닉네임 변경
-        @Transactional
-        public void updateMemberName(String memberName, RoutineRequestDto requestDto) throws Exception {
-                routineRepository.updateMemberName(memberName, requestDto.getMemberName());
-        }
+        /*
+         * 1차 배포에는 사용자 닉네임 변경 기능 미적용
+         * // 루틴의 사용자 닉네임 변경
+         * 
+         * @Transactional
+         * public void updateMemberName(String memberName, RoutineRequestDto requestDto)
+         * throws Exception {
+         * routineRepository.updateMemberName(memberName, requestDto.getMemberName());
+         * }
+         */
 
         // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
         @Transactional

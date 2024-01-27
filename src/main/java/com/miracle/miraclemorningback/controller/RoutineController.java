@@ -55,8 +55,7 @@ public class RoutineController {
         return routineService.updateRoutine(requestDto);
     }
 
-    // TODO 관리자 권한이 필요하도록 설정하기
-    // 회원 삭제
+    // 루틴 삭제
     @DeleteMapping("/api/routine/{routineId}")
     public RoutineDeleteSuccessResponseDto deleteRoutine(@PathVariable Long routineId) throws Exception {
         return routineService.deleteRoutine(routineId);
