@@ -12,7 +12,7 @@ public class TokenDto {
     private String accessToken;
 
     @Builder
-    public TokenDto(String memberName, String accessToken) {
+    public TokenDto(String accessToken) {
         this.accessToken = accessToken;
     }
 }
