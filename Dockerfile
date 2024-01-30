@@ -1,5 +1,5 @@
 # 빌드 스테이지
-FROM openjdk:21 AS Builder
+FROM openjdk:17-jdk-alpine AS Builder
 
 WORKDIR /miracle-morning-back
 
@@ -14,7 +14,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 
 # 실행 스테이지
-FROM openjdk:21
+FROM openjdk:17-jdk-alpine
 
 # 빌드 스테이지에서 생성한 JAR 파일을 복사
 COPY --from=builder /miracle-morning-back/build/libs/*.jar app.jar
