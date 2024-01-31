@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-    @GetMapping(value = { "", "/", "/home", "/routines", "/statistics", "/statistics/detail", "/mypage" })
+    @GetMapping()
     public String indexPage() {
-        return "forward:/index.html";
+        return "index.html";
     }
 }
