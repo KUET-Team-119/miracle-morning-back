@@ -1,34 +1,64 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+name: Java CI with Gradle # workflow 이름
 
-name: Java CI with Gradle
-
-on:
+on: # 이벤트 정의
   push:
-    branches: [ "chori" ]
-  pull_request:
-    branches: [ "chori" ]
-
-permissions:
-  contents: read
+    branches: ["chori"] # chori 브랜치에 push 이벤트
 
 jobs:
   build:
+    runs-on: ubuntu-latest # job을 수행하는 OS
 
-    runs-on: ubuntu-latest
+    steps: # job에서 수행하는 step 정의
+      # Repository에서 CI 수행 서버로 코드를 내려받는 action
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 21
-      uses: actions/setup-java@v3
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
-      with:
-        arguments: build
+      # JDK 설치
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3 # jdk 다운 및 캐싱하는 action
+        with: # action에 전달하는 input 정의
+          java-version: "17"
+          distribution: "temurin"
+
+      # Gradle 캐싱
+      # Gradle의 의존성을 캐시에 보관하여 빌드 시간 단축
+      - name: Gradle caching
+        uses: actions/cache@v3
+        with:
+          # 캐싱할 파일이 있는 경로 & 캐싱한 파일을 복구할 경로
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      # gradlew를 실행할 수 있는 권한 추가
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # Gradle로 프로젝트 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test # 테스트 없이 빌드만 수행
+        env:
+          MYSQL_ENDPOINT: ${{ secrets.MYSQL_ENDPOINT }}
+          MYSQL_SCHEMA: ${{ secrets.MYSQL_SCHEMA }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+
+      # 환경변수 파일 생성
+      - name: Create env file
+        run: |
+          echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
+          echo MYSQL_SCHEMA=${{ secrets.MYSQL_SCHEMA }} >> .env
+          echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
+          echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
+
+      # 이미지 빌드 및 도커 허브에 push
+      - name: Build docker image and push
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back .
+          docker push ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back
