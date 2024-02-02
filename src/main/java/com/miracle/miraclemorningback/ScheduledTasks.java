@@ -30,19 +30,19 @@ public class ScheduledTasks { // TODO 실제로 작동하는지 확인 필요!!
         Instant threshold = Instant.now().minus(daysBeforeDeletion, ChronoUnit.DAYS);
 
         try {
-            // 디렉토리 내의 모든 파일에 대한 스트림 얻기
-            DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directoryPath);
+            try (// 디렉토리 내의 모든 파일에 대한 스트림 얻기
+                    DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directoryPath)) {
+                // 파일들을 순회하면서 특정 기간 이전 파일 삭제
+                for (Path filePath : directoryStream) {
+                    // 파일의 생성 시각 가져오기
+                    Instant creationTime = Files.readAttributes(filePath, BasicFileAttributes.class)
+                            .creationTime().toInstant();
 
-            // 파일들을 순회하면서 특정 기간 이전 파일 삭제
-            for (Path filePath : directoryStream) {
-                // 파일의 생성 시각 가져오기
-                Instant creationTime = Files.readAttributes(filePath, BasicFileAttributes.class)
-                        .creationTime().toInstant();
-
-                // 특정 기간 이전에 생성된 파일인 경우 삭제
-                if (creationTime.isBefore(threshold)) {
-                    Files.delete(filePath);
-                    System.out.println("파일이 삭제되었습니다: " + filePath);
+                    // 특정 기간 이전에 생성된 파일인 경우 삭제
+                    if (creationTime.isBefore(threshold)) {
+                        Files.delete(filePath);
+                        System.out.println("파일이 삭제되었습니다: " + filePath);
+                    }
                 }
             }
 

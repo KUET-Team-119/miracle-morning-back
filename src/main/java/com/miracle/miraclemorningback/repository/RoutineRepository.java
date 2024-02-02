@@ -36,10 +36,12 @@ public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
         List<RoutineEntity> getActivatedAndCompleteRoutines(@Param("member_name") String memberName);
 
         // 모든 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
+        // TODO 다른 사용자가 같은 루틴명을 사용할 경우 문제될 수 있음 -> 기록 테이블로 옮겨야 할 것 같음
         @Query("SELECT ro FROM RoutineEntity ro WHERE ro.isActivated = true AND ro.routineName NOT IN (SELECT re.routineName FROM ResultEntity re WHERE DATE(re.createdAt) = CURRENT_DATE)")
         List<RoutineEntity> getAllActivatedAndIncompleteRoutines();
 
         // 모든 사용자의 루틴 중 활성화되고 인증된 루틴 조회
+        // TODO 다른 사용자가 같은 루틴명을 사용할 경우 문제될 수 있음 -> 기록 테이블로 옮겨야 할 것 같음
         @Query("SELECT ro FROM RoutineEntity ro WHERE ro.isActivated = true AND ro.routineName IN (SELECT re.routineName FROM ResultEntity re WHERE DATE(re.createdAt) = CURRENT_DATE)")
         List<RoutineEntity> getAllActivatedAndCompleteRoutines();
 }

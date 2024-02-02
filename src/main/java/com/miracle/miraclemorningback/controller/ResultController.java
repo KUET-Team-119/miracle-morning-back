@@ -39,6 +39,7 @@ public class ResultController {
     public ResultResponseDto addResult(Authentication authentication, @RequestPart("data") ResultRequestDto requestDto,
             @RequestPart("file") MultipartFile file) throws IOException {
 
+        // TODO 인증 객체 쓸 수 있는지 확인
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
 
         return resultService.addResult(memberName, requestDto, file);

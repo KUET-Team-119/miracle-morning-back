@@ -46,7 +46,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
 
-      # 환경변수 파일 생성
+      # .env 설정
       - name: Create env file
         run: |
           echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
@@ -56,9 +56,15 @@ jobs:
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
 
+      # 도커 로그인
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
       # 이미지 빌드 및 도커 허브에 push
       - name: Build docker image and push
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back .
           docker push ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back
