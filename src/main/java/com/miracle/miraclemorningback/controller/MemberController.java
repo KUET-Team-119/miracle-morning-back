@@ -3,6 +3,7 @@ package com.miracle.miraclemorningback.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.miracle.miraclemorningback.dto.TokenDto;
 import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
@@ -32,8 +34,8 @@ public class MemberController {
     }
 
     // 회원 등록
-    @PostMapping("/api/member")
-    public MemberResponseDto registerMember(@RequestBody MemberRequestDto requestDto) {
+    @PostMapping("/api/auth/member/new")
+    public ResponseEntity<Object> registerMember(@RequestBody MemberRequestDto requestDto) {
         return memberService.registerMember(requestDto);
     }
 
@@ -52,9 +54,14 @@ public class MemberController {
 
     // 회원 삭제
     @DeleteMapping("/api/member/{memberId}")
-    public MemberDeleteSuccessResponseDto deleteMember(@PathVariable Long memberId,
-            @RequestBody MemberRequestDto requestDto)
+    public MemberDeleteSuccessResponseDto deleteMember(@PathVariable Long memberId)
             throws Exception {
-        return memberService.deleteMember(memberId, requestDto);
+        return memberService.deleteMember(memberId);
+    }
+
+    // 로그인
+    @PostMapping("/api/auth/member")
+    public TokenDto loginMember(@RequestBody MemberRequestDto requestDto) throws Exception {
+        return memberService.loginMember(requestDto);
     }
 }

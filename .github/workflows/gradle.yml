@@ -1,0 +1,70 @@
+name: Java CI with Gradle # workflow 이름
+
+on: # 이벤트 정의
+  push:
+    branches: ["chori"] # chori 브랜치에 push 이벤트
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # job을 수행하는 OS
+
+    steps: # job에서 수행하는 step 정의
+      # Repository에서 CI 수행 서버로 코드를 내려받는 action
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # JDK 설치
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3 # jdk 다운 및 캐싱하는 action
+        with: # action에 전달하는 input 정의
+          java-version: "17"
+          distribution: "temurin"
+
+      # Gradle 캐싱
+      # Gradle의 의존성을 캐시에 보관하여 빌드 시간 단축
+      - name: Gradle caching
+        uses: actions/cache@v3
+        with:
+          # 캐싱할 파일이 있는 경로 & 캐싱한 파일을 복구할 경로
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      # gradlew를 실행할 수 있는 권한 추가
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # Gradle로 프로젝트 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test # 테스트 없이 빌드만 수행
+        env:
+          MYSQL_ENDPOINT: ${{ secrets.MYSQL_ENDPOINT }}
+          MYSQL_SCHEMA: ${{ secrets.MYSQL_SCHEMA }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+
+      # .env 설정
+      - name: Create env file
+        run: |
+          echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
+          echo MYSQL_SCHEMA=${{ secrets.MYSQL_SCHEMA }} >> .env
+          echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
+          echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
+
+      # 도커 로그인
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 이미지 빌드 및 도커 허브에 push
+      - name: Build docker image and push
+        run: |
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back .
+          docker push ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back

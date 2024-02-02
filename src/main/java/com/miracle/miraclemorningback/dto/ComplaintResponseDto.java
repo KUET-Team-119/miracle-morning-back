@@ -9,20 +9,17 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ResultResponseDto {
-    private Long resultId;
-    private String routineName;
+public class ComplaintResponseDto {
+    private Long complaintId;
     private String memberName;
+    private String content;
     private LocalDateTime createdAt;
-    private String doneAt;
 
     @Builder
-    public ResultResponseDto(Long resultId, String routineName, String memberName, LocalDateTime createdAt,
-            String doneAt) {
-        this.resultId = resultId;
-        this.routineName = routineName;
+    public ComplaintResponseDto(Long complaintId, String memberName, String content, LocalDateTime createdAt) {
+        this.complaintId = complaintId;
         this.memberName = memberName;
+        this.content = content;
         this.createdAt = createdAt;
-        this.doneAt = doneAt;
     }
 }

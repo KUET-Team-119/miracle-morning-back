@@ -1,0 +1,33 @@
+GET http://localhost:8080/api/members HTTP/1.1
+
+###
+
+POST http://localhost:8080/api/auth/member/new HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "memberName": "파카",
+    "password": "a0000"
+}
+
+###
+
+POST http://localhost:8080/api/routine HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "routineName": "물 마시기",
+    "memberName": "초리",
+    "strategy": "전략적으로",
+    "certification": "사진",
+    "startTime": "10:15:00",
+    "endTime": "10:20:00"
+}
+
+###
+
+GET http://localhost:8080/api/result/today HTTP/1.1
+
+###
+
+GET http://localhost:8080/api/routines/rest/초리 HTTP/1.1

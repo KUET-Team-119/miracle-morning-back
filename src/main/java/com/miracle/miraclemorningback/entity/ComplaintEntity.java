@@ -14,31 +14,23 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "result")
-public class ResultEntity extends Timestamped {
+@Table(name = "complaint")
+public class ComplaintEntity extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "result_id")
-    private Long resultId; // 기록 아이디
+    @Column(name = "complaint_id")
+    private Long complaintId; // 컴플레인 아이디
 
     @Column
-    private String memberName; // 사용자명
+    private String memberName; // 제보자
 
     @Column
-    private String routineName; // 루틴명
-
-    @Column
-    private String proofFilePath; // 인증 사진 파일 경로
-
-    @Column
-    private String doneAt; // 사진 촬영 시간
+    private String content; // 제보 내용
 
     @Builder
-    public ResultEntity(String memberName, String routineName, String filePath, String doneAt) {
+    public ComplaintEntity(String memberName, String content) {
         this.memberName = memberName;
-        this.routineName = routineName;
-        this.proofFilePath = filePath;
-        this.doneAt = doneAt;
+        this.content = content;
     }
 }

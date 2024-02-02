@@ -7,11 +7,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ResultDeleteSuccessResponseDto {
-    private Boolean success;
+public class TokenDto {
+
+    private String accessToken;
 
     @Builder
-    public ResultDeleteSuccessResponseDto(Boolean success) {
-        this.success = success;
+    public TokenDto(String accessToken) {
+        this.accessToken = accessToken;
     }
 }

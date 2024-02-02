@@ -4,8 +4,6 @@ import java.sql.Time;
 
 import org.hibernate.annotations.DynamicInsert;
 
-import com.miracle.miraclemorningback.dto.RoutineRequestDto;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,14 +23,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "routine") // database에 해당 이름의 테이블 생성
 public class RoutineEntity extends Timestamped {
-
-    // @EmbeddedId
-    // private RoutinePK routinePK;
-
-    // @MapsId("memberId")
-    // @ManyToOne
-    // @JoinColumn(name = "MEMBER_ID")
-    // private MemberEntity memberEntity;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,14 +50,15 @@ public class RoutineEntity extends Timestamped {
     @Column(columnDefinition = "boolean default true")
     private Boolean isActivated; // 활성화여부
 
-    public RoutineEntity(RoutineRequestDto requestDto) {
-        // this.routinePK.setRoutineName(requestDto.getRoutineName());
-        this.routineName = requestDto.getRoutineName();
-        this.memberName = requestDto.getMemberName();
-        this.strategy = requestDto.getStrategy();
-        this.certification = requestDto.getCertification();
-        this.startTime = requestDto.getStartTime();
-        this.endTime = requestDto.getEndTime();
-        this.isActivated = requestDto.getIsActivated();
+    @Builder
+    public RoutineEntity(String routineName, String memberName, String strategy, String certification, Time startTime,
+            Time endTime, Boolean isActivated) {
+        this.routineName = routineName;
+        this.memberName = memberName;
+        this.strategy = strategy;
+        this.certification = certification;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.isActivated = isActivated;
     }
 }
