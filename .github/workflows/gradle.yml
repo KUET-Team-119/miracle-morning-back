@@ -64,6 +64,7 @@ jobs:
           echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
           echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
           echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
+          echo MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> .env
           echo MYSQL_CHARACTER_SET_SERVER=${{ secrets.MYSQL_CHARACTER_SET_SERVER }} >> .env
           echo TZ=${{ secrets.TZ }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
