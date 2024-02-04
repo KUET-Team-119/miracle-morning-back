@@ -49,8 +49,13 @@ jobs:
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
 
+      # docker-compose.yml 파일 생성
+      - name: Create docker-compose.yml
+        run: |
+          echo ${{ secrets.DOCKER_COMPOSE }} > .docker-compose.yml
+
       # .env 파일 생성
-      - name: Create env file
+      - name: Create .env
         run: |
           echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
           echo MYSQL_SCHEMA=${{ secrets.MYSQL_SCHEMA }} >> .env
@@ -59,10 +64,6 @@ jobs:
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
           echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
-
-      # docker-compose.yml 파일 생성
-      - name: Create docker-compose.yml
-        run: |
 
       # 도커 로그인
       - name: docker login
@@ -77,17 +78,6 @@ jobs:
           docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back .
           docker push ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back
 
-      # OCI에 .env 파일 전송
-      - name: Copy .env to OCI
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USERNAME }}
-          key: ${{ secrets.REMOTE_KEY }}
-          # 경로 확인
-          source: ".env"
-          target: "/home/ubuntu/workspace/project/miracle-morning"
-
       # OCI에 docker-compose.yml 파일 전송
       - name: Copy docker-compose.yml to OCI
         uses: appleboy/scp-action@master
@@ -97,6 +87,17 @@ jobs:
           key: ${{ secrets.REMOTE_KEY }}
           # 경로 확인
           source: "docker-compose.yml"
+          target: "/home/ubuntu/workspace/project/miracle-morning"
+
+      # OCI에 .env 파일 전송
+      - name: Copy .env to OCI
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_KEY }}
+          # 경로 확인
+          source: ".env"
           target: "/home/ubuntu/workspace/project/miracle-morning"
 
       # ssh로 OCI에 접속, 도커 허브에서 이미지 pull, docker-compose 실행
