@@ -43,13 +43,13 @@ jobs:
         env:
           SPRING_PROFILES_ACTIVE: prod
           # MYSQL_ENDPOINT: ${{ secrets.MYSQL_ENDPOINT }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          TZ: ${{ secrets.TZ }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
-          IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
+          # MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          # MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          # MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          # TZ: ${{ secrets.TZ }}
+          # JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          # JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          # IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
 
       # docker-compose.yml 파일 생성
       - name: Create docker-compose.yml
