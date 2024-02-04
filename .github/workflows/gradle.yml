@@ -41,7 +41,7 @@ jobs:
       - name: Create application-prod.properties
         run: |
           cd ./src/main/resources
-          touch ./application.properties
+          touch ./application-prod.properties
           echo "${{ secrets.APPLICATION_PROD }}" >> ./application-prod.properties
         shell: bash
 
