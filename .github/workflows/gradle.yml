@@ -42,9 +42,10 @@ jobs:
         run: ./gradlew clean build -x test # 테스트 없이 빌드만 수행
         env:
           MYSQL_ENDPOINT: ${{ secrets.MYSQL_ENDPOINT }}
-          MYSQL_SCHEMA: ${{ secrets.MYSQL_SCHEMA }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          TZ: ${{ secrets.TZ }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
