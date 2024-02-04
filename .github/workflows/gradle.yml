@@ -42,7 +42,7 @@ jobs:
         run: ./gradlew clean build -x test # 테스트 없이 빌드만 수행
         env:
           SPRING_PROFILES_ACTIVE: prod
-          MYSQL_ENDPOINT: ${{ secrets.MYSQL_ENDPOINT }}
+          # MYSQL_ENDPOINT: ${{ secrets.MYSQL_ENDPOINT }}
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
