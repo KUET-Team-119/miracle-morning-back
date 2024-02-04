@@ -42,6 +42,14 @@ jobs:
         run: ./gradlew clean build -x test # 테스트 없이 빌드만 수행
         env:
           SPRING_PROFILES_ACTIVE: prod
+          MYSQL_ENDPOINT: ${{ secrets.MYSQL_ENDPOINT }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          TZ: ${{ secrets.TZ }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
 
       # docker-compose.yml 파일 생성
       - name: Create docker-compose.yml
@@ -53,10 +61,10 @@ jobs:
         run: |
           echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
           echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
-          echo TZ=${{ secrets.TZ }} >> .env
           echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
           echo MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> .env
           echo MYSQL_CHARACTER_SET_SERVER=${{ secrets.MYSQL_CHARACTER_SET_SERVER }} >> .env
+          echo TZ=${{ secrets.TZ }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
           echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
