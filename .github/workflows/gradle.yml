@@ -60,11 +60,9 @@ jobs:
       # .env 파일 생성
       - name: Create .env
         run: |
+          echo MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> .env
           echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
           echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
-          echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
-          echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
-          echo MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> .env
           echo MYSQL_CHARACTER_SET_SERVER=${{ secrets.MYSQL_CHARACTER_SET_SERVER }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
