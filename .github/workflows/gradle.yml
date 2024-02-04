@@ -52,7 +52,7 @@ jobs:
       # docker-compose.yml 파일 생성
       - name: Create docker-compose.yml
         run: |
-          echo "${{ secrets.DOCKER_COMPOSE }}" >> .docker-compose.yml
+          echo "${{ secrets.DOCKER_COMPOSE }}" >> docker-compose.yml
 
       # .env 파일 생성
       - name: Create .env
