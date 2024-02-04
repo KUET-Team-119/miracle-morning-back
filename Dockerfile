@@ -5,6 +5,8 @@ ARG JAR_FILE=build/libs/*.jar
 
 COPY ${JAR_FILE} app.jar
 
+RUN mkdir -p /home/images
+
 ENTRYPOINT ["java","-jar","-Dspring.profiles.active=prod","/app.jar"]
 
 # Dockerfile에서 직접 프로젝트를 빌드하는 경우

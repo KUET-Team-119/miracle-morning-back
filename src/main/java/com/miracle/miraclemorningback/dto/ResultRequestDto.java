@@ -1,5 +1,7 @@
 package com.miracle.miraclemorningback.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class ResultRequestDto {
     private String routineName; // 루틴명
     private String memberName; // 사용자명
-    private String doneAt; // 사진 촬영 시간
+    private LocalDateTime doneAt; // 사진 촬영 시간
 }

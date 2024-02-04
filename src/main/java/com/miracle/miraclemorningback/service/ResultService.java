@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +28,8 @@ public class ResultService {
         private ResultRepository resultRepository;
 
         // 인증 사진 저장 경로
-        private final String DIR_PATH = "/home/chori/workspace/project/miracle-morning/miracle-morning-back/src/main/resources/proofImage/";
+        @Value("${images.path}")
+        private String DIR_PATH;
 
         // 전체 기록 조회
         @Transactional(readOnly = true)
@@ -43,11 +45,14 @@ public class ResultService {
                                 .toList();
         }
 
-        // TODO 완료한 루틴의 루틴명이 바뀌어도 계속 완료되어 있도록 루틴id 사용!!
         // 기록 추가
         @Transactional
-        public ResultResponseDto addResult(String memberName, ResultRequestDto requestDto, MultipartFile file)
+        public ResultResponseDto updateResult(String memberName, ResultRequestDto requestDto, MultipartFile file)
                         throws IOException {
+
+                ResultEntity resultEntity = resultRepository.findByRoutineNameAndMemberNameAndCurrentDate(
+                                requestDto.getRoutineName(), memberName).orElseThrow(
+                                                () -> new IllegalArgumentException("존재하지 않은 기록입니다."));
 
                 // 파일 업로드 시간
                 LocalDateTime dateTime = LocalDateTime.now();
@@ -61,13 +66,11 @@ public class ResultService {
                 String filePath = DIR_PATH + fileName;
                 file.transferTo(new File(DIR_PATH, fileName));
 
-                ResultEntity resultEntity = ResultEntity.builder()
-                                .memberName(memberName)
-                                .routineName(requestDto.getRoutineName())
-                                .filePath(filePath)
-                                .doneAt(requestDto.getDoneAt())
-                                .build();
-                resultRepository.save(resultEntity);
+                // 기록 업데이트
+                resultRepository.updateResult(requestDto.getRoutineName(),
+                                memberName,
+                                requestDto.getDoneAt(),
+                                filePath);
 
                 return ResultResponseDto.builder()
                                 .resultId(resultEntity.getResultId())

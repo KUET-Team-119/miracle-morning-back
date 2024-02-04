@@ -100,9 +100,8 @@ public class RoutineService {
                                 // 아이디가 존재하지 않으면 예외 처리
                                 () -> new IllegalArgumentException("존재하지 않은 루틴입니다."));
 
-                routineRepository.updateSetting(
+                routineRepository.updateRoutine(
                                 requestDto.getRoutineId(),
-                                requestDto.getRoutineName(),
                                 requestDto.getStrategy(),
                                 requestDto.getCertification(),
                                 requestDto.getStartTime(),
@@ -134,17 +133,6 @@ public class RoutineService {
                 routineRepository.deleteById(routineId);
                 return RoutineDeleteSuccessResponseDto.builder().success(true).build();
         }
-
-        /*
-         * 1차 배포에는 사용자 닉네임 변경 기능 미적용
-         * // 루틴의 사용자 닉네임 변경
-         * 
-         * @Transactional
-         * public void updateMemberName(String memberName, RoutineRequestDto requestDto)
-         * throws Exception {
-         * routineRepository.updateMemberName(memberName, requestDto.getMemberName());
-         * }
-         */
 
         // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
         @Transactional
@@ -228,7 +216,7 @@ public class RoutineService {
                 return todayRoutinesDto;
         }
 
-        // 모든 사용자의 오늘 날짜의 기록만 조회
+        // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
         @Transactional
         public List<TodayRoutinesDto> getAllTodayRoutines() {
                 List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
@@ -271,4 +259,14 @@ public class RoutineService {
                 return todayRoutinesDto;
         }
 
+        /*
+         * 1차 배포에는 사용자 닉네임 변경 기능 제외
+         * // 루틴의 사용자 닉네임 변경
+         * 
+         * @Transactional
+         * public void updateMemberName(String memberName, RoutineRequestDto requestDto)
+         * throws Exception {
+         * routineRepository.updateMemberName(memberName, requestDto.getMemberName());
+         * }
+         */
 }

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,13 +44,6 @@ public class MemberController {
         return memberService.getMember(memberName);
     }
 
-    // 회원 정보 수정
-    @PutMapping("/api/member/{memberName}")
-    public MemberResponseDto updateMember(@PathVariable String memberName, @RequestBody MemberRequestDto requestDto)
-            throws Exception {
-        return memberService.updateMember(memberName, requestDto);
-    }
-
     // 회원 삭제
     @DeleteMapping("/api/member/{memberId}")
     public MemberDeleteSuccessResponseDto deleteMember(@PathVariable Long memberId)
@@ -64,4 +56,16 @@ public class MemberController {
     public TokenDto loginMember(@RequestBody MemberRequestDto requestDto) throws Exception {
         return memberService.loginMember(requestDto);
     }
+
+    /*
+     * 1차 배포에는 사용자 닉네임 변경 기능 제외
+     * // 회원 정보 수정
+     * 
+     * @PutMapping("/api/member/{memberName}")
+     * public MemberResponseDto updateMember(@PathVariable String
+     * memberName, @RequestBody MemberRequestDto requestDto)
+     * throws Exception {
+     * return memberService.updateMember(memberName, requestDto);
+     * }
+     */
 }

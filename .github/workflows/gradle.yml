@@ -30,6 +30,8 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       # gradlew를 실행할 수 있는 권한 추가
       - name: Grant execute permission for gradlew
@@ -45,6 +47,7 @@ jobs:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
 
       # .env 설정
       - name: Create env file
@@ -55,6 +58,7 @@ jobs:
           echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
+          echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
 
       # 도커 로그인
       - name: docker login
@@ -68,3 +72,42 @@ jobs:
         run: |
           docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back .
           docker push ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back
+
+      # OCI에 docker-compose.yml 파일 전송
+      - name: Copy docker-compose.yaml to OCI
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_KEY }}
+          # 경로 확인
+          source: "docker-compose.yml"
+          target: "/home/ubuntu/workspace/project/miracle-morning"
+
+      # OCI에 .env 파일 전송
+      - name: Copy .env to OCI
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_KEY }}
+          # 경로 확인
+          source: ".env"
+          target: "/home/ubuntu/workspace/project/miracle-morning"
+
+      # ssh로 OCI에 접속, 도커 허브에서 이미지 pull, docker-compose 실행
+      - name: Pull docker image & Execute docker-compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_KEY }}
+          script: |
+            if [ "$(docker ps -qa)" ]; then
+              sudo docker rm -f $(docker ps -qa)
+            fi
+
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back
+
+            docker-compose -f /home/ubuntu/workspace/project/miracle-morning/docker-compose.yml up -d
+            docker image prune -f

@@ -19,8 +19,8 @@ import com.miracle.miraclemorningback.security.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
-@Service // 스프링이 관리해주는 객체, 스프링 빈
-@RequiredArgsConstructor // controller와 같이 final 멤버 변수 생성자를 만드는 역할
+@Service
+@RequiredArgsConstructor
 public class MemberService {
 
         @Autowired
@@ -90,29 +90,6 @@ public class MemberService {
                                                 () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
         }
 
-        // 회원 정보 수정
-        @Transactional
-        public MemberResponseDto updateMember(String memberName, MemberRequestDto requestDto) throws Exception {
-                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElseThrow(
-                                // 사용자명이 존재하지 않으면 예외 처리
-                                () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
-
-                // 비밀번호가 일치하지 않으면 예외 처리
-                if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
-                        throw new Exception("비밀번호가 일치하지 않습니다.");
-                }
-
-                memberRepository.updateMemberName(memberName, requestDto.getMemberName());
-
-                return MemberResponseDto.builder()
-                                .memberId(memberEntity.getMemberId())
-                                .memberName(memberEntity.getMemberName())
-                                .password(memberEntity.getPassword())
-                                .role(memberEntity.getRole())
-                                .createdAt(memberEntity.getCreatedAt())
-                                .build();
-        }
-
         // 회원 삭제
         @Transactional
         public MemberDeleteSuccessResponseDto deleteMember(Long memberId)
@@ -146,4 +123,33 @@ public class MemberService {
 
                 return tokenDto;
         }
+
+        /*
+         * 1차 배포에는 사용자 닉네임 변경 기능 제외
+         * // 회원 정보 수정
+         * 
+         * @Transactional
+         * public MemberResponseDto updateMember(String memberName, MemberRequestDto
+         * requestDto) throws Exception {
+         * MemberEntity memberEntity =
+         * memberRepository.findByMemberName(memberName).orElseThrow(
+         * // 사용자명이 존재하지 않으면 예외 처리
+         * () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
+         * 
+         * // 비밀번호가 일치하지 않으면 예외 처리
+         * if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
+         * throw new Exception("비밀번호가 일치하지 않습니다.");
+         * }
+         * 
+         * memberRepository.updateMemberName(memberName, requestDto.getMemberName());
+         * 
+         * return MemberResponseDto.builder()
+         * .memberId(memberEntity.getMemberId())
+         * .memberName(memberEntity.getMemberName())
+         * .password(memberEntity.getPassword())
+         * .role(memberEntity.getRole())
+         * .createdAt(memberEntity.getCreatedAt())
+         * .build();
+         * }
+         */
 }

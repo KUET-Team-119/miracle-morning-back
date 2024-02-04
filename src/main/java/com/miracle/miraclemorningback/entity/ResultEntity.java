@@ -1,5 +1,7 @@
 package com.miracle.miraclemorningback.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,10 +34,10 @@ public class ResultEntity extends Timestamped {
     private String proofFilePath; // 인증 사진 파일 경로
 
     @Column
-    private String doneAt; // 사진 촬영 시간
+    private LocalDateTime doneAt; // 사진 촬영 시간
 
     @Builder
-    public ResultEntity(String memberName, String routineName, String filePath, String doneAt) {
+    public ResultEntity(String memberName, String routineName, String filePath, LocalDateTime doneAt) {
         this.memberName = memberName;
         this.routineName = routineName;
         this.proofFilePath = filePath;

@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,7 +49,7 @@ public class RoutineController {
     }
 
     // 루틴 정보 수정
-    @PutMapping("/api/routine")
+    @PatchMapping("/api/routine")
     public RoutineResponseDto updateRoutine(@RequestBody RoutineRequestDto requestDto)
             throws Exception {
         return routineService.updateRoutine(requestDto);
@@ -61,8 +61,21 @@ public class RoutineController {
         return routineService.deleteRoutine(routineId);
     }
 
+    // 특정 사용자의 오늘 날짜의 기록만 조회
+    @GetMapping("/api/routines/today")
+    public List<TodayRoutinesDto> getTodayRoutines(Authentication authentication) {
+        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        return routineService.getTodayRoutines(memberName);
+    }
+
+    // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
+    @GetMapping("/api/all/routines/today")
+    public List<TodayRoutinesDto> getAllTodayRoutines(Authentication authentication) {
+        return routineService.getAllTodayRoutines();
+    }
+
     /*
-     * 1차 배포에는 사용자 닉네임 변경 기능 미적용
+     * 1차 배포에는 사용자 닉네임 변경 기능 제외
      * // 루틴의 사용자 닉네임 변경
      * 
      * @PutMapping("/api/routine/nickname/{memberName}")
@@ -73,37 +86,4 @@ public class RoutineController {
      * routineService.updateMemberName(memberName, requestDto);
      * }
      */
-
-    /*
-     * 아래 두 api는 오늘 날짜의 기록만 조회 api로 기능 통합
-     * 
-     * // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-     * 
-     * @GetMapping("/api/routines/rest/{memberName}")
-     * public List<RoutineResponseDto>
-     * getActivatedAndUnfinishedRoutines(@PathVariable String memberName) {
-     * return routineService.getActivatedAndIncompleteRoutines(memberName);
-     * }
-     * 
-     * // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-     * 
-     * @GetMapping("/api/routines/clear/{memberName}")
-     * public List<RoutineResponseDto> getActivatedAndFinishedRoutines(@PathVariable
-     * String memberName) {
-     * return routineService.getActivatedAndCompleteRoutines(memberName);
-     * }
-     */
-
-    // 특정 사용자의 오늘 날짜의 기록만 조회
-    @GetMapping("/api/routines/today")
-    public List<TodayRoutinesDto> getTodayRoutines(Authentication authentication) {
-        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
-        return routineService.getTodayRoutines(memberName);
-    }
-
-    // 모든 사용자의 오늘 날짜의 기록만 조회
-    @GetMapping("/api/all/routines/today")
-    public List<TodayRoutinesDto> getAllTodayRoutines() {
-        return routineService.getAllTodayRoutines();
-    }
 }

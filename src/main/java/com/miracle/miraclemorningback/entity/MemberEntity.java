@@ -17,8 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "member") // database에 해당 이름의 테이블 생성
-public class MemberEntity extends Timestamped { // table 역할
-    // jpa ==> database를 객체처럼 사용 가능
+public class MemberEntity extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

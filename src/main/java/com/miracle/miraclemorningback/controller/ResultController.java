@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,14 +35,14 @@ public class ResultController {
     }
 
     // 기록 추가
-    @PostMapping("/api/result")
-    public ResultResponseDto addResult(Authentication authentication, @RequestPart("data") ResultRequestDto requestDto,
+    @PatchMapping("/api/result")
+    public ResultResponseDto updateResult(Authentication authentication,
+            @RequestPart("data") ResultRequestDto requestDto,
             @RequestPart("file") MultipartFile file) throws IOException {
 
-        // TODO 인증 객체 쓸 수 있는지 확인
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
 
-        return resultService.addResult(memberName, requestDto, file);
+        return resultService.updateResult(memberName, requestDto, file);
     }
 
     // 특정 기간 기록 검색
