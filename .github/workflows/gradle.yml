@@ -66,7 +66,6 @@ jobs:
           echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
           echo MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> .env
           echo MYSQL_CHARACTER_SET_SERVER=${{ secrets.MYSQL_CHARACTER_SET_SERVER }} >> .env
-          echo TZ=${{ secrets.TZ }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
           echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
