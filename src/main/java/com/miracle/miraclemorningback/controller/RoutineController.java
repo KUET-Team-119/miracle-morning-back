@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.miracle.miraclemorningback.dto.RoutineDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.dto.RoutineResponseDto;
-import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.RoutineService;
 
@@ -59,19 +58,6 @@ public class RoutineController {
     @DeleteMapping("/api/routine/{routineId}")
     public RoutineDeleteSuccessResponseDto deleteRoutine(@PathVariable Long routineId) throws Exception {
         return routineService.deleteRoutine(routineId);
-    }
-
-    // 특정 사용자의 오늘 날짜의 기록만 조회
-    @GetMapping("/api/routines/today")
-    public List<TodayRoutinesDto> getTodayRoutines(Authentication authentication) {
-        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
-        return routineService.getTodayRoutines(memberName);
-    }
-
-    // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
-    @GetMapping("/api/all/routines/today")
-    public List<TodayRoutinesDto> getAllTodayRoutines(Authentication authentication) {
-        return routineService.getAllTodayRoutines();
     }
 
     /*

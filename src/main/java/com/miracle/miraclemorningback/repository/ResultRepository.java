@@ -15,20 +15,20 @@ import com.miracle.miraclemorningback.entity.ResultEntity;
 @Repository
 public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
 
-    // 오늘 날짜의 기록만 조회
-    @Query("SELECT re FROM ResultEntity re WHERE DATE(re.createdAt) = CURRENT_DATE")
-    List<ResultEntity> findAllByCurrentDate();
+        // 오늘 날짜의 기록만 조회
+        @Query("SELECT re FROM ResultEntity re WHERE DATE(re.createdAt) = CURRENT_DATE")
+        List<ResultEntity> findAllByCurrentDate();
 
-    // 인증할 루틴 기록 조회
-    @Query("SELECT re FROM ResultEntity re WHERE re.routineName = :routine_name AND re.memberName = :member_name AND DATE(re.createdAt) = CURRENT_DATE")
-    Optional<ResultEntity> findByRoutineNameAndMemberNameAndCurrentDate(@Param("routine_name") String routineName,
-            @Param("member_name") String memberName);
+        // 인증할 루틴 기록 조회
+        @Query("SELECT re FROM ResultEntity re WHERE re.routineName = :routine_name AND re.memberName = :member_name AND DATE(re.createdAt) = CURRENT_DATE")
+        Optional<ResultEntity> findByRoutineNameAndMemberNameAndCurrentDate(@Param("routine_name") String routineName,
+                        @Param("member_name") String memberName);
 
-    // 인증한 루틴 기록 업데이트
-    @Modifying
-    @Query("UPDATE ResultEntity re SET re.doneAt = :done_at, proofFilePath = :proof_file_path WHERE re.routineName = :routine_name AND re.memberName = :member_name AND DATE(re.createdAt) = CURRENT_DATE")
-    void updateResult(@Param("routine_name") String routineName,
-            @Param("member_name") String memberName,
-            @Param("done_at") LocalDateTime doneAt,
-            @Param("proof_file_path") String proofFilePath);
+        // 인증한 루틴 기록 업데이트
+        @Modifying
+        @Query("UPDATE ResultEntity re SET re.doneAt = :done_at, proofFilePath = :proof_file_path WHERE re.routineName = :routine_name AND re.memberName = :member_name AND DATE(re.createdAt) = CURRENT_DATE")
+        void updateResult(@Param("routine_name") String routineName,
+                        @Param("member_name") String memberName,
+                        @Param("done_at") LocalDateTime doneAt,
+                        @Param("proof_file_path") String proofFilePath);
 }

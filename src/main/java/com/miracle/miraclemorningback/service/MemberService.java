@@ -104,14 +104,27 @@ public class MemberService {
 
         // 로그인
         @Transactional
-        public TokenDto loginMember(MemberRequestDto requestDto) throws Exception {
-                MemberEntity memberEntity = memberRepository.findByMemberName(requestDto.getMemberName()).orElseThrow(
-                                // 사용자명이 일치하지 않으면 예외 처리
-                                () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
+        public ResponseEntity<Object> loginMember(MemberRequestDto requestDto) throws Exception {
 
-                // 비밀번호가 일치하지 않으면 예외 처리
+                MemberEntity memberEntity = memberRepository.findByMemberName(requestDto.getMemberName())
+                                .orElseGet(() -> {
+                                        return MemberEntity.builder().memberName(null).build(); // 빈 MemberEntity 반환 또는
+                                                                                                // 다른 처리 가능
+                                });
+
+                // 사용자가 존재하지 않으면 UNAUTHORIZED 상태 코드를 반환
+                if (memberEntity.getMemberName() == null) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("닉네임 또는 비밀번호가 잘못되었습니다.");
+                }
+
+                // 비밀번호가 일치하지 않으면 UNAUTHORIZED 상태 코드를 반환
                 if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
-                        throw new Exception(memberEntity.getPassword());
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("닉네임 또는 비밀번호가 잘못되었습니다.");
+                }
+
+                // 승인되지 않은 사용자인 경우 FORBIDDEN 상태 코드를 반환
+                if (memberEntity.getRole() != Role.USER) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("승인되지 않은 사용자입니다.");
                 }
 
                 TokenDto tokenDto = TokenDto.builder()
@@ -121,7 +134,7 @@ public class MemberService {
                                                 memberEntity.getRole()))
                                 .build();
 
-                return tokenDto;
+                return ResponseEntity.ok().body(tokenDto);
         }
 
         /*

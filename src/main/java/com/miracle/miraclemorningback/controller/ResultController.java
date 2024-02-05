@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.miracle.miraclemorningback.dto.ResultDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
 import com.miracle.miraclemorningback.dto.ResultResponseDto;
+import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.ResultService;
 
@@ -62,6 +63,19 @@ public class ResultController {
     @GetMapping("/api/result/today")
     public List<ResultResponseDto> getTodayResult() {
         return resultService.getTodayResult();
+    }
+
+    // 특정 사용자의 오늘 날짜의 기록만 조회
+    @GetMapping("/api/routines/today")
+    public List<TodayRoutinesDto> getTodayRoutines(Authentication authentication) {
+        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        return resultService.getTodayRoutines(memberName);
+    }
+
+    // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
+    @GetMapping("/api/all/routines/today")
+    public List<TodayRoutinesDto> getAllTodayRoutines(Authentication authentication) {
+        return resultService.getAllTodayRoutines();
     }
 
     // // 인증 사진 다운

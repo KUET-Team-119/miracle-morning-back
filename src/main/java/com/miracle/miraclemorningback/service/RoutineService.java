@@ -1,7 +1,6 @@
 package com.miracle.miraclemorningback.service;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.miracle.miraclemorningback.dto.RoutineDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.dto.RoutineResponseDto;
-import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.entity.RoutineEntity;
 import com.miracle.miraclemorningback.repository.RoutineRepository;
 
@@ -132,131 +130,6 @@ public class RoutineService {
 
                 routineRepository.deleteById(routineId);
                 return RoutineDeleteSuccessResponseDto.builder().success(true).build();
-        }
-
-        // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-        @Transactional
-        public List<RoutineResponseDto> getActivatedAndIncompleteRoutines(String memberName) {
-                return routineRepository.getActivatedAndIncompleteRoutines(memberName).stream()
-                                .map(routineEntity -> RoutineResponseDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .isActivated(routineEntity.getIsActivated())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .modifiedAt(routineEntity.getModifiedAt())
-                                                .build())
-                                .toList();
-        }
-
-        // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-        @Transactional
-        public List<RoutineResponseDto> getActivatedAndCompleteRoutines(String memberName) {
-                return routineRepository.getActivatedAndCompleteRoutines(memberName).stream()
-                                .map(routineEntity -> RoutineResponseDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .isActivated(routineEntity.getIsActivated())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .modifiedAt(routineEntity.getModifiedAt())
-                                                .build())
-                                .toList();
-        }
-
-        // 특정 사용자의 오늘 날짜의 기록만 조회
-        @Transactional
-        public List<TodayRoutinesDto> getTodayRoutines(String memberName) {
-
-                List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
-                List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
-                List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
-
-                // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = routineRepository.getActivatedAndIncompleteRoutines(memberName).stream()
-                                .map(routineEntity -> TodayRoutinesDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .complete(false)
-                                                .build())
-                                .toList();
-
-                // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = routineRepository.getActivatedAndCompleteRoutines(memberName).stream()
-                                .map(routineEntity -> TodayRoutinesDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .complete(true)
-                                                .build())
-                                .toList();
-
-                todayRoutinesDto.addAll(incompleteRoutines);
-                todayRoutinesDto.addAll(completeRoutines);
-
-                return todayRoutinesDto;
-        }
-
-        // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
-        @Transactional
-        public List<TodayRoutinesDto> getAllTodayRoutines() {
-                List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
-                List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
-                List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
-
-                // 모든 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = routineRepository.getAllActivatedAndIncompleteRoutines().stream()
-                                .map(routineEntity -> TodayRoutinesDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .complete(false)
-                                                .build())
-                                .toList();
-
-                // 모든 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = routineRepository.getAllActivatedAndCompleteRoutines().stream()
-                                .map(routineEntity -> TodayRoutinesDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .complete(true)
-                                                .build())
-                                .toList();
-
-                todayRoutinesDto.addAll(incompleteRoutines);
-                todayRoutinesDto.addAll(completeRoutines);
-
-                return todayRoutinesDto;
         }
 
         /*

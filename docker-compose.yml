@@ -1,0 +1,61 @@
+version: "3.9"
+services:
+  miracle_morning_mysql:
+    container_name: miracle_morning_mysql
+    image: mysql
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 3306
+    command: --skip-init
+    networks:
+      - miracle_morning_network
+
+  miracle_morning_back:
+    container_name: miracle_morning_back
+    image: choridev/miracle-morning-back
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 8080
+    depends_on:
+      - miracle_morning_mysql
+    networks:
+      - miracle_morning_network
+
+  miracle_morning_front:
+    container_name: miracle_morning_front
+    image: choridev/miracle-morning-front
+    # volumes:
+    # Dockerfile에서 nginx.conf 복사 진행
+    # - ./miracle-morning-front/conf/nginx.conf:/etc/nginx/conf.d/nginx.conf
+    # SSL 인증서 관련
+    # - ./data/certbot/conf:/etc/letsencrypt
+    # - ./data/certbot/www:/var/www/certbot
+    restart: always
+    ports:
+      - 80:80
+      # SSL 인증서 관련
+      # - 443:443
+    depends_on:
+      - miracle_morning_back
+    # SSL 인증서 관련
+    # command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    networks:
+      - miracle_morning_network
+
+  # SSL 인증서 관련 컨테이너
+  # certbot:
+  #   image: certbot/certbot
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./data/certbot/conf:/etc/letsencrypt
+  #     - ./data/certbot/www:/var/www/certbot
+  #  entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  #  networks:
+  #     - miracle_morning_network
+
+networks:
+  miracle_morning_network:
