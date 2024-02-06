@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.miracle.miraclemorningback.entity.ResultEntity;
+import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.ResultRepository;
 import com.miracle.miraclemorningback.repository.RoutineRepository;
 
@@ -23,10 +24,13 @@ import com.miracle.miraclemorningback.repository.RoutineRepository;
 public class ScheduledTasks {
 
     @Autowired
-    RoutineRepository routineRepository;
+    private MemberRepository memberRepository;
 
     @Autowired
-    ResultRepository resultRepository;
+    private RoutineRepository routineRepository;
+
+    @Autowired
+    private ResultRepository resultRepository;
 
     // 인증 사진 저장 경로
     @Value("${images.path}")
@@ -74,9 +78,10 @@ public class ScheduledTasks {
     public void generateIncompleteResults() {
         routineRepository.getActivatedRoutines().forEach(routineEntity -> {
             ResultEntity resultEntity = ResultEntity.builder()
-                    .memberName(routineEntity.getMemberName())
                     .routineName(routineEntity.getRoutineName())
                     .build();
+            resultEntity
+                    .setMemberEntity(memberRepository.findById(routineEntity.getMemberEntity().getMemberId()).get());
             resultRepository.save(resultEntity);
         });
     }

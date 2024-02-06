@@ -17,7 +17,9 @@ import com.miracle.miraclemorningback.dto.ResultDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
 import com.miracle.miraclemorningback.dto.ResultResponseDto;
 import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
+import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.ResultEntity;
+import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.ResultRepository;
 import com.miracle.miraclemorningback.repository.TodayRoutinesRepository;
 
@@ -26,6 +28,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ResultService {
+
+        @Autowired
+        private MemberRepository memberRepository;
 
         @Autowired
         private ResultRepository resultRepository;
@@ -44,20 +49,22 @@ public class ResultService {
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
-                                                .memberName(resultEntity.getMemberName())
+                                                .memberName(resultEntity.getMemberEntity().getMemberName())
                                                 .doneAt(resultEntity.getDoneAt())
                                                 .createdAt(resultEntity.getCreatedAt())
                                                 .build())
                                 .toList();
         }
 
-        // 기록 추가
+        // 루틴 인증을 위한 기록 추가
         @Transactional
         public ResultResponseDto updateResult(String memberName, ResultRequestDto requestDto, MultipartFile file)
                         throws IOException {
 
-                ResultEntity resultEntity = resultRepository.findByRoutineNameAndMemberNameAndCurrentDate(
-                                requestDto.getRoutineName(), memberName).orElseThrow(
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).get();
+
+                ResultEntity resultEntity = resultRepository.findByRoutineNameAndMemberEntityAndCurrentDate(
+                                requestDto.getRoutineName(), memberEntity).orElseThrow(
                                                 () -> new IllegalArgumentException("존재하지 않은 기록입니다."));
 
                 // 파일 업로드 시간
@@ -74,14 +81,14 @@ public class ResultService {
 
                 // 기록 업데이트
                 resultRepository.updateResult(requestDto.getRoutineName(),
-                                memberName,
+                                memberEntity,
                                 requestDto.getDoneAt(),
                                 filePath);
 
                 return ResultResponseDto.builder()
                                 .resultId(resultEntity.getResultId())
                                 .routineName(resultEntity.getRoutineName())
-                                .memberName(resultEntity.getMemberName())
+                                .memberName(resultEntity.getMemberEntity().getMemberName())
                                 .doneAt(resultEntity.getDoneAt())
                                 .createdAt(resultEntity.getCreatedAt())
                                 .build();
@@ -95,7 +102,7 @@ public class ResultService {
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
-                                                .memberName(resultEntity.getMemberName())
+                                                .memberName(resultEntity.getMemberEntity().getMemberName())
                                                 .createdAt(resultEntity.getCreatedAt())
                                                 .doneAt(resultEntity.getDoneAt())
                                                 .build())
@@ -122,7 +129,7 @@ public class ResultService {
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
-                                                .memberName(resultEntity.getMemberName())
+                                                .memberName(resultEntity.getMemberEntity().getMemberName())
                                                 .createdAt(resultEntity.getCreatedAt())
                                                 .doneAt(resultEntity.getDoneAt())
                                                 .build())
@@ -133,16 +140,19 @@ public class ResultService {
         @Transactional
         public List<TodayRoutinesDto> getTodayRoutines(String memberName) {
 
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).get();
+
                 List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
                 List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
                 List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
 
                 // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = todayRoutinesRepository.getActivatedAndIncompleteRoutines(memberName).stream()
+                incompleteRoutines = todayRoutinesRepository
+                                .getActivatedAndIncompleteRoutines(memberEntity.getMemberId()).stream()
                                 .map(todayRoutinesEntity -> TodayRoutinesDto.builder()
                                                 .routineId(todayRoutinesEntity.getRoutine_id())
                                                 .routineName(todayRoutinesEntity.getRoutine_name())
-                                                .memberName(todayRoutinesEntity.getMember_name())
+                                                .memberName(memberEntity.getMemberName())
                                                 .strategy(todayRoutinesEntity.getStrategy())
                                                 .certification(todayRoutinesEntity.getCertification())
                                                 .startTime(todayRoutinesEntity.getStart_time())
@@ -154,11 +164,12 @@ public class ResultService {
                                 .toList();
 
                 // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = todayRoutinesRepository.getActivatedAndCompleteRoutines(memberName).stream()
+                completeRoutines = todayRoutinesRepository.getActivatedAndCompleteRoutines(memberEntity.getMemberId())
+                                .stream()
                                 .map(todayRoutinesEntity -> TodayRoutinesDto.builder()
                                                 .routineId(todayRoutinesEntity.getRoutine_id())
                                                 .routineName(todayRoutinesEntity.getRoutine_name())
-                                                .memberName(todayRoutinesEntity.getMember_name())
+                                                .memberName(memberEntity.getMemberName())
                                                 .strategy(todayRoutinesEntity.getStrategy())
                                                 .certification(todayRoutinesEntity.getCertification())
                                                 .startTime(todayRoutinesEntity.getStart_time())
@@ -187,7 +198,9 @@ public class ResultService {
                                 .map(todayRoutinesEntity -> TodayRoutinesDto.builder()
                                                 .routineId(todayRoutinesEntity.getRoutine_id())
                                                 .routineName(todayRoutinesEntity.getRoutine_name())
-                                                .memberName(todayRoutinesEntity.getMember_name())
+                                                .memberName(memberRepository
+                                                                .findById(todayRoutinesEntity.getMember_id()).get()
+                                                                .getMemberName())
                                                 .strategy(todayRoutinesEntity.getStrategy())
                                                 .certification(todayRoutinesEntity.getCertification())
                                                 .startTime(todayRoutinesEntity.getStart_time())
@@ -203,7 +216,9 @@ public class ResultService {
                                 .map(todayRoutinesEntity -> TodayRoutinesDto.builder()
                                                 .routineId(todayRoutinesEntity.getRoutine_id())
                                                 .routineName(todayRoutinesEntity.getRoutine_name())
-                                                .memberName(todayRoutinesEntity.getMember_name())
+                                                .memberName(memberRepository
+                                                                .findById(todayRoutinesEntity.getMember_id()).get()
+                                                                .getMemberName())
                                                 .strategy(todayRoutinesEntity.getStrategy())
                                                 .certification(todayRoutinesEntity.getCertification())
                                                 .startTime(todayRoutinesEntity.getStart_time())

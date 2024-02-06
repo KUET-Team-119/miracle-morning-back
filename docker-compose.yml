@@ -8,7 +8,6 @@ services:
       - .env
     expose:
       - 3306
-    command: --skip-init
     networks:
       - miracle_morning_network
 

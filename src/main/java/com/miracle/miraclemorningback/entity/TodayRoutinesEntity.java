@@ -26,7 +26,7 @@ public class TodayRoutinesEntity {
     private String routine_name; // 루틴명
 
     @Column
-    private String member_name; // 닉네임
+    private Long member_id; // 사용자 아이디
 
     @Column
     private String strategy; // 실천전략
@@ -47,11 +47,11 @@ public class TodayRoutinesEntity {
     private LocalDateTime done_at; // 사진 촬영 시간
 
     @Builder
-    public TodayRoutinesEntity(Long routineId, String routineName, String memberName, String strategy,
+    public TodayRoutinesEntity(Long routineId, String routineName, Long memberId, String strategy,
             String certification, Time startTime, Time endTime, LocalDateTime createdAt, LocalDateTime doneAt) {
         this.routine_id = routineId;
         this.routine_name = routineName;
-        this.member_name = memberName;
+        this.member_id = memberId;
         this.strategy = strategy;
         this.certification = certification;
         this.start_time = startTime;

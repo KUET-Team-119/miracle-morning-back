@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.ResultEntity;
 
 @Repository
@@ -20,15 +21,15 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
         List<ResultEntity> findAllByCurrentDate();
 
         // 인증할 루틴 기록 조회
-        @Query("SELECT re FROM ResultEntity re WHERE re.routineName = :routine_name AND re.memberName = :member_name AND DATE(re.createdAt) = CURRENT_DATE")
-        Optional<ResultEntity> findByRoutineNameAndMemberNameAndCurrentDate(@Param("routine_name") String routineName,
-                        @Param("member_name") String memberName);
+        @Query("SELECT re FROM ResultEntity re WHERE re.routineName = :routine_name AND re.memberEntity = :member_entity AND DATE(re.createdAt) = CURRENT_DATE")
+        Optional<ResultEntity> findByRoutineNameAndMemberEntityAndCurrentDate(@Param("routine_name") String routineName,
+                        @Param("member_entity") MemberEntity member_entity);
 
         // 인증한 루틴 기록 업데이트
         @Modifying
-        @Query("UPDATE ResultEntity re SET re.doneAt = :done_at, proofFilePath = :proof_file_path WHERE re.routineName = :routine_name AND re.memberName = :member_name AND DATE(re.createdAt) = CURRENT_DATE")
+        @Query("UPDATE ResultEntity re SET re.doneAt = :done_at, proofFilePath = :proof_file_path WHERE re.routineName = :routine_name AND re.memberEntity = :member_entity AND DATE(re.createdAt) = CURRENT_DATE")
         void updateResult(@Param("routine_name") String routineName,
-                        @Param("member_name") String memberName,
+                        @Param("member_entity") MemberEntity member_entity,
                         @Param("done_at") LocalDateTime doneAt,
                         @Param("proof_file_path") String proofFilePath);
 }

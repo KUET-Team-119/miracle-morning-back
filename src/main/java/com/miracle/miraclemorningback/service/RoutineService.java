@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.miracle.miraclemorningback.dto.RoutineDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.dto.RoutineResponseDto;
+import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.RoutineEntity;
+import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.RoutineRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,9 @@ public class RoutineService {
         @Autowired
         private RoutineRepository routineRepository;
 
+        @Autowired
+        private MemberRepository memberRepository;
+
         // 전체 루틴 조회
         @Transactional(readOnly = true)
         public List<RoutineResponseDto> getRoutines() {
@@ -28,7 +33,7 @@ public class RoutineService {
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
+                                                .memberName(routineEntity.getMemberEntity().getMemberName())
                                                 .strategy(routineEntity.getStrategy())
                                                 .certification(routineEntity.getCertification())
                                                 .startTime(routineEntity.getStartTime())
@@ -38,10 +43,6 @@ public class RoutineService {
                                                 .modifiedAt(routineEntity.getModifiedAt())
                                                 .build())
                                 .toList();
-
-                // 빌더 패턴 이전
-                // return
-                // routineRepository.findAll().stream().map(RoutineResponseDto::new).toList();
         }
 
         // 루틴 추가
@@ -49,19 +50,21 @@ public class RoutineService {
         public RoutineResponseDto addRoutine(String memberName, RoutineRequestDto requestDto) {
                 RoutineEntity routineEntity = RoutineEntity.builder()
                                 .routineName(requestDto.getRoutineName())
-                                .memberName(memberName)
                                 .strategy(requestDto.getStrategy())
                                 .certification(requestDto.getCertification())
                                 .startTime(requestDto.getStartTime())
                                 .endTime(requestDto.getEndTime())
                                 .isActivated(requestDto.getIsActivated())
                                 .build();
+
+                routineEntity.setMemberEntity(memberRepository.findByMemberName(memberName).get());
+
                 routineRepository.save(routineEntity);
 
                 return RoutineResponseDto.builder()
                                 .routineId(routineEntity.getRoutineId())
                                 .routineName(routineEntity.getRoutineName())
-                                .memberName(routineEntity.getMemberName())
+                                .memberName(routineEntity.getMemberEntity().getMemberName())
                                 .strategy(routineEntity.getStrategy())
                                 .certification(routineEntity.getCertification())
                                 .startTime(routineEntity.getStartTime())
@@ -75,11 +78,12 @@ public class RoutineService {
         // 특정 회원 루틴 검색
         @Transactional
         public List<RoutineResponseDto> getRoutine(String memberName) {
-                return routineRepository.findAllByMemberName(memberName).stream()
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).get();
+                return routineRepository.findAllByMemberEntity(memberEntity).stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
+                                                .memberName(routineEntity.getMemberEntity().getMemberName())
                                                 .strategy(routineEntity.getStrategy())
                                                 .certification(routineEntity.getCertification())
                                                 .startTime(routineEntity.getStartTime())
@@ -109,7 +113,7 @@ public class RoutineService {
                 return RoutineResponseDto.builder()
                                 .routineId(routineEntity.getRoutineId())
                                 .routineName(routineEntity.getRoutineName())
-                                .memberName(routineEntity.getMemberName())
+                                .memberName(routineEntity.getMemberEntity().getMemberName())
                                 .strategy(routineEntity.getStrategy())
                                 .certification(routineEntity.getCertification())
                                 .startTime(routineEntity.getStartTime())

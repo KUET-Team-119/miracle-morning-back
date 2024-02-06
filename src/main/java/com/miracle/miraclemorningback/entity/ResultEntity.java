@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,8 +27,9 @@ public class ResultEntity extends Timestamped {
     @Column(name = "result_id")
     private Long resultId; // 기록 아이디
 
-    @Column
-    private String memberName; // 사용자명
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private MemberEntity memberEntity; // 사용자
 
     @Column
     private String routineName; // 루틴명
@@ -37,10 +41,13 @@ public class ResultEntity extends Timestamped {
     private LocalDateTime doneAt; // 사진 촬영 시간
 
     @Builder
-    public ResultEntity(String memberName, String routineName, String filePath, LocalDateTime doneAt) {
-        this.memberName = memberName;
+    public ResultEntity(String routineName, String filePath, LocalDateTime doneAt) {
         this.routineName = routineName;
         this.proofFilePath = filePath;
         this.doneAt = doneAt;
+    }
+
+    public void setMemberEntity(MemberEntity memberEntity) {
+        this.memberEntity = memberEntity;
     }
 }
