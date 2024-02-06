@@ -9,11 +9,13 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.miracle.miraclemorningback.dto.ResultDeleteSuccessResponseDto;
+import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
 import com.miracle.miraclemorningback.dto.ResultResponseDto;
 import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
@@ -58,14 +60,25 @@ public class ResultService {
 
         // 루틴 인증을 위한 기록 추가
         @Transactional
-        public ResultResponseDto updateResult(String memberName, ResultRequestDto requestDto, MultipartFile file)
+        public ResponseEntity<Object> updateResult(String memberName, ResultRequestDto requestDto, MultipartFile file)
                         throws IOException {
 
                 MemberEntity memberEntity = memberRepository.findByMemberName(memberName).get();
 
                 ResultEntity resultEntity = resultRepository.findByRoutineNameAndMemberEntityAndCurrentDate(
-                                requestDto.getRoutineName(), memberEntity).orElseThrow(
-                                                () -> new IllegalArgumentException("존재하지 않은 기록입니다."));
+                                requestDto.getRoutineName(), memberEntity).orElseGet(
+                                                () -> {
+                                                        return ResultEntity.builder().routineName(null).build();
+                                                });
+
+                // 기록이 존재하지 않으면 NOT_FOUND 상태 코드를 반환
+                if (resultEntity.getRoutineName() == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
 
                 // 파일 업로드 시간
                 LocalDateTime dateTime = LocalDateTime.now();
@@ -85,13 +98,12 @@ public class ResultService {
                                 requestDto.getDoneAt(),
                                 filePath);
 
-                return ResultResponseDto.builder()
-                                .resultId(resultEntity.getResultId())
-                                .routineName(resultEntity.getRoutineName())
-                                .memberName(resultEntity.getMemberEntity().getMemberName())
-                                .doneAt(resultEntity.getDoneAt())
-                                .createdAt(resultEntity.getCreatedAt())
+                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                .success(true)
+                                .message("요청을 성공적으로 처리했습니다.")
                                 .build();
+
+                return ResponseEntity.ok().body(requestSuccessDto);
         }
 
         // 특정 기록 검색
@@ -113,13 +125,24 @@ public class ResultService {
 
         // 기록 삭제
         @Transactional
-        public ResultDeleteSuccessResponseDto deleteResult(Long resultId) throws Exception {
-                resultRepository.findById(resultId).orElseThrow(
-                                // 아이디가 존재하지 않으면 예외 처리
-                                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+        public ResponseEntity<Object> deleteResult(Long resultId) {
+                if (!resultRepository.existsById(resultId)) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
 
-                resultRepository.deleteById(resultId);
-                return ResultDeleteSuccessResponseDto.builder().success(true).build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                } else {
+                        resultRepository.deleteById(resultId);
+
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(true)
+                                        .message("요청을 성공적으로 처리했습니다.")
+                                        .build();
+
+                        return ResponseEntity.ok().body(requestSuccessDto);
+                }
         }
 
         // 오늘 날짜의 기록만 조회

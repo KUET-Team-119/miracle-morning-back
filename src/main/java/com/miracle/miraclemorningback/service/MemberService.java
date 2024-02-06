@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.miracle.miraclemorningback.dto.TokenDto;
-import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
+import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.Role;
 import com.miracle.miraclemorningback.repository.MemberRepository;
@@ -52,7 +52,12 @@ public class MemberService {
                 // 중복된 memberName 확인
                 if (memberRepository.existsByMemberName(memberName)) {
                         // 이미 존재하는 닉네임인 경우 예외 처리 및 409 Conflict 반환
-                        return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 닉네임입니다.");
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("이미 존재하는 닉네입니다.")
+                                        .build();
+
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body(requestSuccessDto);
                 }
 
                 MemberEntity memberEntity = MemberEntity.builder()
@@ -63,6 +68,32 @@ public class MemberService {
 
                 memberRepository.save(memberEntity);
 
+                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                .success(true)
+                                .message("요청이 성공적으로 처리되었습니다.")
+                                .build();
+
+                return ResponseEntity.ok().body(requestSuccessDto);
+        }
+
+        // 특정 회원 검색
+        @Transactional
+        public ResponseEntity<Object> getMember(String memberName) {
+
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName)
+                                .orElseGet(() -> {
+                                        return MemberEntity.builder().memberName(null).build();
+                                });
+
+                // 사용자가 존재하지 않으면 UNAUTHORIZED 상태 코드를 반환
+                if (memberEntity.getMemberName() == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
                 MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                                 .memberId(memberEntity.getMemberId())
                                 .memberName(memberEntity.getMemberName())
@@ -70,56 +101,37 @@ public class MemberService {
                                 .role(memberEntity.getRole())
                                 .createdAt(memberEntity.getCreatedAt())
                                 .build();
-
                 return ResponseEntity.ok().body(memberResponseDto);
-        }
-
-        // 특정 회원 검색
-        @Transactional
-        public MemberResponseDto getMember(String memberName) {
-                return memberRepository.findByMemberName(memberName)
-                                .map(memberEntity -> MemberResponseDto.builder()
-                                                .memberId(memberEntity.getMemberId())
-                                                .memberName(memberEntity.getMemberName())
-                                                .password(memberEntity.getPassword())
-                                                .role(memberEntity.getRole())
-                                                .createdAt(memberEntity.getCreatedAt())
-                                                .build())
-                                .orElseThrow(
-                                                // 사용자명이 존재하지 않으면 예외 처리
-                                                () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
         }
 
         // 회원 삭제
         @Transactional
-        public MemberDeleteSuccessResponseDto deleteMember(Long memberId)
-                        throws Exception {
-                memberRepository.findById(memberId).orElseThrow(
-                                // 아이디가 존재하지 않으면 예외 처리
-                                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
-
-                memberRepository.deleteById(memberId);
-                return MemberDeleteSuccessResponseDto.builder().success(true).build();
+        public ResponseEntity<Object> deleteMember(Long memberId) {
+                if (!memberRepository.existsById(memberId)) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당하는 리소스가 없습니다.");
+                } else {
+                        memberRepository.deleteById(memberId);
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder().success(true).build();
+                        return ResponseEntity.ok().body(requestSuccessDto);
+                }
         }
 
         // 로그인
         @Transactional
-        public ResponseEntity<Object> loginMember(MemberRequestDto requestDto) throws Exception {
+        public ResponseEntity<Object> loginMember(MemberRequestDto requestDto) {
 
                 MemberEntity memberEntity = memberRepository.findByMemberName(requestDto.getMemberName())
                                 .orElseGet(() -> {
-                                        return MemberEntity.builder().memberName(null).build(); // 빈 MemberEntity 반환 또는
-                                                                                                // 다른 처리 가능
+                                        return MemberEntity.builder().memberName(null).build();
                                 });
 
-                // 사용자가 존재하지 않으면 UNAUTHORIZED 상태 코드를 반환
-                if (memberEntity.getMemberName() == null) {
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("닉네임 또는 비밀번호가 잘못되었습니다.");
-                }
-
-                // 비밀번호가 일치하지 않으면 UNAUTHORIZED 상태 코드를 반환
-                if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("닉네임 또는 비밀번호가 잘못되었습니다.");
+                // 닉네임 또는 비밀번호가 일치하지 않으면 UNAUTHORIZED 상태 코드를 반환
+                if (memberEntity.getMemberName() == null
+                                || !requestDto.getPassword().equals(memberEntity.getPassword())) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder().success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(requestSuccessDto);
                 }
 
                 // 승인되지 않은 사용자인 경우 FORBIDDEN 상태 코드를 반환

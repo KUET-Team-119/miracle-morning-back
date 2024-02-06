@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.miracle.miraclemorningback.dto.MemberDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.service.MemberService;
@@ -39,20 +38,19 @@ public class MemberController {
 
     // 특정 회원 검색
     @GetMapping("/api/member/{memberName}")
-    public MemberResponseDto getMember(@PathVariable String memberName) {
+    public ResponseEntity<Object> getMember(@PathVariable String memberName) {
         return memberService.getMember(memberName);
     }
 
     // 회원 삭제
     @DeleteMapping("/api/member/{memberId}")
-    public MemberDeleteSuccessResponseDto deleteMember(@PathVariable Long memberId)
-            throws Exception {
+    public ResponseEntity<Object> deleteMember(@PathVariable Long memberId) {
         return memberService.deleteMember(memberId);
     }
 
     // 로그인
     @PostMapping("/api/auth/member")
-    public ResponseEntity<Object> loginMember(@RequestBody MemberRequestDto requestDto) throws Exception {
+    public ResponseEntity<Object> loginMember(@RequestBody MemberRequestDto requestDto) {
         return memberService.loginMember(requestDto);
     }
 

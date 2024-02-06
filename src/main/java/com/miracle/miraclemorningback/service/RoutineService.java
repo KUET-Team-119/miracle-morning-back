@@ -3,10 +3,12 @@ package com.miracle.miraclemorningback.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.miracle.miraclemorningback.dto.RoutineDeleteSuccessResponseDto;
+import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.dto.RoutineResponseDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
@@ -47,7 +49,7 @@ public class RoutineService {
 
         // 루틴 추가
         @Transactional
-        public RoutineResponseDto addRoutine(String memberName, RoutineRequestDto requestDto) {
+        public ResponseEntity<Object> addRoutine(String memberName, RoutineRequestDto requestDto) {
                 RoutineEntity routineEntity = RoutineEntity.builder()
                                 .routineName(requestDto.getRoutineName())
                                 .strategy(requestDto.getStrategy())
@@ -61,18 +63,12 @@ public class RoutineService {
 
                 routineRepository.save(routineEntity);
 
-                return RoutineResponseDto.builder()
-                                .routineId(routineEntity.getRoutineId())
-                                .routineName(routineEntity.getRoutineName())
-                                .memberName(routineEntity.getMemberEntity().getMemberName())
-                                .strategy(routineEntity.getStrategy())
-                                .certification(routineEntity.getCertification())
-                                .startTime(routineEntity.getStartTime())
-                                .endTime(routineEntity.getEndTime())
-                                .isActivated(routineEntity.getIsActivated())
-                                .createdAt(routineEntity.getCreatedAt())
-                                .modifiedAt(routineEntity.getModifiedAt())
+                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                .success(true)
+                                .message("요청이 성공적으로 처리되었습니다.")
                                 .build();
+
+                return ResponseEntity.ok().body(requestSuccessDto);
         }
 
         // 특정 회원 루틴 검색
@@ -97,10 +93,16 @@ public class RoutineService {
 
         // 루틴 정보 수정
         @Transactional
-        public RoutineResponseDto updateRoutine(RoutineRequestDto requestDto) throws Exception {
-                RoutineEntity routineEntity = routineRepository.findById(requestDto.getRoutineId()).orElseThrow(
-                                // 아이디가 존재하지 않으면 예외 처리
-                                () -> new IllegalArgumentException("존재하지 않은 루틴입니다."));
+        public ResponseEntity<Object> updateRoutine(RoutineRequestDto requestDto) {
+
+                if (!routineRepository.existsById(requestDto.getRoutineId())) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스를 찾을 수 없습니다.")
+                                        .build();
+
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
 
                 routineRepository.updateRoutine(
                                 requestDto.getRoutineId(),
@@ -110,30 +112,33 @@ public class RoutineService {
                                 requestDto.getEndTime(),
                                 requestDto.getIsActivated());
 
-                return RoutineResponseDto.builder()
-                                .routineId(routineEntity.getRoutineId())
-                                .routineName(routineEntity.getRoutineName())
-                                .memberName(routineEntity.getMemberEntity().getMemberName())
-                                .strategy(routineEntity.getStrategy())
-                                .certification(routineEntity.getCertification())
-                                .startTime(routineEntity.getStartTime())
-                                .endTime(routineEntity.getEndTime())
-                                .isActivated(routineEntity.getIsActivated())
-                                .createdAt(routineEntity.getCreatedAt())
-                                .modifiedAt(routineEntity.getModifiedAt())
+                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                .success(true)
+                                .message("요청이 성공적으로 처리되었습니다.")
                                 .build();
+
+                return ResponseEntity.ok().body(requestSuccessDto);
         }
 
         // 루틴 삭제
         @Transactional
-        public RoutineDeleteSuccessResponseDto deleteRoutine(Long routineId)
-                        throws Exception {
-                routineRepository.findById(routineId).orElseThrow(
-                                // 아이디가 존재하지 않으면 예외 처리
-                                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+        public ResponseEntity<Object> deleteRoutine(Long routineId) {
+                if (!routineRepository.existsById(routineId)) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스를 찾을 수 없습니다.")
+                                        .build();
 
-                routineRepository.deleteById(routineId);
-                return RoutineDeleteSuccessResponseDto.builder().success(true).build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                } else {
+                        routineRepository.deleteById(routineId);
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(true)
+                                        .message("요청이 성공적으로 처리되었습니다.")
+                                        .build();
+
+                        return ResponseEntity.ok().body(requestSuccessDto);
+                }
         }
 
         /*

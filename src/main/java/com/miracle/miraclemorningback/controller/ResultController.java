@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.miracle.miraclemorningback.dto.ResultDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
 import com.miracle.miraclemorningback.dto.ResultResponseDto;
 import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
@@ -37,7 +37,7 @@ public class ResultController {
 
     // 기록 추가
     @PatchMapping("/api/result")
-    public ResultResponseDto updateResult(Authentication authentication,
+    public ResponseEntity<Object> updateResult(Authentication authentication,
             @RequestPart("data") ResultRequestDto requestDto,
             @RequestPart("file") MultipartFile file) throws IOException {
 
@@ -55,7 +55,7 @@ public class ResultController {
 
     // 기록 삭제
     @DeleteMapping("/api/result/{resultId}")
-    public ResultDeleteSuccessResponseDto deleteResult(@PathVariable Long resultId) throws Exception {
+    public ResponseEntity<Object> deleteResult(@PathVariable Long resultId) {
         return resultService.deleteResult(resultId);
     }
 

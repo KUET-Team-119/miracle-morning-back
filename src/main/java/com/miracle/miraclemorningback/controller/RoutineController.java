@@ -3,6 +3,7 @@ package com.miracle.miraclemorningback.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.miracle.miraclemorningback.dto.RoutineDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.dto.RoutineResponseDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
@@ -35,7 +35,7 @@ public class RoutineController {
 
     // 루틴 추가
     @PostMapping("/api/routine")
-    public RoutineResponseDto addRoutine(Authentication authentication, @RequestBody RoutineRequestDto requestDto) {
+    public ResponseEntity<Object> addRoutine(Authentication authentication, @RequestBody RoutineRequestDto requestDto) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         return routineService.addRoutine(memberName, requestDto);
     }
@@ -49,14 +49,13 @@ public class RoutineController {
 
     // 루틴 정보 수정
     @PatchMapping("/api/routine")
-    public RoutineResponseDto updateRoutine(@RequestBody RoutineRequestDto requestDto)
-            throws Exception {
+    public ResponseEntity<Object> updateRoutine(@RequestBody RoutineRequestDto requestDto) {
         return routineService.updateRoutine(requestDto);
     }
 
     // 루틴 삭제
     @DeleteMapping("/api/routine/{routineId}")
-    public RoutineDeleteSuccessResponseDto deleteRoutine(@PathVariable Long routineId) throws Exception {
+    public ResponseEntity<Object> deleteRoutine(@PathVariable Long routineId) {
         return routineService.deleteRoutine(routineId);
     }
 
