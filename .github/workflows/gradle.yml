@@ -45,7 +45,7 @@ jobs:
           MYSQL_ENDPOINT: ${{ secrets.MYSQL_ENDPOINT }}
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
@@ -56,7 +56,7 @@ jobs:
           echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
           echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
           echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
-          echo MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> .env
+          echo MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
           echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
