@@ -66,13 +66,10 @@ public class ResultService {
                 MemberEntity memberEntity = memberRepository.findByMemberName(memberName).get();
 
                 ResultEntity resultEntity = resultRepository.findByRoutineNameAndMemberEntityAndCurrentDate(
-                                requestDto.getRoutineName(), memberEntity).orElseGet(
-                                                () -> {
-                                                        return ResultEntity.builder().routineName(null).build();
-                                                });
+                                requestDto.getRoutineName(), memberEntity).orElse(null);
 
                 // 기록이 존재하지 않으면 NOT_FOUND 상태 코드를 반환
-                if (resultEntity.getRoutineName() == null) {
+                if (resultEntity == null) {
                         RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
                                         .success(false)
                                         .message("해당하는 리소스가 없습니다.")

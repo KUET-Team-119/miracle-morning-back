@@ -80,13 +80,10 @@ public class MemberService {
         @Transactional
         public ResponseEntity<Object> getMember(String memberName) {
 
-                MemberEntity memberEntity = memberRepository.findByMemberName(memberName)
-                                .orElseGet(() -> {
-                                        return MemberEntity.builder().memberName(null).build();
-                                });
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElse(null);
 
                 // 사용자가 존재하지 않으면 UNAUTHORIZED 상태 코드를 반환
-                if (memberEntity.getMemberName() == null) {
+                if (memberEntity == null) {
                         RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
                                         .success(false)
                                         .message("해당하는 리소스가 없습니다.")
@@ -120,14 +117,10 @@ public class MemberService {
         @Transactional
         public ResponseEntity<Object> loginMember(MemberRequestDto requestDto) {
 
-                MemberEntity memberEntity = memberRepository.findByMemberName(requestDto.getMemberName())
-                                .orElseGet(() -> {
-                                        return MemberEntity.builder().memberName(null).build();
-                                });
+                MemberEntity memberEntity = memberRepository.findByMemberName(requestDto.getMemberName()).orElse(null);
 
                 // 닉네임 또는 비밀번호가 일치하지 않으면 UNAUTHORIZED 상태 코드를 반환
-                if (memberEntity.getMemberName() == null
-                                || !requestDto.getPassword().equals(memberEntity.getPassword())) {
+                if (memberEntity == null || !requestDto.getPassword().equals(memberEntity.getPassword())) {
                         RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder().success(false)
                                         .message("해당하는 리소스가 없습니다.")
                                         .build();

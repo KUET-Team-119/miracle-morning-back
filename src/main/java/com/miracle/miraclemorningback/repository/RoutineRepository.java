@@ -16,6 +16,8 @@ import java.util.List;
 public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
         List<RoutineEntity> findAllByMemberEntity(MemberEntity memberEntity);
 
+        List<RoutineEntity> findAllByRoutineName(String routineName);
+
         // 루틴 수정
         @Modifying
         @Query("UPDATE RoutineEntity ro SET ro.strategy = :strategy, ro.certification = :certification, ro.startTime = :start_time, ro.endTime = :end_time, ro.isActivated = :is_activated WHERE ro.routineId = :routine_id")
