@@ -51,21 +51,22 @@ jobs:
           IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
 
       # .env 파일 생성
-      # TODO 원격 서버로 보낼 필요 있는지 확인 필요
       - name: Create .env
         run: |
           echo MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }} >> .env
-        # echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
-        # echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
-        # echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
-        # echo MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }} >> .env
-        # echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
-        # echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
-        # echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
+          echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
+          echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
+          echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
+          echo MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
+          echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
 
       # init.sql 파일 생성
       - name: Create init.sql
         run: |
+          echo "ALTER USER 'root'@'%' IDENTIFIED BY '${{secrets.MYSQL_ROOT_PASSWORD}}';" >> init.sql
+          echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '${{secrets.MYSQL_ROOT_PASSWORD}}';" >> init.sql
           echo "CREATE DATABASE IF NOT EXISTS ${{ secrets.MYSQL_DATABASE }};" >> init.sql
           echo "CREATE USER '${{secrets.MYSQL_USERNAME}}'@'%' IDENTIFIED BY '${{secrets.MYSQL_PASSWORD}}';" >> init.sql
           echo "GRANT ALL PRIVILEGES ON ${{ secrets.MYSQL_DATABASE }}.* TO '${{secrets.MYSQL_USERNAME}}'@'%';" >> init.sql

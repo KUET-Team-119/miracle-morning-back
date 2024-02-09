@@ -4,8 +4,8 @@ services:
     container_name: miracle_morning_mysql
     image: mysql
     restart: always
-    env_file:
-      - .env
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     expose:
       - 3306
     volumes:
