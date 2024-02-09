@@ -1,6 +1,11 @@
 # 깃허브 액션으로 이미 빌드된 파일을 복사해서 가져오는 경우
 FROM openjdk:17-jdk-alpine
 
+# 타임존을 한국 시간으로 설정
+RUN apk add --no-cache tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone
+
 ARG JAR_FILE=build/libs/*.jar
 
 COPY ${JAR_FILE} app.jar

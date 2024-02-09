@@ -8,8 +8,10 @@ services:
       - .env
     expose:
       - 3306
-  #   networks:
-  #     - miracle_morning_network
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - miracle_morning_network
 
   miracle_morning_back:
     container_name: miracle_morning_back
@@ -21,8 +23,8 @@ services:
       - 8080
     depends_on:
       - miracle_morning_mysql
-    # networks:
-    #   - miracle_morning_network
+    networks:
+      - miracle_morning_network
 
   miracle_morning_front:
     container_name: miracle_morning_front
@@ -42,8 +44,8 @@ services:
       - miracle_morning_back
     # SSL 인증서 관련
     # command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
-    # networks:
-    #   - miracle_morning_network
+    networks:
+      - miracle_morning_network
 
   # SSL 인증서 관련 컨테이너
   # certbot:
@@ -55,5 +57,5 @@ services:
   #  entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
   #  networks:
   #     - miracle_morning_network
-# networks:
-#   miracle_morning_network:
+networks:
+  miracle_morning_network:
