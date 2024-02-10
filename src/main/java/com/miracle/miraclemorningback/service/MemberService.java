@@ -101,15 +101,31 @@ public class MemberService {
                 return ResponseEntity.ok().body(memberResponseDto);
         }
 
-        // 회원 삭제
+        // 개별 사용자용 회원 삭제
         @Transactional
-        public ResponseEntity<Object> deleteMember(Long memberId) {
-                if (!memberRepository.existsById(memberId)) {
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당하는 리소스가 없습니다.");
+        public ResponseEntity<Object> deleteMember(Long memberId, String password) {
+                MemberEntity memberEntity = memberRepository.findById(memberId).orElse(null);
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
                 } else {
-                        memberRepository.deleteById(memberId);
-                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder().success(true).build();
-                        return ResponseEntity.ok().body(requestSuccessDto);
+                        if (password.equals(memberEntity.getPassword())) {
+                                memberRepository.deleteById(memberId);
+                                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                                .success(true)
+                                                .message("요청이 성공적으로 처리되었습니다.")
+                                                .build();
+                                return ResponseEntity.ok().body(requestSuccessDto);
+                        } else {
+                                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                                .success(false)
+                                                .message("인증에 실패했습니다.")
+                                                .build();
+                                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(requestSuccessDto);
+                        }
                 }
         }
 
@@ -122,7 +138,7 @@ public class MemberService {
                 // 닉네임 또는 비밀번호가 일치하지 않으면 UNAUTHORIZED 상태 코드를 반환
                 if (memberEntity == null || !requestDto.getPassword().equals(memberEntity.getPassword())) {
                         RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder().success(false)
-                                        .message("해당하는 리소스가 없습니다.")
+                                        .message("인증에 실패했습니다.")
                                         .build();
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(requestSuccessDto);
                 }

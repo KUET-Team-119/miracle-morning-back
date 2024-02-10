@@ -12,12 +12,6 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - miracle_morning_network
-    command:
-      [
-        "mysqld",
-        "--character-set-server=utf8mb4",
-        "--collation-server=utf8mb4_unicode_ci",
-      ]
 
   miracle_morning_back:
     container_name: miracle_morning_back
@@ -36,8 +30,6 @@ services:
     container_name: miracle_morning_front
     image: choridev/miracle-morning-front
     # volumes:
-    # Dockerfile에서 nginx.conf 복사 진행
-    # - ./miracle-morning-front/conf/nginx.conf:/etc/nginx/conf.d/nginx.conf
     # SSL 인증서 관련
     # - ./data/certbot/conf:/etc/letsencrypt
     # - ./data/certbot/www:/var/www/certbot

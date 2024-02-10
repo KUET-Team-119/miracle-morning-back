@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
@@ -42,10 +43,11 @@ public class MemberController {
         return memberService.getMember(memberName);
     }
 
-    // 회원 삭제
+    // 개별 사용자용 회원 삭제
     @DeleteMapping("/api/member/{memberId}")
-    public ResponseEntity<Object> deleteMember(@PathVariable Long memberId) {
-        return memberService.deleteMember(memberId);
+    public ResponseEntity<Object> deleteMember(@PathVariable Long memberId,
+            @RequestHeader(value = "Password", required = true) String password) {
+        return memberService.deleteMember(memberId, password);
     }
 
     // 로그인
