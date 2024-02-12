@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,13 +31,13 @@ public class ResultController {
     private ResultService resultService;
 
     // 전체 기록 조회
-    @GetMapping("/api/results")
+    @GetMapping("/api/all/results")
     public List<ResultResponseDto> getResults() {
         return resultService.getResults();
     }
 
     // 기록 추가
-    @PatchMapping("/api/result")
+    @PatchMapping("/api/results")
     public ResponseEntity<Object> updateResult(Authentication authentication,
             @RequestPart("data") ResultRequestDto requestDto,
             @RequestPart("file") MultipartFile file) throws IOException {
@@ -46,11 +47,13 @@ public class ResultController {
         return resultService.updateResult(memberName, requestDto, file);
     }
 
-    // 특정 기간 기록 검색
-    // TODO resultId에서 날짜 데이터로 변경 / 쿼리 파라미터 형식으로 바꾸는 방향도 고려
-    @GetMapping("/api/result/{date}")
-    public ResultResponseDto getResult(@PathVariable Long resultId) {
-        return resultService.getResult(resultId);
+    // 특정 사용자의 특정 기간 기록 검색
+    @GetMapping("/api/results")
+    public List<ResultResponseDto> getResultsByDate(
+            @RequestParam("member-id") Long memberId,
+            @RequestParam("year") Integer year,
+            @RequestParam("month") Integer month) {
+        return resultService.getResultsByDate(memberId, year, month);
     }
 
     // 기록 삭제
@@ -59,13 +62,13 @@ public class ResultController {
         return resultService.deleteResult(resultId);
     }
 
-    // 오늘 날짜의 기록만 조회
+    // 오늘 날짜의 기록 조회
     @GetMapping("/api/result/today")
     public List<ResultResponseDto> getTodayResult() {
         return resultService.getTodayResult();
     }
 
-    // 특정 사용자의 오늘 날짜의 기록만 조회
+    // 특정 사용자의 오늘 날짜의 기록 조회
     @GetMapping("/api/routines/today")
     public List<TodayRoutinesDto> getTodayRoutines(Authentication authentication) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();

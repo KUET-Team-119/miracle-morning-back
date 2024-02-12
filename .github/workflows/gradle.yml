@@ -50,16 +50,16 @@ jobs:
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
 
-      # # .env 파일 생성
-      # - name: Create .env
-      #   run: |
-      #     echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
-      #     echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
-      #     echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
-      #     echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
-      #     echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
-      #     echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
-      #     echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
+      # .env 파일 생성
+      - name: Create .env
+        run: |
+          echo MYSQL_ENDPOINT=${{ secrets.MYSQL_ENDPOINT }} >> .env
+          echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
+          echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
+          echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
+          echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
 
       # init.sql 파일 생성
       - name: Create init.sql
@@ -95,15 +95,15 @@ jobs:
           source: "docker-compose.yml"
           target: "/home/ubuntu/workspace/project/miracle-morning"
 
-      # # OCI에 .env 파일 전송
-      # - name: Copy .env to OCI
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.REMOTE_HOST }}
-      #     username: ${{ secrets.REMOTE_USERNAME }}
-      #     key: ${{ secrets.REMOTE_KEY }}
-      #     source: ".env"
-      #     target: "/home/ubuntu/workspace/project/miracle-morning"
+      # OCI에 .env 파일 전송
+      - name: Copy .env to OCI
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_KEY }}
+          source: ".env"
+          target: "/home/ubuntu/workspace/project/miracle-morning"
 
       # OCI에 init.sql 파일 전송
       - name: Copy init.sql to OCI

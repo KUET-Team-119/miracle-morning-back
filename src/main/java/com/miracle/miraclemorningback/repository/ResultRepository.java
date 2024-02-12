@@ -16,19 +16,28 @@ import com.miracle.miraclemorningback.entity.ResultEntity;
 @Repository
 public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
 
-        // 오늘 날짜의 기록만 조회
+        // 특정 사용자의 특정 기간 기록 검색
+        @Query("SELECT re FROM ResultEntity re WHERE re.memberEntity = :member_entity AND YEAR(re.createdAt) = :year AND MONTH(re.createdAt) = :month")
+        List<ResultEntity> findAllByIdAndYearAndMonth(
+                        @Param("member_entity") MemberEntity memberEntity,
+                        @Param("year") Integer year,
+                        @Param("month") Integer month);
+
+        // 오늘 날짜의 기록 조회
         @Query("SELECT re FROM ResultEntity re WHERE DATE(re.createdAt) = CURRENT_DATE")
         List<ResultEntity> findAllByCurrentDate();
 
         // 인증할 루틴 기록 조회
         @Query("SELECT re FROM ResultEntity re WHERE re.routineName = :routine_name AND re.memberEntity = :member_entity AND DATE(re.createdAt) = CURRENT_DATE")
-        Optional<ResultEntity> findByRoutineNameAndMemberEntityAndCurrentDate(@Param("routine_name") String routineName,
+        Optional<ResultEntity> findByRoutineNameAndMemberEntityAndCurrentDate(
+                        @Param("routine_name") String routineName,
                         @Param("member_entity") MemberEntity member_entity);
 
         // 인증한 루틴 기록 업데이트
         @Modifying
         @Query("UPDATE ResultEntity re SET re.doneAt = :done_at, proofFilePath = :proof_file_path WHERE re.routineName = :routine_name AND re.memberEntity = :member_entity AND DATE(re.createdAt) = CURRENT_DATE")
-        void updateResult(@Param("routine_name") String routineName,
+        void updateResult(
+                        @Param("routine_name") String routineName,
                         @Param("member_entity") MemberEntity member_entity,
                         @Param("done_at") LocalDateTime doneAt,
                         @Param("proof_file_path") String proofFilePath);

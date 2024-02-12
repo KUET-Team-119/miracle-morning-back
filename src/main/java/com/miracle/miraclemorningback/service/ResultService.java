@@ -103,21 +103,21 @@ public class ResultService {
                 return ResponseEntity.ok().body(requestSuccessDto);
         }
 
-        // 특정 기록 검색
-        // TODO resultId에서 날짜 데이터로 변경 / 쿼리 파라미터 형식으로 바꾸는 방향도 고려
+        // 특정 사용자의 특정 기간 기록 검색
         @Transactional
-        public ResultResponseDto getResult(Long resultId) {
-                return resultRepository.findById(resultId)
+        public List<ResultResponseDto> getResultsByDate(Long memberId, Integer year, Integer month) {
+
+                MemberEntity memberEntity = memberRepository.findById(memberId).get();
+
+                return resultRepository.findAllByIdAndYearAndMonth(memberEntity, year, month).stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
                                                 .memberName(resultEntity.getMemberEntity().getMemberName())
-                                                .createdAt(resultEntity.getCreatedAt())
                                                 .doneAt(resultEntity.getDoneAt())
+                                                .createdAt(resultEntity.getCreatedAt())
                                                 .build())
-                                .orElseThrow(
-                                                // 아이디가 존재하지 않으면 예외 처리
-                                                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+                                .toList();
         }
 
         // 기록 삭제
@@ -142,7 +142,7 @@ public class ResultService {
                 }
         }
 
-        // 오늘 날짜의 기록만 조회
+        // 오늘 날짜의 기록 조회
         @Transactional
         public List<ResultResponseDto> getTodayResult() {
                 return resultRepository.findAllByCurrentDate().stream()
@@ -156,7 +156,7 @@ public class ResultService {
                                 .toList();
         }
 
-        // 특정 사용자의 오늘 날짜의 기록만 조회
+        // 특정 사용자의 오늘 날짜의 기록 조회
         @Transactional
         public List<TodayRoutinesDto> getTodayRoutines(String memberName) {
 
