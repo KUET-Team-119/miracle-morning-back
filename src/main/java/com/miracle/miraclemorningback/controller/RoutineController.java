@@ -42,7 +42,7 @@ public class RoutineController {
 
     // 특정 회원 루틴 검색
     @GetMapping("/api/routine")
-    public List<RoutineResponseDto> getRoutine(Authentication authentication) {
+    public ResponseEntity<Object> getRoutine(Authentication authentication) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         return routineService.getRoutine(memberName);
     }

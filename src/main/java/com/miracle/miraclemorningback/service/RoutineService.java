@@ -134,9 +134,21 @@ public class RoutineService {
 
         // 특정 회원 루틴 검색
         @Transactional
-        public List<RoutineResponseDto> getRoutine(String memberName) {
-                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).get();
-                return routineRepository.findAllByMemberEntity(memberEntity).stream()
+        public ResponseEntity<Object> getRoutine(String memberName) {
+
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElse(null);
+
+                // 사용자가 존재하지 않으면 UNAUTHORIZED 상태 코드를 반환
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
+                List<RoutineResponseDto> listOfRoutineResponseDto = routineRepository
+                                .findAllByMemberEntity(memberEntity).stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
@@ -150,6 +162,8 @@ public class RoutineService {
                                                 .modifiedAt(routineEntity.getModifiedAt())
                                                 .build())
                                 .toList();
+
+                return ResponseEntity.ok().body(listOfRoutineResponseDto);
         }
 
         // 루틴 정보 수정

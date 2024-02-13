@@ -49,7 +49,7 @@ public class ResultController {
 
     // 특정 사용자의 특정 기간 기록 검색
     @GetMapping("/api/results")
-    public List<ResultResponseDto> getResultsByDate(
+    public ResponseEntity<Object> getResultsByDate(
             @RequestParam("member-id") Long memberId,
             @RequestParam("year") Integer year,
             @RequestParam("month") Integer month) {
@@ -70,7 +70,7 @@ public class ResultController {
 
     // 특정 사용자의 오늘 날짜의 기록 조회
     @GetMapping("/api/routines/today")
-    public List<TodayRoutinesDto> getTodayRoutines(Authentication authentication) {
+    public ResponseEntity<Object> getTodayRoutines(Authentication authentication) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         return resultService.getTodayRoutines(memberName);
     }

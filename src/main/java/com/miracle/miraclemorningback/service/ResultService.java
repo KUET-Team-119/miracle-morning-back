@@ -63,7 +63,15 @@ public class ResultService {
         public ResponseEntity<Object> updateResult(String memberName, ResultRequestDto requestDto, MultipartFile file)
                         throws IOException {
 
-                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).get();
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElseGet(null);
+
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
 
                 ResultEntity resultEntity = resultRepository.findByRoutineNameAndMemberEntityAndCurrentDate(
                                 requestDto.getRoutineName(), memberEntity).orElse(null);
@@ -105,11 +113,20 @@ public class ResultService {
 
         // 특정 사용자의 특정 기간 기록 검색
         @Transactional
-        public List<ResultResponseDto> getResultsByDate(Long memberId, Integer year, Integer month) {
+        public ResponseEntity<Object> getResultsByDate(Long memberId, Integer year, Integer month) {
 
-                MemberEntity memberEntity = memberRepository.findById(memberId).get();
+                MemberEntity memberEntity = memberRepository.findById(memberId).orElseGet(null);
 
-                return resultRepository.findAllByIdAndYearAndMonth(memberEntity, year, month).stream()
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
+                List<ResultResponseDto> listOfResultResponseDto = resultRepository
+                                .findAllByIdAndYearAndMonth(memberEntity, year, month).stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineName())
@@ -118,6 +135,8 @@ public class ResultService {
                                                 .createdAt(resultEntity.getCreatedAt())
                                                 .build())
                                 .toList();
+
+                return ResponseEntity.ok().body(listOfResultResponseDto);
         }
 
         // 기록 삭제
@@ -158,9 +177,17 @@ public class ResultService {
 
         // 특정 사용자의 오늘 날짜의 기록 조회
         @Transactional
-        public List<TodayRoutinesDto> getTodayRoutines(String memberName) {
+        public ResponseEntity<Object> getTodayRoutines(String memberName) {
 
-                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).get();
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElseGet(null);
+
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
 
                 List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
                 List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
@@ -203,7 +230,7 @@ public class ResultService {
                 todayRoutinesDto.addAll(incompleteRoutines);
                 todayRoutinesDto.addAll(completeRoutines);
 
-                return todayRoutinesDto;
+                return ResponseEntity.ok().body(todayRoutinesDto);
         }
 
         // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
