@@ -138,6 +138,6 @@ jobs:
             fi
 
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/miracle-morning-back
-
+            docker image prune -f
     #        docker-compose -f /home/ubuntu/workspace/project/miracle-morning/docker-compose.yml up -d
     #        docker image prune -f
