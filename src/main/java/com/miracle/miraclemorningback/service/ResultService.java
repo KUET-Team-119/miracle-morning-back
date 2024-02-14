@@ -21,8 +21,10 @@ import com.miracle.miraclemorningback.dto.ResultResponseDto;
 import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.ResultEntity;
+import com.miracle.miraclemorningback.entity.RoutineEntity;
 import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.ResultRepository;
+import com.miracle.miraclemorningback.repository.RoutineRepository;
 import com.miracle.miraclemorningback.repository.TodayRoutinesRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,9 @@ public class ResultService {
 
         @Autowired
         private MemberRepository memberRepository;
+
+        @Autowired
+        private RoutineRepository routineRepository;
 
         @Autowired
         private ResultRepository resultRepository;
@@ -50,7 +55,7 @@ public class ResultService {
                 return resultRepository.findAll().stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
-                                                .routineName(resultEntity.getRoutineName())
+                                                .routineName(resultEntity.getRoutineEntity().getRoutineName())
                                                 .memberName(resultEntity.getMemberEntity().getMemberName())
                                                 .doneAt(resultEntity.getDoneAt())
                                                 .createdAt(resultEntity.getCreatedAt())
@@ -73,8 +78,18 @@ public class ResultService {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
                 }
 
-                ResultEntity resultEntity = resultRepository.findByRoutineNameAndMemberEntityAndCurrentDate(
-                                requestDto.getRoutineName(), memberEntity).orElse(null);
+                RoutineEntity routineEntity = routineRepository.findById(requestDto.getRoutineId()).orElseGet(null);
+
+                if (routineEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
+                ResultEntity resultEntity = resultRepository.findByRoutineEntityAndMemberEntityAndCurrentDate(
+                                routineEntity, memberEntity).orElse(null);
 
                 // 기록이 존재하지 않으면 NOT_FOUND 상태 코드를 반환
                 if (resultEntity == null) {
@@ -90,7 +105,7 @@ public class ResultService {
                 String timeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(dateTime);
 
                 // 파일명: 닉네임 + 루틴명 + 업로드 시간 + 원본 파일명
-                String fileName = memberName + "_" + requestDto.getRoutineName() + "_" + timeStamp
+                String fileName = memberName + "_" + requestDto.getRoutineId() + "_" + timeStamp
                                 + "_" + file.getOriginalFilename();
 
                 // 파일 경로
@@ -98,7 +113,8 @@ public class ResultService {
                 file.transferTo(new File(DIR_PATH, fileName));
 
                 // 기록 업데이트
-                resultRepository.updateResult(requestDto.getRoutineName(),
+                resultRepository.updateResult(
+                                routineEntity,
                                 memberEntity,
                                 requestDto.getDoneAt(),
                                 filePath);
@@ -129,7 +145,9 @@ public class ResultService {
                                 .findAllByIdAndYearAndMonth(memberEntity, year, month).stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
-                                                .routineName(resultEntity.getRoutineName())
+                                                .routineId(resultEntity.getRoutineEntity().getRoutineId())
+                                                .routineName(resultEntity.getRoutineEntity().getRoutineName())
+                                                .memberId(resultEntity.getMemberEntity().getMemberId())
                                                 .memberName(resultEntity.getMemberEntity().getMemberName())
                                                 .doneAt(resultEntity.getDoneAt())
                                                 .createdAt(resultEntity.getCreatedAt())
@@ -167,7 +185,9 @@ public class ResultService {
                 return resultRepository.findAllByCurrentDate().stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
-                                                .routineName(resultEntity.getRoutineName())
+                                                .routineId(resultEntity.getRoutineEntity().getRoutineId())
+                                                .routineName(resultEntity.getRoutineEntity().getRoutineName())
+                                                .memberId(resultEntity.getMemberEntity().getMemberId())
                                                 .memberName(resultEntity.getMemberEntity().getMemberName())
                                                 .createdAt(resultEntity.getCreatedAt())
                                                 .doneAt(resultEntity.getDoneAt())

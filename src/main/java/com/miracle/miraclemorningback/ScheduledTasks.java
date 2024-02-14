@@ -78,8 +78,8 @@ public class ScheduledTasks {
     public void generateIncompleteResults() {
         routineRepository.getActivatedRoutines().forEach(routineEntity -> {
             ResultEntity resultEntity = ResultEntity.builder()
-                    .routineName(routineEntity.getRoutineName())
                     .build();
+            resultEntity.setRoutineEntity(routineEntity);
             resultEntity
                     .setMemberEntity(memberRepository.findById(routineEntity.getMemberEntity().getMemberId()).get());
             resultRepository.save(resultEntity);

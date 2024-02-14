@@ -1,9 +1,12 @@
 package com.miracle.miraclemorningback.entity;
 
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.DynamicInsert;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -53,6 +57,9 @@ public class RoutineEntity extends Timestamped {
 
     @Column(columnDefinition = "boolean default true")
     private Boolean isActivated; // 활성화여부
+
+    @OneToMany(mappedBy = "routineEntity", cascade = CascadeType.REMOVE)
+    private List<ResultEntity> results = new ArrayList<>();
 
     @Builder
     public RoutineEntity(String routineName, String strategy, String certification, Time startTime, Time endTime,

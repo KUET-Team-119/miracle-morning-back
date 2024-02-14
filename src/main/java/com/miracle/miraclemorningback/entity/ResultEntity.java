@@ -31,8 +31,9 @@ public class ResultEntity extends Timestamped {
     @JoinColumn(name = "member_id")
     private MemberEntity memberEntity; // 사용자
 
-    @Column
-    private String routineName; // 루틴명
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routine_id")
+    private RoutineEntity routineEntity; // 루틴
 
     @Column
     private String proofFilePath; // 인증 사진 파일 경로
@@ -41,13 +42,16 @@ public class ResultEntity extends Timestamped {
     private LocalDateTime doneAt; // 사진 촬영 시간
 
     @Builder
-    public ResultEntity(String routineName, String filePath, LocalDateTime doneAt) {
-        this.routineName = routineName;
+    public ResultEntity(String filePath, LocalDateTime doneAt) {
         this.proofFilePath = filePath;
         this.doneAt = doneAt;
     }
 
     public void setMemberEntity(MemberEntity memberEntity) {
         this.memberEntity = memberEntity;
+    }
+
+    public void setRoutineEntity(RoutineEntity routineEntity) {
+        this.routineEntity = routineEntity;
     }
 }

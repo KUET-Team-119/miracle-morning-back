@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.ResultEntity;
+import com.miracle.miraclemorningback.entity.RoutineEntity;
 
 @Repository
 public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
@@ -28,16 +29,16 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
         List<ResultEntity> findAllByCurrentDate();
 
         // 인증할 루틴 기록 조회
-        @Query("SELECT re FROM ResultEntity re WHERE re.routineName = :routine_name AND re.memberEntity = :member_entity AND DATE(re.createdAt) = CURRENT_DATE")
-        Optional<ResultEntity> findByRoutineNameAndMemberEntityAndCurrentDate(
-                        @Param("routine_name") String routineName,
+        @Query("SELECT re FROM ResultEntity re WHERE re.routineEntity = :routine_entity AND re.memberEntity = :member_entity AND DATE(re.createdAt) = CURRENT_DATE")
+        Optional<ResultEntity> findByRoutineEntityAndMemberEntityAndCurrentDate(
+                        @Param("routine_entity") RoutineEntity routineEntity,
                         @Param("member_entity") MemberEntity member_entity);
 
         // 인증한 루틴 기록 업데이트
         @Modifying
-        @Query("UPDATE ResultEntity re SET re.doneAt = :done_at, proofFilePath = :proof_file_path WHERE re.routineName = :routine_name AND re.memberEntity = :member_entity AND DATE(re.createdAt) = CURRENT_DATE")
+        @Query("UPDATE ResultEntity re SET re.doneAt = :done_at, proofFilePath = :proof_file_path WHERE re.routineEntity = :routine_entity AND re.memberEntity = :member_entity AND DATE(re.createdAt) = CURRENT_DATE")
         void updateResult(
-                        @Param("routine_name") String routineName,
+                        @Param("routine_entity") RoutineEntity routineEntity,
                         @Param("member_entity") MemberEntity member_entity,
                         @Param("done_at") LocalDateTime doneAt,
                         @Param("proof_file_path") String proofFilePath);
