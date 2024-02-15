@@ -61,15 +61,15 @@ jobs:
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
           echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
 
-      # init.sql 파일 생성
-      - name: Create init.sql
+      # db_init.sql 파일 생성
+      - name: Create db_init.sql
         run: |
-          echo "ALTER USER 'root'@'%' IDENTIFIED BY '${{secrets.MYSQL_ROOT_PASSWORD}}';" >> init.sql
-          echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '${{secrets.MYSQL_ROOT_PASSWORD}}';" >> init.sql
-          echo "CREATE DATABASE IF NOT EXISTS ${{ secrets.MYSQL_DATABASE }};" >> init.sql
-          echo "CREATE USER '${{secrets.MYSQL_USERNAME}}'@'%' IDENTIFIED BY '${{secrets.MYSQL_PASSWORD}}';" >> init.sql
-          echo "GRANT ALL PRIVILEGES ON ${{ secrets.MYSQL_DATABASE }}.* TO '${{secrets.MYSQL_USERNAME}}'@'%';" >> init.sql
-          echo "FLUSH PRIVILEGES;" >> init.sql
+          echo "ALTER USER 'root'@'%' IDENTIFIED BY '${{secrets.MYSQL_ROOT_PASSWORD}}';" >> db_init.sql
+          echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '${{secrets.MYSQL_ROOT_PASSWORD}}';" >> db_init.sql
+          echo "CREATE DATABASE IF NOT EXISTS ${{ secrets.MYSQL_DATABASE }};" >> db_init.sql
+          echo "CREATE USER '${{secrets.MYSQL_USERNAME}}'@'%' IDENTIFIED BY '${{secrets.MYSQL_PASSWORD}}';" >> db_init.sql
+          echo "GRANT ALL PRIVILEGES ON ${{ secrets.MYSQL_DATABASE }}.* TO '${{secrets.MYSQL_USERNAME}}'@'%';" >> db_init.sql
+          echo "FLUSH PRIVILEGES;" >> db_init.sql
 
       # 도커 로그인
       - name: docker login
@@ -105,15 +105,35 @@ jobs:
           source: ".env"
           target: "/home/ubuntu/workspace/project/miracle-morning"
 
-      # OCI에 init.sql 파일 전송
-      - name: Copy init.sql to OCI
+      # OCI에 db_init.sql 파일 전송
+      - name: Copy db_init.sql to OCI
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USERNAME }}
           key: ${{ secrets.REMOTE_KEY }}
-          source: "init.sql"
-          target: "/home/ubuntu/workspace/project/miracle-morning"
+          source: "db_init.sql"
+          target: "/home/ubuntu/workspace/project/miracle-morning/miracle-morning-mysql/initdb.d"
+
+      # OCI에 db_init.sql 파일 전송
+      - name: Copy table_init.sql to OCI
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_KEY }}
+          source: "table_init.sql"
+          target: "/home/ubuntu/workspace/project/miracle-morning/miracle-morning-mysql/initdb.d"
+
+      # OCI에 my.cnf 파일 전송
+      - name: Copy my.cnf to OCI
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_KEY }}
+          source: "my.cnf"
+          target: "/home/ubuntu/workspace/project/miracle-morning/miracle-morning-mysql/conf.d"
 
       # docker-compose.yml 파일 전송
       - name: Copy docker-compose.yml to OCI

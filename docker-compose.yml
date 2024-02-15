@@ -6,10 +6,18 @@ services:
     restart: always
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      TZ: Asia/Seoul
     expose:
       - 3306
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./miracle-morning-mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./miracle-morning-mysql/conf.d:/etc/mysql/conf.d
+      - ./miracle-morning-mysql/data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 3s
+      timeout: 20s
+      retries: 10
     networks:
       - miracle_morning_network
 
@@ -22,7 +30,8 @@ services:
     expose:
       - 8080
     depends_on:
-      - miracle_morning_mysql
+      miracle_morning_mysql:
+      condition: service_healthy
     networks:
       - miracle_morning_network
 
