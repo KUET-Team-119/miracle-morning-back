@@ -115,15 +115,15 @@ jobs:
           source: "db_init.sql"
           target: "/home/ubuntu/workspace/project/miracle-morning/miracle-morning-mysql/initdb.d"
 
-      # OCI에 db_init.sql 파일 전송
-      - name: Copy table_init.sql to OCI
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USERNAME }}
-          key: ${{ secrets.REMOTE_KEY }}
-          source: "table_init.sql"
-          target: "/home/ubuntu/workspace/project/miracle-morning/miracle-morning-mysql/initdb.d"
+      # # OCI에 table_init.sql 파일 전송
+      # - name: Copy table_init.sql to OCI
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.REMOTE_HOST }}
+      #     username: ${{ secrets.REMOTE_USERNAME }}
+      #     key: ${{ secrets.REMOTE_KEY }}
+      #     source: "table_init.sql"
+      #     target: "/home/ubuntu/workspace/project/miracle-morning/miracle-morning-mysql/initdb.d"
 
       # OCI에 my.cnf 파일 전송
       - name: Copy my.cnf to OCI
