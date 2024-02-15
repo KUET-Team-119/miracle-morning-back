@@ -5,6 +5,7 @@ services:
     image: mysql
     restart: always
     environment:
+      LC_ALL: "C.UTF-8" # MySQL의 locale 설정
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       TZ: Asia/Seoul
     expose:
@@ -31,7 +32,7 @@ services:
       - 8080
     depends_on:
       miracle_morning_mysql:
-      condition: service_healthy
+        condition: service_healthy
     networks:
       - miracle_morning_network
 
