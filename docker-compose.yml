@@ -14,7 +14,7 @@ services:
       - ./miracle-morning-mysql/initdb.d:/docker-entrypoint-initdb.d
       - ./miracle-morning-mysql/conf.d:/etc/mysql/conf.d
       - ./miracle-morning-mysql/data:/var/lib/mysql
-    healthcheck:
+    healthcheck: # MySQL이 실행된 이후 Springboot가 실행되도록 설정
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 3s
       timeout: 20s
@@ -30,7 +30,7 @@ services:
       - .env
     expose:
       - 8080
-    depends_on:
+    depends_on: # MySQL이 실행된 이후 Springboot가 실행되도록 설정
       miracle_morning_mysql:
         condition: service_healthy
     networks:
