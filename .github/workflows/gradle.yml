@@ -61,6 +61,7 @@ jobs:
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
           echo IMAGES_PATH=${{ secrets.IMAGES_PATH }} >> .env
+          echo SU_NAME=${{ secrets.SU_NAME }} >> .env
 
       # db_init.sql 파일 생성
       - name: Create db_init.sql
