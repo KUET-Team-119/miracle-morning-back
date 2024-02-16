@@ -49,6 +49,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
+          SU_NAME: ${{ secrets.SU_NAME }}
 
       # .env 파일 생성
       - name: Create .env

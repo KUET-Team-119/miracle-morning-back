@@ -3,6 +3,7 @@ package com.miracle.miraclemorningback.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class MemberService {
 
         @Autowired
         private JwtTokenProvider jwtTokenProvider;
+
+        @Value("${su.name}")
+        private String su;
 
         // 전체 회원 조회
         @Transactional(readOnly = true)
@@ -101,9 +105,40 @@ public class MemberService {
                 return ResponseEntity.ok().body(memberResponseDto);
         }
 
-        // 개별 사용자용 회원 삭제
+        // 회원 권한 수정
         @Transactional
-        public ResponseEntity<Object> deleteMember(Long memberId, String password) {
+        public ResponseEntity<Object> updateMemberRole(MemberRequestDto requestDto) {
+                MemberEntity memberEntity = memberRepository.findById(requestDto.getMemberId()).orElseGet(null);
+
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                } else if (memberEntity.getMemberName().equals(su)) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("관리자는 권한이 변경될 수 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(requestSuccessDto);
+                } else {
+                        memberRepository.updateMemberRole(requestDto.getMemberId(), requestDto.getRole());
+
+                        MemberResponseDto memberResponseDto = MemberResponseDto.builder()
+                                        .memberId(memberEntity.getMemberId())
+                                        .memberName(memberEntity.getMemberName())
+                                        .password(memberEntity.getPassword())
+                                        .role(memberEntity.getRole())
+                                        .createdAt(memberEntity.getCreatedAt())
+                                        .build();
+                        return ResponseEntity.ok().body(memberResponseDto);
+                }
+        }
+
+        // 회원 삭제
+        @Transactional
+        public ResponseEntity<Object> deleteMember(Long memberId, String password, String requester) {
                 MemberEntity memberEntity = memberRepository.findById(memberId).orElse(null);
                 if (memberEntity == null) {
                         RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
@@ -111,8 +146,14 @@ public class MemberService {
                                         .message("해당하는 리소스가 없습니다.")
                                         .build();
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                } else if (memberEntity.getMemberName().equals(su)) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("관리자는 삭제할 수 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(requestSuccessDto);
                 } else {
-                        if (password.equals(memberEntity.getPassword())) {
+                        if (requester.equals(su) || password.equals(memberEntity.getPassword())) {
                                 memberRepository.deleteById(memberId);
                                 RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
                                                 .success(true)
@@ -143,47 +184,18 @@ public class MemberService {
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(requestSuccessDto);
                 }
 
-                // 승인되지 않은 사용자인 경우 FORBIDDEN 상태 코드를 반환
-                if (memberEntity.getRole() != Role.USER) {
+                if (memberEntity.getRole() == Role.USER || memberEntity.getRole() == Role.ADMIN) {
+                        // 승인된 사용자인 경우 토큰 생성 후 반환
+                        TokenDto tokenDto = TokenDto.builder()
+                                        .accessToken(jwtTokenProvider.generateToken(
+                                                        memberEntity.getMemberId(),
+                                                        memberEntity.getMemberName(),
+                                                        memberEntity.getRole()))
+                                        .build();
+                        return ResponseEntity.ok().body(tokenDto);
+                } else {
+                        // 승인되지 않은 사용자인 경우 FORBIDDEN 상태 코드를 반환
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("승인되지 않은 사용자입니다.");
                 }
-
-                TokenDto tokenDto = TokenDto.builder()
-                                .accessToken(jwtTokenProvider.generateToken(
-                                                memberEntity.getMemberId(),
-                                                memberEntity.getMemberName(),
-                                                memberEntity.getRole()))
-                                .build();
-
-                return ResponseEntity.ok().body(tokenDto);
         }
-
-        /*
-         * 1차 배포에는 사용자 닉네임 변경 기능 제외
-         * // 회원 정보 수정
-         * 
-         * @Transactional
-         * public MemberResponseDto updateMember(String memberName, MemberRequestDto
-         * requestDto) throws Exception {
-         * MemberEntity memberEntity =
-         * memberRepository.findByMemberName(memberName).orElseThrow(
-         * // 사용자명이 존재하지 않으면 예외 처리
-         * () -> new IllegalArgumentException("존재하지 않은 사용자입니다."));
-         * 
-         * // 비밀번호가 일치하지 않으면 예외 처리
-         * if (!requestDto.getPassword().equals(memberEntity.getPassword())) {
-         * throw new Exception("비밀번호가 일치하지 않습니다.");
-         * }
-         * 
-         * memberRepository.updateMemberName(memberName, requestDto.getMemberName());
-         * 
-         * return MemberResponseDto.builder()
-         * .memberId(memberEntity.getMemberId())
-         * .memberName(memberEntity.getMemberName())
-         * .password(memberEntity.getPassword())
-         * .role(memberEntity.getRole())
-         * .createdAt(memberEntity.getCreatedAt())
-         * .build();
-         * }
-         */
 }
