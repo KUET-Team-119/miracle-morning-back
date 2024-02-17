@@ -41,7 +41,7 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
     private String issuer;
 
     private SecretKey secretKey;
-    private Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 30; // 30분 동안 토큰 유효
+    private Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60; // 1시간 동안 토큰 유효
 
     @PostConstruct
     public void init() {
