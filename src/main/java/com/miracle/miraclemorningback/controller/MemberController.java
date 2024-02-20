@@ -1,6 +1,5 @@
 package com.miracle.miraclemorningback.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,11 +18,10 @@ import com.miracle.miraclemorningback.service.MemberService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequiredArgsConstructor // MemberService에 대한 멤버를 사용 가능
+@RequiredArgsConstructor
 public class MemberController {
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
     // 전체 회원 조회
     @GetMapping("/api/admin/members")

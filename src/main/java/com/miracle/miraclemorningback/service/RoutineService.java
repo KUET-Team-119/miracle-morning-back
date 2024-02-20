@@ -2,7 +2,6 @@ package com.miracle.miraclemorningback.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,14 +18,12 @@ import com.miracle.miraclemorningback.repository.RoutineRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service // 스프링이 관리해주는 객체, 스프링 빈
-@RequiredArgsConstructor // controller와 같이 final 멤버 변수 생성자를 만드는 역할
+@RequiredArgsConstructor
 public class RoutineService {
 
-        @Autowired
-        private RoutineRepository routineRepository;
+        private final RoutineRepository routineRepository;
 
-        @Autowired
-        private MemberRepository memberRepository;
+        private final MemberRepository memberRepository;
 
         // 전체 루틴 조회
         @Transactional(readOnly = true)

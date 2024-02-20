@@ -2,7 +2,6 @@ package com.miracle.miraclemorningback.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +23,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 
-        @Autowired
-        private MemberRepository memberRepository;
+        private final MemberRepository memberRepository;
 
-        @Autowired
-        private JwtTokenProvider jwtTokenProvider;
+        private final JwtTokenProvider jwtTokenProvider;
 
         @Value("${su.name}")
         private String su;

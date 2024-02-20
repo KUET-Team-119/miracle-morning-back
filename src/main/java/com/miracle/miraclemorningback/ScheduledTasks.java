@@ -10,7 +10,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,17 +19,17 @@ import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.ResultRepository;
 import com.miracle.miraclemorningback.repository.RoutineRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class ScheduledTasks {
 
-    @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    private RoutineRepository routineRepository;
+    private final RoutineRepository routineRepository;
 
-    @Autowired
-    private ResultRepository resultRepository;
+    private final ResultRepository resultRepository;
 
     // 인증 사진 저장 경로
     @Value("${images.path}")

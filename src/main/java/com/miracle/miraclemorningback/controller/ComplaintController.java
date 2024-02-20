@@ -1,6 +1,5 @@
 package com.miracle.miraclemorningback.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,8 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ComplaintController {
 
-    @Autowired
-    private ComplaintService complaintService;
+    private final ComplaintService complaintService;
 
     // 제보 조회
     @GetMapping("/api/complaints")

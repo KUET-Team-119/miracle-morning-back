@@ -2,7 +2,6 @@ package com.miracle.miraclemorningback.controller;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,8 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResultController {
 
-    @Autowired
-    private ResultService resultService;
+    private final ResultService resultService;
 
     // 전체 기록 조회
     @GetMapping("/api/all/results")

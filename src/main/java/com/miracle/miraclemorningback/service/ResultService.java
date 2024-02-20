@@ -7,7 +7,6 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,17 +32,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResultService {
 
-        @Autowired
-        private MemberRepository memberRepository;
+        private final MemberRepository memberRepository;
 
-        @Autowired
-        private RoutineRepository routineRepository;
+        private final RoutineRepository routineRepository;
 
-        @Autowired
-        private ResultRepository resultRepository;
+        private final ResultRepository resultRepository;
 
-        @Autowired
-        private TodayRoutinesRepository todayRoutinesRepository;
+        private final TodayRoutinesRepository todayRoutinesRepository;
 
         // 인증 사진 저장 경로
         @Value("${images.path}")
