@@ -43,9 +43,6 @@ public class RoutineEntity extends Timestamped {
     @Column
     private String routineName; // 루틴명
 
-    @Column
-    private String strategy; // 실천전략
-
     @Column(nullable = false)
     private String certification; // 인증방법
 
@@ -62,10 +59,8 @@ public class RoutineEntity extends Timestamped {
     private List<ResultEntity> results = new ArrayList<>();
 
     @Builder
-    public RoutineEntity(String routineName, String strategy, String certification, Time startTime, Time endTime,
-            Boolean isActivated) {
+    public RoutineEntity(String routineName, String certification, Time startTime, Time endTime, Boolean isActivated) {
         this.routineName = routineName;
-        this.strategy = strategy;
         this.certification = certification;
         this.startTime = startTime;
         this.endTime = endTime;

@@ -1,7 +1,6 @@
 package com.miracle.miraclemorningback.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
-import com.miracle.miraclemorningback.dto.ResultResponseDto;
-import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.ResultService;
 
@@ -32,7 +29,7 @@ public class ResultController {
 
     // 전체 기록 조회
     @GetMapping("/api/all/results")
-    public List<ResultResponseDto> getResults() {
+    public ResponseEntity<Object> getResults() {
         return resultService.getResults();
     }
 
@@ -64,7 +61,7 @@ public class ResultController {
 
     // 오늘 날짜의 기록 조회
     @GetMapping("/api/result/today")
-    public List<ResultResponseDto> getTodayResult() {
+    public ResponseEntity<Object> getTodayResult() {
         return resultService.getTodayResult();
     }
 
@@ -77,7 +74,7 @@ public class ResultController {
 
     // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
     @GetMapping("/api/all/routines/today")
-    public List<TodayRoutinesDto> getAllTodayRoutines(Authentication authentication) {
+    public ResponseEntity<Object> getAllTodayRoutines(Authentication authentication) {
         return resultService.getAllTodayRoutines();
     }
 

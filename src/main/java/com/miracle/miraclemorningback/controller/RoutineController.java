@@ -1,7 +1,5 @@
 package com.miracle.miraclemorningback.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
-import com.miracle.miraclemorningback.dto.RoutineResponseDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.RoutineService;
 
@@ -29,7 +26,7 @@ public class RoutineController {
 
     // 전체 루틴 조회
     @GetMapping("/api/routines")
-    public List<RoutineResponseDto> getRoutines() {
+    public ResponseEntity<Object> getRoutines() {
         return routineService.getRoutines();
     }
 

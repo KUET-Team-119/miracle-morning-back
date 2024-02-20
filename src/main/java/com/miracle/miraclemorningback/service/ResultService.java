@@ -51,8 +51,8 @@ public class ResultService {
 
         // 전체 기록 조회
         @Transactional(readOnly = true)
-        public List<ResultResponseDto> getResults() {
-                return resultRepository.findAll().stream()
+        public ResponseEntity<Object> getResults() {
+                List<ResultResponseDto> listOfResults = resultRepository.findAll().stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineEntity().getRoutineName())
@@ -61,6 +61,8 @@ public class ResultService {
                                                 .createdAt(resultEntity.getCreatedAt())
                                                 .build())
                                 .toList();
+
+                return ResponseEntity.ok().body(listOfResults);
         }
 
         // 루틴 인증을 위한 기록 추가
@@ -181,8 +183,8 @@ public class ResultService {
 
         // 오늘 날짜의 기록 조회
         @Transactional
-        public List<ResultResponseDto> getTodayResult() {
-                return resultRepository.findAllByCurrentDate().stream()
+        public ResponseEntity<Object> getTodayResult() {
+                List<ResultResponseDto> listOfTodayResults = resultRepository.findAllByCurrentDate().stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineId(resultEntity.getRoutineEntity().getRoutineId())
@@ -193,6 +195,8 @@ public class ResultService {
                                                 .doneAt(resultEntity.getDoneAt())
                                                 .build())
                                 .toList();
+
+                return ResponseEntity.ok().body(listOfTodayResults);
         }
 
         // 특정 사용자의 오늘 날짜의 기록 조회
@@ -220,7 +224,6 @@ public class ResultService {
                                                 .routineId(todayRoutinesEntity.getRoutine_id())
                                                 .routineName(todayRoutinesEntity.getRoutine_name())
                                                 .memberName(memberEntity.getMemberName())
-                                                .strategy(todayRoutinesEntity.getStrategy())
                                                 .certification(todayRoutinesEntity.getCertification())
                                                 .startTime(todayRoutinesEntity.getStart_time())
                                                 .endTime(todayRoutinesEntity.getEnd_time())
@@ -237,7 +240,6 @@ public class ResultService {
                                                 .routineId(todayRoutinesEntity.getRoutine_id())
                                                 .routineName(todayRoutinesEntity.getRoutine_name())
                                                 .memberName(memberEntity.getMemberName())
-                                                .strategy(todayRoutinesEntity.getStrategy())
                                                 .certification(todayRoutinesEntity.getCertification())
                                                 .startTime(todayRoutinesEntity.getStart_time())
                                                 .endTime(todayRoutinesEntity.getEnd_time())
@@ -255,7 +257,7 @@ public class ResultService {
 
         // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
         @Transactional
-        public List<TodayRoutinesDto> getAllTodayRoutines() {
+        public ResponseEntity<Object> getAllTodayRoutines() {
                 List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
                 List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
                 List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
@@ -268,7 +270,6 @@ public class ResultService {
                                                 .memberName(memberRepository
                                                                 .findById(todayRoutinesEntity.getMember_id()).get()
                                                                 .getMemberName())
-                                                .strategy(todayRoutinesEntity.getStrategy())
                                                 .certification(todayRoutinesEntity.getCertification())
                                                 .startTime(todayRoutinesEntity.getStart_time())
                                                 .endTime(todayRoutinesEntity.getEnd_time())
@@ -286,7 +287,6 @@ public class ResultService {
                                                 .memberName(memberRepository
                                                                 .findById(todayRoutinesEntity.getMember_id()).get()
                                                                 .getMemberName())
-                                                .strategy(todayRoutinesEntity.getStrategy())
                                                 .certification(todayRoutinesEntity.getCertification())
                                                 .startTime(todayRoutinesEntity.getStart_time())
                                                 .endTime(todayRoutinesEntity.getEnd_time())
@@ -299,7 +299,7 @@ public class ResultService {
                 todayRoutinesDto.addAll(incompleteRoutines);
                 todayRoutinesDto.addAll(completeRoutines);
 
-                return todayRoutinesDto;
+                return ResponseEntity.ok().body(todayRoutinesDto);
         }
 
         // // 인증 사진 다운

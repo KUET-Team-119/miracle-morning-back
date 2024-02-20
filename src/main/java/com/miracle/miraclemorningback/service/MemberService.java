@@ -35,16 +35,18 @@ public class MemberService {
 
         // 전체 회원 조회
         @Transactional(readOnly = true)
-        public List<MemberResponseDto> getMembers() {
-
-                return memberRepository.findAll().stream().map(memberEntity -> MemberResponseDto.builder()
-                                .memberId(memberEntity.getMemberId())
-                                .memberName(memberEntity.getMemberName())
-                                .password(memberEntity.getPassword())
-                                .role(memberEntity.getRole())
-                                .createdAt(memberEntity.getCreatedAt())
-                                .build())
+        public ResponseEntity<Object> getMembers() {
+                List<MemberResponseDto> listOfMembers = memberRepository.findAll().stream()
+                                .map(memberEntity -> MemberResponseDto.builder()
+                                                .memberId(memberEntity.getMemberId())
+                                                .memberName(memberEntity.getMemberName())
+                                                .password(memberEntity.getPassword())
+                                                .role(memberEntity.getRole())
+                                                .createdAt(memberEntity.getCreatedAt())
+                                                .build())
                                 .toList();
+
+                return ResponseEntity.ok().body(listOfMembers);
         }
 
         // 회원 등록

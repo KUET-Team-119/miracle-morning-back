@@ -30,13 +30,12 @@ public class RoutineService {
 
         // 전체 루틴 조회
         @Transactional(readOnly = true)
-        public List<RoutineResponseDto> getRoutines() {
-                return routineRepository.findAll().stream()
+        public ResponseEntity<Object> getRoutines() {
+                List<RoutineResponseDto> listOfRoutines = routineRepository.findAll().stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
                                                 .memberName(routineEntity.getMemberEntity().getMemberName())
-                                                .strategy(routineEntity.getStrategy())
                                                 .certification(routineEntity.getCertification())
                                                 .startTime(routineEntity.getStartTime())
                                                 .endTime(routineEntity.getEndTime())
@@ -45,6 +44,8 @@ public class RoutineService {
                                                 .modifiedAt(routineEntity.getModifiedAt())
                                                 .build())
                                 .toList();
+
+                return ResponseEntity.ok().body(listOfRoutines);
         }
 
         // 루틴 추가
@@ -79,7 +80,6 @@ public class RoutineService {
                         // 존재하지 않은 사용자, 중복되지 않은 루틴명인 경우 -> 루틴 추가 로직 수행
                         RoutineEntity routineEntity = RoutineEntity.builder()
                                         .routineName(requestDto.getRoutineName())
-                                        .strategy(requestDto.getStrategy())
                                         .certification(requestDto.getCertification())
                                         .startTime(requestDto.getStartTime())
                                         .endTime(requestDto.getEndTime())
@@ -112,7 +112,6 @@ public class RoutineService {
                         // 존재하지 않은 사용자, 중복되지 않은 루틴명인 경우 -> 루틴 추가 로직 수행
                         RoutineEntity routineEntity = RoutineEntity.builder()
                                         .routineName(requestDto.getRoutineName())
-                                        .strategy(requestDto.getStrategy())
                                         .certification(requestDto.getCertification())
                                         .startTime(requestDto.getStartTime())
                                         .endTime(requestDto.getEndTime())
@@ -153,7 +152,6 @@ public class RoutineService {
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
                                                 .memberName(routineEntity.getMemberEntity().getMemberName())
-                                                .strategy(routineEntity.getStrategy())
                                                 .certification(routineEntity.getCertification())
                                                 .startTime(routineEntity.getStartTime())
                                                 .endTime(routineEntity.getEndTime())
@@ -181,7 +179,6 @@ public class RoutineService {
 
                 routineRepository.updateRoutine(
                                 requestDto.getRoutineId(),
-                                requestDto.getStrategy(),
                                 requestDto.getCertification(),
                                 requestDto.getStartTime(),
                                 requestDto.getEndTime(),

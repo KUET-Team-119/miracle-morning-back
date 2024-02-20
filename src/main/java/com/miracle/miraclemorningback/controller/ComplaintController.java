@@ -1,7 +1,5 @@
 package com.miracle.miraclemorningback.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miracle.miraclemorningback.dto.ComplaintRequestDto;
-import com.miracle.miraclemorningback.dto.ComplaintResponseDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.ComplaintService;
 
@@ -28,7 +25,7 @@ public class ComplaintController {
 
     // 제보 조회
     @GetMapping("/api/complaints")
-    public List<ComplaintResponseDto> getComplaints() {
+    public ResponseEntity<Object> getComplaints() {
         return complaintService.getComplaints();
     }
 

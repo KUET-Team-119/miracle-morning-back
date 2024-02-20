@@ -1,7 +1,5 @@
 package com.miracle.miraclemorningback.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
-import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.MemberService;
 
@@ -30,7 +27,7 @@ public class MemberController {
 
     // 전체 회원 조회
     @GetMapping("/api/admin/members")
-    public List<MemberResponseDto> getMembers() {
+    public ResponseEntity<Object> getMembers() {
         return memberService.getMembers();
     }
 

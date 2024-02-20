@@ -24,15 +24,18 @@ public class ComplaintService {
     private ComplaintRepository complaintRepository;
 
     // 제보 조회
-    @Transactional
-    public List<ComplaintResponseDto> getComplaints() {
-        return complaintRepository.findAll().stream().map(complaintEntity -> ComplaintResponseDto.builder()
-                .complaintId(complaintEntity.getComplaintId())
-                .memberName(complaintEntity.getMemberName())
-                .content(complaintEntity.getContent())
-                .createdAt(complaintEntity.getCreatedAt())
-                .build())
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> getComplaints() {
+        List<ComplaintResponseDto> listOfComplaints = complaintRepository.findAll().stream()
+                .map(complaintEntity -> ComplaintResponseDto.builder()
+                        .complaintId(complaintEntity.getComplaintId())
+                        .memberName(complaintEntity.getMemberName())
+                        .content(complaintEntity.getContent())
+                        .createdAt(complaintEntity.getCreatedAt())
+                        .build())
                 .toList();
+
+        return ResponseEntity.ok().body(listOfComplaints);
     }
 
     // 오류 제보
