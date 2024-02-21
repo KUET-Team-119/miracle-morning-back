@@ -15,7 +15,21 @@ services:
       - ./miracle-morning-mysql/conf.d:/etc/mysql/conf.d
       - ./miracle-morning-mysql/data:/var/lib/mysql
     healthcheck: # MySQL이 실행된 이후 Springboot가 실행되도록 설정
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "miracle_morning_mysql"]
+      interval: 3s
+      timeout: 20s
+      retries: 10
+    networks:
+      - miracle_morning_network
+
+  miracle_morning_redis:
+    container_name: miracle_morning_redis
+    image: redis:alpine
+    entrypoint: ["redis-server", "--port", "6379"]
+    expose:
+      - 6379
+    healthcheck: # Redis가 실행된 이후 Springboot가 실행되도록 설정
+      test: ["CMD", "redis-cli", "ping"]
       interval: 3s
       timeout: 20s
       retries: 10
@@ -30,8 +44,10 @@ services:
       - .env
     expose:
       - 8080
-    depends_on: # MySQL이 실행된 이후 Springboot가 실행되도록 설정
+    depends_on: # MySQL, Redis가 실행된 이후 Springboot가 실행되도록 설정
       miracle_morning_mysql:
+        condition: service_healthy
+      miracle_morning_redis:
         condition: service_healthy
     networks:
       - miracle_morning_network

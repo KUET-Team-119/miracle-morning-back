@@ -46,6 +46,8 @@ jobs:
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           IMAGES_PATH: ${{ secrets.IMAGES_PATH }}
@@ -58,6 +60,7 @@ jobs:
           echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> .env
           echo MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} >> .env
           echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> .env
+          echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
           echo CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_ISSUER=${{ secrets.JWT_ISSUER }} >> .env
