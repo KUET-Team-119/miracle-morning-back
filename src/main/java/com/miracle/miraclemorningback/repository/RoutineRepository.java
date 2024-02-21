@@ -20,8 +20,9 @@ public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
 
         // 루틴 수정
         @Modifying
-        @Query("UPDATE RoutineEntity ro SET ro.certification = :certification, ro.startTime = :start_time, ro.endTime = :end_time, ro.isActivated = :is_activated WHERE ro.routineId = :routine_id")
+        @Query("UPDATE RoutineEntity ro SET ro.dayOfWeek = :day_of_week, ro.certification = :certification, ro.startTime = :start_time, ro.endTime = :end_time, ro.isActivated = :is_activated WHERE ro.routineId = :routine_id")
         void updateRoutine(@Param("routine_id") Long routineId,
+                        @Param("day_of_week") String dayOfWeek,
                         @Param("certification") String certification,
                         @Param("start_time") Time startTime,
                         @Param("end_time") Time endTime,

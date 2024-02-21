@@ -15,6 +15,7 @@ public class TodayRoutinesDto {
     private Long routineId;
     private String routineName;
     private String memberName;
+    private String dayOfWeek;
     private String certification;
     private Time startTime;
     private Time endTime;
@@ -23,11 +24,13 @@ public class TodayRoutinesDto {
     private Boolean complete;
 
     @Builder
-    public TodayRoutinesDto(Long routineId, String routineName, String memberName, String certification,
-            Time startTime, Time endTime, LocalDateTime createdAt, LocalDateTime doneAt, Boolean complete) {
+    public TodayRoutinesDto(Long routineId, String routineName, String memberName, String dayOfWeek,
+            String certification, Time startTime, Time endTime, LocalDateTime createdAt, LocalDateTime doneAt,
+            Boolean complete) {
         this.routineId = routineId;
         this.routineName = routineName;
         this.memberName = memberName;
+        this.dayOfWeek = dayOfWeek;
         this.certification = certification;
         this.startTime = startTime;
         this.endTime = endTime;

@@ -15,6 +15,7 @@ import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.MemberService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -58,7 +59,7 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/api/auth/member")
-    public ResponseEntity<Object> loginMember(@RequestBody MemberRequestDto requestDto) {
-        return memberService.loginMember(requestDto);
+    public ResponseEntity<Object> loginMember(HttpServletResponse response, @RequestBody MemberRequestDto requestDto) {
+        return memberService.loginMember(response, requestDto);
     }
 }

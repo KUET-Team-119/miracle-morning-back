@@ -5,6 +5,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import com.miracle.miraclemorningback.repository.MemberRepository;
+import com.miracle.miraclemorningback.repository.RefreshTokenRepository;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +20,10 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
         private final JwtTokenProvider jwtTokenProvider;
+
+        private final RefreshTokenRepository refreshTokenRepository;
+
+        private final MemberRepository memberRepository;
 
         private final CorsConfigurationSource corsConfigurationSource;
 
@@ -40,7 +48,9 @@ public class SecurityConfig {
                                                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                                                 // 권한 확인 과정에서 발생하는 예외 처리
                                                 .accessDeniedHandler(new JwtAccessDeniedHandler()))
-                                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                                .addFilterBefore(
+                                                new JwtAuthenticationFilter(jwtTokenProvider, refreshTokenRepository,
+                                                                memberRepository),
                                                 UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();

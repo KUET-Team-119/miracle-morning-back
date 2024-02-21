@@ -33,6 +33,7 @@ public class RoutineService {
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
                                                 .memberName(routineEntity.getMemberEntity().getMemberName())
+                                                .dayOfWeek(routineEntity.getDayOfWeek())
                                                 .certification(routineEntity.getCertification())
                                                 .startTime(routineEntity.getStartTime())
                                                 .endTime(routineEntity.getEndTime())
@@ -77,6 +78,7 @@ public class RoutineService {
                         // 존재하지 않은 사용자, 중복되지 않은 루틴명인 경우 -> 루틴 추가 로직 수행
                         RoutineEntity routineEntity = RoutineEntity.builder()
                                         .routineName(requestDto.getRoutineName())
+                                        .dayOfWeek(requestDto.getDayOfWeek())
                                         .certification(requestDto.getCertification())
                                         .startTime(requestDto.getStartTime())
                                         .endTime(requestDto.getEndTime())
@@ -109,6 +111,7 @@ public class RoutineService {
                         // 존재하지 않은 사용자, 중복되지 않은 루틴명인 경우 -> 루틴 추가 로직 수행
                         RoutineEntity routineEntity = RoutineEntity.builder()
                                         .routineName(requestDto.getRoutineName())
+                                        .dayOfWeek(requestDto.getDayOfWeek())
                                         .certification(requestDto.getCertification())
                                         .startTime(requestDto.getStartTime())
                                         .endTime(requestDto.getEndTime())
@@ -149,6 +152,7 @@ public class RoutineService {
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
                                                 .memberName(routineEntity.getMemberEntity().getMemberName())
+                                                .dayOfWeek(routineEntity.getDayOfWeek())
                                                 .certification(routineEntity.getCertification())
                                                 .startTime(routineEntity.getStartTime())
                                                 .endTime(routineEntity.getEndTime())
@@ -176,6 +180,7 @@ public class RoutineService {
 
                 routineRepository.updateRoutine(
                                 requestDto.getRoutineId(),
+                                requestDto.getDayOfWeek(),
                                 requestDto.getCertification(),
                                 requestDto.getStartTime(),
                                 requestDto.getEndTime(),

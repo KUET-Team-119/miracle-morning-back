@@ -23,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
+import java.util.UUID;
+
 import javax.crypto.SecretKey;
 
 @Slf4j
@@ -31,6 +33,13 @@ import javax.crypto.SecretKey;
 public class JwtTokenProvider { // JWT 토큰 생성 및 검증
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60; // 1시간 동안 토큰 유효
+    private final Integer VALID_STATE = 0;
+    private final Integer MANIPULATED_STATE = 1;
+    private final Integer EXPIRED_STATE = 2;
+    private final Integer UNSUPPORTED_STATE = 3;
+    private final Integer WRONG_STATE = 4;
+    private final Integer OTHERS_STATE = 5;
 
     @Value("${jwt.secret}")
     private String secretKeyPlain;
@@ -39,15 +48,14 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
     private String issuer;
 
     private SecretKey secretKey;
-    private Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60; // 1시간 동안 토큰 유효
 
     @PostConstruct
     public void init() {
         this.secretKey = Keys.hmacShaKeyFor(secretKeyPlain.getBytes());
     }
 
-    // Jwt 토큰 생성
-    public String generateToken(Long memberId, String memberName, Role roles) {
+    // Jwt accessToken 생성
+    public String generateAccessToken(Long memberId, String memberName, Role roles) {
         Date now = new Date();
         String accessToken = Jwts.builder().claims().issuer(issuer).subject(memberName).issuedAt(now)
                 .expiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
@@ -55,6 +63,13 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
                 .add("roles", roles).and()
                 .signWith(secretKey).compact();
         return accessToken;
+    }
+
+    // Jwt refreshToken 생성
+    public String generateRefreshToken() {
+        String refreshToken = UUID.randomUUID().toString();
+
+        return refreshToken;
     }
 
     // Jwt 토큰으로 인증 정보 조회
@@ -79,19 +94,25 @@ public class JwtTokenProvider { // JWT 토큰 생성 및 검증
     }
 
     // Jwt 토큰의 유효성 검사
-    public Boolean validateToken(String accessToken) {
+    public Integer validateToken(String accessToken) {
         try {
             Jws<Claims> claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken);
-            return !claims.getPayload().getExpiration().before(new Date());
+            if (!claims.getPayload().getExpiration().before(new Date())) {
+                return VALID_STATE;
+            }
         } catch (SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
+            return MANIPULATED_STATE;
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");
+            return EXPIRED_STATE;
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
+            return UNSUPPORTED_STATE;
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
+            return WRONG_STATE;
         }
-        return false;
+        return OTHERS_STATE;
     }
 }

@@ -13,10 +13,14 @@ import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
+import com.miracle.miraclemorningback.entity.RefreshTokenEntity;
 import com.miracle.miraclemorningback.entity.Role;
 import com.miracle.miraclemorningback.repository.MemberRepository;
+import com.miracle.miraclemorningback.repository.RefreshTokenRepository;
 import com.miracle.miraclemorningback.security.JwtTokenProvider;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 
         private final MemberRepository memberRepository;
+
+        private final RefreshTokenRepository refreshTokenRepository;
 
         private final JwtTokenProvider jwtTokenProvider;
 
@@ -171,7 +177,7 @@ public class MemberService {
 
         // 로그인
         @Transactional
-        public ResponseEntity<Object> loginMember(MemberRequestDto requestDto) {
+        public ResponseEntity<Object> loginMember(HttpServletResponse response, MemberRequestDto requestDto) {
 
                 MemberEntity memberEntity = memberRepository.findByMemberName(requestDto.getMemberName()).orElse(null);
 
@@ -183,14 +189,35 @@ public class MemberService {
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(requestSuccessDto);
                 }
 
+                // 승인된 사용자인 경우 토큰 생성 후 반환
                 if (memberEntity.getRole() == Role.USER || memberEntity.getRole() == Role.ADMIN) {
-                        // 승인된 사용자인 경우 토큰 생성 후 반환
+
+                        String accessToken = jwtTokenProvider.generateAccessToken(
+                                        memberEntity.getMemberId(),
+                                        memberEntity.getMemberName(),
+                                        memberEntity.getRole());
+
+                        String refreshToken = jwtTokenProvider.generateRefreshToken();
+
                         TokenDto tokenDto = TokenDto.builder()
-                                        .accessToken(jwtTokenProvider.generateToken(
-                                                        memberEntity.getMemberId(),
-                                                        memberEntity.getMemberName(),
-                                                        memberEntity.getRole()))
+                                        .accessToken(accessToken)
                                         .build();
+
+                        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder()
+                                        .refreshToken(refreshToken)
+                                        .accessToken(accessToken)
+                                        .memberId(memberEntity.getMemberId())
+                                        .build();
+
+                        refreshTokenRepository.save(refreshTokenEntity);
+
+                        // 쿠키 생성
+                        Cookie cookie = new Cookie("refreshToken", refreshToken);
+                        cookie.setMaxAge(60 * 5); // 5분 동안 유효
+                        cookie.setPath("/"); // 쿠키 경로 설정
+                        response.addCookie(cookie); // 응답 헤더에 쿠키 추가
+
+                        // 헤더에 쿠키 정보 포함하여 응답
                         return ResponseEntity.ok().body(tokenDto);
                 } else {
                         // 승인되지 않은 사용자인 경우 FORBIDDEN 상태 코드를 반환

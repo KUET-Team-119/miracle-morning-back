@@ -14,6 +14,7 @@ public class RoutineResponseDto {
     private Long routineId;
     private String routineName;
     private String memberName;
+    private String dayOfWeek;
     private String certification;
     private Time startTime;
     private Time endTime;
@@ -22,11 +23,13 @@ public class RoutineResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public RoutineResponseDto(Long routineId, String routineName, String memberName, String certification,
-            Time startTime, Time endTime, Boolean isActivated, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public RoutineResponseDto(Long routineId, String routineName, String memberName, String dayOfWeek,
+            String certification, Time startTime, Time endTime, Boolean isActivated, LocalDateTime createdAt,
+            LocalDateTime modifiedAt) {
         this.routineId = routineId;
         this.routineName = routineName;
         this.memberName = memberName;
+        this.dayOfWeek = dayOfWeek;
         this.certification = certification;
         this.startTime = startTime;
         this.endTime = endTime;
