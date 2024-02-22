@@ -58,9 +58,9 @@ public class ResultController {
     }
 
     // 오늘 날짜의 기록 조회
-    @GetMapping("/api/result/today")
-    public ResponseEntity<Object> getTodayResult() {
-        return resultService.getTodayResult();
+    @GetMapping("/api/results/today")
+    public ResponseEntity<Object> getTodayResults() {
+        return resultService.getTodayResults();
     }
 
     // 특정 사용자의 오늘 날짜의 기록 조회
@@ -74,6 +74,12 @@ public class ResultController {
     @GetMapping("/api/all/routines/today")
     public ResponseEntity<Object> getAllTodayRoutines(Authentication authentication) {
         return resultService.getAllTodayRoutines();
+    }
+
+    @GetMapping("/api/results/week")
+    public ResponseEntity<Object> getDayOfWeekAchievement(Authentication authentication) {
+        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        return resultService.getDayOfWeekAchievement(memberName);
     }
 
     // // 인증 사진 다운

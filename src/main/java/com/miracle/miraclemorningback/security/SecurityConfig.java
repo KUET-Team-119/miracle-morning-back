@@ -4,16 +4,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.RefreshTokenRepository;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-
-import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Configuration
@@ -25,13 +24,14 @@ public class SecurityConfig {
 
         private final MemberRepository memberRepository;
 
-        private final CorsConfigurationSource corsConfigurationSource;
+        private final CorsConfig corsConfig;
 
         @Bean
         protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
                                 .csrf(Customizer -> Customizer.disable())
-                                .cors(Customizer -> Customizer.configurationSource(corsConfigurationSource))
+                                .cors(Customizer -> Customizer
+                                                .configurationSource(corsConfig.corsConfigurationSource()))
                                 .httpBasic(Customizer -> Customizer.disable()) // UI를 사용하는 것을 기본값으로 가진 시큐리티 설정을 비활성화
                                 .sessionManagement( // 세션 사용 안함, STATELESS로 설정
                                                 sessionManagement -> sessionManagement

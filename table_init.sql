@@ -14,9 +14,10 @@ CREATE TABLE routine (
     routine_id BIGINT NOT NULL AUTO_INCREMENT COMMENT '루틴 식별자',
     routine_name VARCHAR(255) COMMENT '루틴명',
     member_id BIGINT COMMENT '사용자 식별자',
+    day_of_week VARCHAR(255) COMMENT '실천 요일',
+    certification VARCHAR(255) COMMENT '인증 방법',
     start_time TIME(6) COMMENT '시작 시간',
     end_time TIME(6) COMMENT '종료 시간',
-    certification VARCHAR(255) NOT NULL COMMENT '인증 방법',
     is_activated BOOLEAN DEFAULT TRUE COMMENT '활성화 여부',
     created_at DATETIME(6) COMMENT '생성 일자',
     modified_at DATETIME(6) COMMENT '수정 일자',
@@ -37,19 +38,6 @@ CREATE TABLE result (
     FOREIGN KEY (member_id) REFERENCES member(member_id),
     FOREIGN KEY (routine_id) REFERENCES routine(routine_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='기록';
-
--- 오늘의 루틴 테이블 생성
-CREATE TABLE today_routines_entity (
-    routine_id BIGINT NOT NULL COMMENT '루틴 식별자',
-    routine_name VARCHAR(255) COMMENT '루틴명',
-    member_id BIGINT COMMENT '사용자 식별자',
-    certification VARCHAR(255) NOT NULL COMMENT '인증 방법',
-    start_time TIME(6) COMMENT '시작 시간',
-    end_time TIME(6) COMMENT '종료 시간',
-    done_at DATETIME(6) COMMENT '실천 시간',
-    created_at DATETIME(6) COMMENT '생성 일자',
-    PRIMARY KEY (routine_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='오늘의 루틴';
 
 -- 오류 제보 테이블 생성
 CREATE TABLE complaint (

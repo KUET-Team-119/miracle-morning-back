@@ -28,7 +28,7 @@ public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
                         @Param("end_time") Time endTime,
                         @Param("is_activated") Boolean isActivated);
 
-        // 활성화된 모든 루틴 가져오기
-        @Query("SELECT ro FROM RoutineEntity ro WHERE ro.isActivated = true")
-        List<RoutineEntity> getActivatedRoutines();
+        // 활성화되고 실천 요일이 유효한 모든 루틴 가져오기
+        @Query(value = "SELECT * FROM routine WHERE is_activated = true AND SUBSTRING(day_of_week, WEEKDAY(CURRENT_DATE) + 1, 1) = '1'", nativeQuery = true)
+        List<RoutineEntity> getActivatedAndValidDayOfWeekRoutines();
 }

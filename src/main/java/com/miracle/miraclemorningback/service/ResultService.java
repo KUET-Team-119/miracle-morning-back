@@ -14,17 +14,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.miracle.miraclemorningback.dto.DayOfWeekAchievementDto;
 import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
 import com.miracle.miraclemorningback.dto.ResultResponseDto;
 import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
+import com.miracle.miraclemorningback.entity.DayOfWeek;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.ResultEntity;
 import com.miracle.miraclemorningback.entity.RoutineEntity;
 import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.ResultRepository;
 import com.miracle.miraclemorningback.repository.RoutineRepository;
-import com.miracle.miraclemorningback.repository.TodayRoutinesRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,8 +38,6 @@ public class ResultService {
         private final RoutineRepository routineRepository;
 
         private final ResultRepository resultRepository;
-
-        private final TodayRoutinesRepository todayRoutinesRepository;
 
         // 인증 사진 저장 경로
         @Value("${images.path}")
@@ -178,7 +177,7 @@ public class ResultService {
 
         // 오늘 날짜의 기록 조회
         @Transactional
-        public ResponseEntity<Object> getTodayResult() {
+        public ResponseEntity<Object> getTodayResults() {
                 List<ResultResponseDto> listOfTodayResults = resultRepository.findAllByCurrentDate().stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
@@ -213,36 +212,11 @@ public class ResultService {
                 List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
 
                 // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = todayRoutinesRepository
-                                .getActivatedAndIncompleteRoutines(memberEntity.getMemberId()).stream()
-                                .map(todayRoutinesEntity -> TodayRoutinesDto.builder()
-                                                .routineId(todayRoutinesEntity.getRoutine_id())
-                                                .routineName(todayRoutinesEntity.getRoutine_name())
-                                                .memberName(memberEntity.getMemberName())
-                                                .certification(todayRoutinesEntity.getCertification())
-                                                .startTime(todayRoutinesEntity.getStart_time())
-                                                .endTime(todayRoutinesEntity.getEnd_time())
-                                                .createdAt(todayRoutinesEntity.getCreated_at())
-                                                .doneAt(todayRoutinesEntity.getDone_at())
-                                                .complete(false)
-                                                .build())
-                                .toList();
+                incompleteRoutines = resultRepository
+                                .getActivatedAndIncompleteRoutines(memberEntity.getMemberId());
 
                 // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = todayRoutinesRepository.getActivatedAndCompleteRoutines(memberEntity.getMemberId())
-                                .stream()
-                                .map(todayRoutinesEntity -> TodayRoutinesDto.builder()
-                                                .routineId(todayRoutinesEntity.getRoutine_id())
-                                                .routineName(todayRoutinesEntity.getRoutine_name())
-                                                .memberName(memberEntity.getMemberName())
-                                                .certification(todayRoutinesEntity.getCertification())
-                                                .startTime(todayRoutinesEntity.getStart_time())
-                                                .endTime(todayRoutinesEntity.getEnd_time())
-                                                .createdAt(todayRoutinesEntity.getCreated_at())
-                                                .doneAt(todayRoutinesEntity.getDone_at())
-                                                .complete(true)
-                                                .build())
-                                .toList();
+                completeRoutines = resultRepository.getActivatedAndCompleteRoutines(memberEntity.getMemberId());
 
                 todayRoutinesDto.addAll(incompleteRoutines);
                 todayRoutinesDto.addAll(completeRoutines);
@@ -258,43 +232,45 @@ public class ResultService {
                 List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
 
                 // 모든 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = todayRoutinesRepository.getAllActivatedAndIncompleteRoutines().stream()
-                                .map(todayRoutinesEntity -> TodayRoutinesDto.builder()
-                                                .routineId(todayRoutinesEntity.getRoutine_id())
-                                                .routineName(todayRoutinesEntity.getRoutine_name())
-                                                .memberName(memberRepository
-                                                                .findById(todayRoutinesEntity.getMember_id()).get()
-                                                                .getMemberName())
-                                                .certification(todayRoutinesEntity.getCertification())
-                                                .startTime(todayRoutinesEntity.getStart_time())
-                                                .endTime(todayRoutinesEntity.getEnd_time())
-                                                .createdAt(todayRoutinesEntity.getCreated_at())
-                                                .doneAt(todayRoutinesEntity.getDone_at())
-                                                .complete(false)
-                                                .build())
-                                .toList();
+                incompleteRoutines = resultRepository.getAllActivatedAndIncompleteRoutines();
 
                 // 모든 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = todayRoutinesRepository.getAllActivatedAndCompleteRoutines().stream()
-                                .map(todayRoutinesEntity -> TodayRoutinesDto.builder()
-                                                .routineId(todayRoutinesEntity.getRoutine_id())
-                                                .routineName(todayRoutinesEntity.getRoutine_name())
-                                                .memberName(memberRepository
-                                                                .findById(todayRoutinesEntity.getMember_id()).get()
-                                                                .getMemberName())
-                                                .certification(todayRoutinesEntity.getCertification())
-                                                .startTime(todayRoutinesEntity.getStart_time())
-                                                .endTime(todayRoutinesEntity.getEnd_time())
-                                                .createdAt(todayRoutinesEntity.getCreated_at())
-                                                .doneAt(todayRoutinesEntity.getDone_at())
-                                                .complete(true)
-                                                .build())
-                                .toList();
+                completeRoutines = resultRepository.getAllActivatedAndCompleteRoutines();
 
                 todayRoutinesDto.addAll(incompleteRoutines);
                 todayRoutinesDto.addAll(completeRoutines);
 
                 return ResponseEntity.ok().body(todayRoutinesDto);
+        }
+
+        // 요일별 달성률
+        @Transactional
+        public ResponseEntity<Object> getDayOfWeekAchievement(String memberName) {
+
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElseGet(null);
+
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
+                List<DayOfWeekAchievementDto> listOfDayOfWeekAchievementDto = new ArrayList<>();
+
+                DayOfWeek[] dayOfWeek = DayOfWeek.values();
+
+                for (int i = 0; i < dayOfWeek.length; i++) {
+                        DayOfWeekAchievementDto dayOfWeekAchievementDto = DayOfWeekAchievementDto.builder()
+                                        .dayOfWeek(dayOfWeek[i])
+                                        .achievement(resultRepository.getDayOfWeekAchievement(memberEntity, i))
+                                        .build();
+
+                        listOfDayOfWeekAchievementDto.add(dayOfWeekAchievementDto);
+                }
+
+                return ResponseEntity.ok().body(listOfDayOfWeekAchievementDto);
         }
 
         // // 인증 사진 다운

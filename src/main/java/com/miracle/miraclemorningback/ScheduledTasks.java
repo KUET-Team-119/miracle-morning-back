@@ -75,7 +75,7 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 작동
     // 인증되지 않은 루틴 기록 생성
     public void generateIncompleteResults() {
-        routineRepository.getActivatedRoutines().forEach(routineEntity -> {
+        routineRepository.getActivatedAndValidDayOfWeekRoutines().forEach(routineEntity -> {
             ResultEntity resultEntity = ResultEntity.builder()
                     .build();
             resultEntity.setRoutineEntity(routineEntity);
