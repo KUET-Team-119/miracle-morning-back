@@ -18,6 +18,7 @@ import com.miracle.miraclemorningback.dto.DayOfWeekAchievementDto;
 import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
 import com.miracle.miraclemorningback.dto.ResultResponseDto;
+import com.miracle.miraclemorningback.dto.RoutineAchievementDto;
 import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.entity.DayOfWeek;
 import com.miracle.miraclemorningback.entity.MemberEntity;
@@ -212,11 +213,10 @@ public class ResultService {
                 List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
 
                 // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = resultRepository
-                                .getActivatedAndIncompleteRoutines(memberEntity.getMemberId());
+                incompleteRoutines = resultRepository.getActivatedAndIncompleteRoutines(memberEntity);
 
                 // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = resultRepository.getActivatedAndCompleteRoutines(memberEntity.getMemberId());
+                completeRoutines = resultRepository.getActivatedAndCompleteRoutines(memberEntity);
 
                 todayRoutinesDto.addAll(incompleteRoutines);
                 todayRoutinesDto.addAll(completeRoutines);
@@ -271,6 +271,26 @@ public class ResultService {
                 }
 
                 return ResponseEntity.ok().body(listOfDayOfWeekAchievementDto);
+        }
+
+        // 루틴별 달성률
+        @Transactional
+        public ResponseEntity<Object> getRoutineAchievement(String memberName) {
+
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElseGet(null);
+
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
+                List<RoutineAchievementDto> routineAchievementDto = resultRepository
+                                .getRoutineAchievement(memberEntity);
+
+                return ResponseEntity.ok().body(routineAchievementDto);
         }
 
         // // 인증 사진 다운

@@ -39,7 +39,7 @@ public class MemberService {
         // 전체 회원 조회
         @Transactional(readOnly = true)
         public ResponseEntity<Object> getMembers() {
-                List<MemberResponseDto> listOfMembers = memberRepository.findAll().stream()
+                List<MemberResponseDto> members = memberRepository.findAll().stream()
                                 .map(memberEntity -> MemberResponseDto.builder()
                                                 .memberId(memberEntity.getMemberId())
                                                 .memberName(memberEntity.getMemberName())
@@ -49,7 +49,7 @@ public class MemberService {
                                                 .build())
                                 .toList();
 
-                return ResponseEntity.ok().body(listOfMembers);
+                return ResponseEntity.ok().body(members);
         }
 
         // 회원 등록

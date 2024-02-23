@@ -82,6 +82,12 @@ public class ResultController {
         return resultService.getDayOfWeekAchievement(memberName);
     }
 
+    @GetMapping("api/results/routines")
+    public ResponseEntity<Object> getRoutineAchievement(Authentication authentication) {
+        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        return resultService.getRoutineAchievement(memberName);
+    }
+
     // // 인증 사진 다운
     // @GetMapping("/api/result/proofFiles")
     // public List<ResultResponseDto> getProofFiles() throws IOException {
