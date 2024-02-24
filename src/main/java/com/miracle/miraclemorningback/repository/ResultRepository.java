@@ -24,9 +24,13 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
                         @Param("year") Integer year,
                         @Param("month") Integer month);
 
-        // 오늘 날짜의 기록 조회
-        @Query("SELECT re FROM ResultEntity re WHERE DATE(re.createdAt) = CURRENT_DATE")
-        List<ResultEntity> findAllByCurrentDate();
+        // 사용자가 인증한 기록 중 오늘 날짜의 기록 조회
+        @Query("SELECT re FROM ResultEntity re WHERE re.doneAt IS NOT NULL AND DATE(re.createdAt) = CURRENT_DATE ORDER BY re.doneAt DESC")
+        List<ResultEntity> getCompleteAndTodayResults();
+
+        // 사용자가 인증한 기록 중 오늘을 포함해서 4일 전까지의 기록 조회
+        @Query("SELECT re FROM ResultEntity re WHERE re.doneAt IS NOT NULL AND FUNCTION('DATEDIFF', CURRENT_DATE, re.createdAt) < 5 ORDER BY re.doneAt DESC")
+        List<ResultEntity> getCompleteAndRecentResults();
 
         // 인증한 루틴 기록 업데이트
         @Modifying
@@ -61,8 +65,4 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
         // 최근 1달 루틴별 달성률
         @Query("SELECT NEW com.miracle.miraclemorningback.dto.RoutineAchievementDto(ro.routineName, CEIL(COALESCE((COUNT(CASE WHEN re.doneAt IS NOT NULL THEN 1 END) / COUNT(re.resultId) * 100), 0))) FROM ResultEntity re JOIN re.routineEntity ro WHERE re.memberEntity = :member_entity AND FUNCTION('DATEDIFF', CURRENT_DATE, re.createdAt) <= 30 GROUP BY ro.routineName")
         List<RoutineAchievementDto> getRoutineAchievement(@Param("member_entity") MemberEntity memberEntity);
-
-        // 사용자가 인증한 기록 중 오늘을 포함해서 4일 전까지의 기록 조회
-        @Query("SELECT re FROM ResultEntity re WHERE re.doneAt IS NOT NULL AND FUNCTION('DATEDIFF', CURRENT_DATE, re.createdAt) < 5")
-        List<ResultEntity> getCompleteResults();
 }

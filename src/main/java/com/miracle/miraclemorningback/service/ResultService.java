@@ -166,7 +166,7 @@ public class ResultService {
         // 오늘 날짜의 기록 조회
         @Transactional
         public ResponseEntity<Object> getTodayResults() {
-                List<ResultResponseDto> listOfTodayResults = resultRepository.findAllByCurrentDate().stream()
+                List<ResultResponseDto> listOfTodayResults = resultRepository.getCompleteAndTodayResults().stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineId(resultEntity.getRoutineEntity().getRoutineId())
@@ -260,7 +260,7 @@ public class ResultService {
                 return ResponseEntity.ok().body(listOfDayOfWeekAchievementDto);
         }
 
-        // 루틴별 달성률
+        // 최근 1달 루틴별 달성률
         @Transactional
         public ResponseEntity<Object> getRoutineAchievement(String memberName) {
 
@@ -280,12 +280,45 @@ public class ResultService {
                 return ResponseEntity.ok().body(routineAchievementDto);
         }
 
-        // 인증 사진 다운
+        // 사용자가 인증한 기록 중 오늘 날짜의 기록 조회
         @Transactional
-        public ResponseEntity<Object> getProofImages() {
+        public ResponseEntity<Object> getCompleteAndTodayResults() {
                 List<ResultResponseDto> resultResponseDto = new ArrayList<>();
 
-                resultRepository.getCompleteResults().forEach(resultEntity -> {
+                resultRepository.getCompleteAndTodayResults().forEach(resultEntity -> {
+                        try {
+                                // 파일 경로
+                                Path path = Paths.get(resultEntity.getProofFilePath());
+                                // 파일을 Base64로 인코딩
+                                String encodedFile = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+
+                                // ProofImageDto 생성 및 리스트에 추가
+                                resultResponseDto.add(ResultResponseDto.builder()
+                                                .resultId(resultEntity.getResultId())
+                                                .routineId(resultEntity.getRoutineEntity().getRoutineId())
+                                                .routineName(resultEntity.getRoutineEntity().getRoutineName())
+                                                .memberId(resultEntity.getMemberEntity().getMemberId())
+                                                .memberName(resultEntity.getMemberEntity().getMemberName())
+                                                .createdAt(resultEntity.getCreatedAt())
+                                                .doneAt(resultEntity.getDoneAt())
+                                                .fileBase64(encodedFile)
+                                                .build());
+                        } catch (IOException e) {
+                                // 파일 읽기 오류 처리
+                                e.printStackTrace();
+                        }
+                });
+
+                // ResponseEntity를 사용하여 응답 반환
+                return ResponseEntity.ok().body(resultResponseDto);
+        }
+
+        // 사용자가 인증한 기록 중 오늘을 포함해서 4일 전까지의 기록 조회
+        @Transactional
+        public ResponseEntity<Object> getCompleteAndRecentResults() {
+                List<ResultResponseDto> resultResponseDto = new ArrayList<>();
+
+                resultRepository.getCompleteAndRecentResults().forEach(resultEntity -> {
                         try {
                                 // 파일 경로
                                 Path path = Paths.get(resultEntity.getProofFilePath());

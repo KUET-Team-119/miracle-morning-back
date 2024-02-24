@@ -31,6 +31,18 @@ public class ResultController {
         return resultService.getResults();
     }
 
+    // 사용자가 인증한 기록 중 오늘 날짜의 기록 조회
+    @GetMapping("/api/results/today")
+    public ResponseEntity<Object> getCompleteAndTodayResults() {
+        return resultService.getCompleteAndRecentResults();
+    }
+
+    // 사용자가 인증한 기록 중 오늘을 포함해서 4일 전까지의 기록 조회
+    @GetMapping("/api/admin/results/recent")
+    public ResponseEntity<Object> getCompleteAndRecentResults() {
+        return resultService.getCompleteAndRecentResults();
+    }
+
     // 기록 추가
     @PatchMapping("/api/results")
     public ResponseEntity<Object> updateResult(Authentication authentication,
@@ -55,12 +67,6 @@ public class ResultController {
     @DeleteMapping("/api/result/{resultId}")
     public ResponseEntity<Object> deleteResult(@PathVariable Long resultId) {
         return resultService.deleteResult(resultId);
-    }
-
-    // 오늘 날짜의 기록 조회
-    @GetMapping("/api/results/today")
-    public ResponseEntity<Object> getTodayResults() {
-        return resultService.getTodayResults();
     }
 
     // 특정 사용자의 오늘 날짜의 기록 조회
@@ -88,11 +94,5 @@ public class ResultController {
     public ResponseEntity<Object> getRoutineAchievement(Authentication authentication) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         return resultService.getRoutineAchievement(memberName);
-    }
-
-    // 인증 사진 다운
-    @GetMapping("/api/admin/results/proofImages")
-    public ResponseEntity<Object> getProofFiles() {
-        return resultService.getProofImages();
     }
 }
