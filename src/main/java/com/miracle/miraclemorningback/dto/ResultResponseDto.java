@@ -17,6 +17,7 @@ public class ResultResponseDto {
     private String memberName;
     private LocalDateTime createdAt;
     private LocalDateTime doneAt;
+    private String fileBase64;
 
     @Builder
     public ResultResponseDto(
@@ -26,7 +27,8 @@ public class ResultResponseDto {
             Long memberId,
             String memberName,
             LocalDateTime createdAt,
-            LocalDateTime doneAt) {
+            LocalDateTime doneAt,
+            String fileBase64) {
         this.resultId = resultId;
         this.routineId = routineId;
         this.routineName = routineName;
@@ -34,5 +36,6 @@ public class ResultResponseDto {
         this.memberName = memberName;
         this.createdAt = createdAt;
         this.doneAt = doneAt;
+        this.fileBase64 = fileBase64;
     }
 }

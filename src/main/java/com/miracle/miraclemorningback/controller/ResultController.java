@@ -35,7 +35,7 @@ public class ResultController {
     @PatchMapping("/api/results")
     public ResponseEntity<Object> updateResult(Authentication authentication,
             @RequestPart("data") ResultRequestDto requestDto,
-            @RequestPart("file") MultipartFile file) throws IOException {
+            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
 
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
 
@@ -76,21 +76,23 @@ public class ResultController {
         return resultService.getAllTodayRoutines();
     }
 
+    // 최근 1달 요일별 달성률
     @GetMapping("/api/results/week")
     public ResponseEntity<Object> getDayOfWeekAchievement(Authentication authentication) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         return resultService.getDayOfWeekAchievement(memberName);
     }
 
+    // 최근 1달 루틴별 달성률
     @GetMapping("api/results/routines")
     public ResponseEntity<Object> getRoutineAchievement(Authentication authentication) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         return resultService.getRoutineAchievement(memberName);
     }
 
-    // // 인증 사진 다운
-    // @GetMapping("/api/result/proofFiles")
-    // public List<ResultResponseDto> getProofFiles() throws IOException {
-    // return resultService.getProofFiles();
-    // }
+    // 인증 사진 다운
+    @GetMapping("/api/admin/results/proofImages")
+    public ResponseEntity<Object> getProofFiles() {
+        return resultService.getProofImages();
+    }
 }

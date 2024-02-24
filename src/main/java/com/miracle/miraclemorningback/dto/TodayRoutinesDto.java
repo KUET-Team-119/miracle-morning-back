@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TodayRoutinesDto {
 
+    private Long resultId;
     private Long routineId;
     private String routineName;
     private String memberName;
@@ -24,9 +25,10 @@ public class TodayRoutinesDto {
     private Boolean complete;
 
     @Builder
-    public TodayRoutinesDto(Long routineId, String routineName, String memberName, String dayOfWeek,
+    public TodayRoutinesDto(Long resultId, Long routineId, String routineName, String memberName, String dayOfWeek,
             String certification, Time startTime, Time endTime, LocalDateTime createdAt, LocalDateTime doneAt,
             Boolean complete) {
+        this.resultId = resultId;
         this.routineId = routineId;
         this.routineName = routineName;
         this.memberName = memberName;

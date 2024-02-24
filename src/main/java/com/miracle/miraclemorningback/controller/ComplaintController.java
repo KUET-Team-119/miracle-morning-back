@@ -22,7 +22,7 @@ public class ComplaintController {
     private final ComplaintService complaintService;
 
     // 제보 조회
-    @GetMapping("/api/complaints")
+    @GetMapping("/api/admin/complaints")
     public ResponseEntity<Object> getComplaints() {
         return complaintService.getComplaints();
     }
@@ -35,7 +35,7 @@ public class ComplaintController {
     }
 
     // 제보 삭제
-    @DeleteMapping("/api/complaint/{complaintId}")
+    @DeleteMapping("/api/admin/complaint/{complaintId}")
     public ResponseEntity<Object> deleteComplaint(@PathVariable Long complaintId) {
         return complaintService.deleteComplaint(complaintId);
     }

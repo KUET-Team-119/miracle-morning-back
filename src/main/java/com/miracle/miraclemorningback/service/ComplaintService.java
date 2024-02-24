@@ -24,7 +24,7 @@ public class ComplaintService {
     // 제보 조회
     @Transactional(readOnly = true)
     public ResponseEntity<Object> getComplaints() {
-        List<ComplaintResponseDto> listOfComplaints = complaintRepository.findAll().stream()
+        List<ComplaintResponseDto> complaintsDto = complaintRepository.findAll().stream()
                 .map(complaintEntity -> ComplaintResponseDto.builder()
                         .complaintId(complaintEntity.getComplaintId())
                         .memberName(complaintEntity.getMemberName())
@@ -33,7 +33,7 @@ public class ComplaintService {
                         .build())
                 .toList();
 
-        return ResponseEntity.ok().body(listOfComplaints);
+        return ResponseEntity.ok().body(complaintsDto);
     }
 
     // 오류 제보
