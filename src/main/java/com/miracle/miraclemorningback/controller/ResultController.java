@@ -34,7 +34,7 @@ public class ResultController {
     // 사용자가 인증한 기록 중 오늘 날짜의 기록 조회
     @GetMapping("/api/results/today")
     public ResponseEntity<Object> getCompleteAndTodayResults() {
-        return resultService.getCompleteAndRecentResults();
+        return resultService.getCompleteAndTodayResults();
     }
 
     // 사용자가 인증한 기록 중 오늘을 포함해서 4일 전까지의 기록 조회
