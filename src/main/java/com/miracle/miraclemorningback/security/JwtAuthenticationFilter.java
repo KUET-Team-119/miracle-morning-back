@@ -24,6 +24,9 @@ import jakarta.servlet.http.Cookie;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final Integer VALID_STATE = 0;
+    private final Integer EXPIRED_STATE = 2;
+
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
@@ -45,11 +48,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(request);
 
         try { // validateToken: Jwt 토큰의 유효성 검사
-            if (token != null && jwtTokenProvider.validateToken(token) == 0) {
+            if (token != null && jwtTokenProvider.validateToken(token) == VALID_STATE) {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
                 // 유효한 토큰이면 SecurityContextHolder에 추가
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else if (token != null && jwtTokenProvider.validateToken(token) == 2) {
+            } else if (token != null && jwtTokenProvider.validateToken(token) == EXPIRED_STATE) {
                 System.out.println("클라이언트 accessToken: " + token);
                 // 만료된 accessToken으로 저장된 refreshTokenEntity 찾기
                 RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.findByAccessToken(token)

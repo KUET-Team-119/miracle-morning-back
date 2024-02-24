@@ -1,4 +1,4 @@
-name: Java CI with Gradle # workflow 이름
+name: Java CI/CD with Gradle # workflow 이름
 
 on: # 이벤트 정의
   push:
