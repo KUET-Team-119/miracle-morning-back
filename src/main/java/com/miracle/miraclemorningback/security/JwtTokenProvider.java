@@ -33,7 +33,7 @@ import javax.crypto.SecretKey;
 public class JwtTokenProvider { // JWT 토큰 생성 및 검증
 
     private final UserDetailsServiceImpl userDetailsService;
-    private final Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 20; // 20초 동안 토큰 유효
+    private final Long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 20; // 15초 동안 토큰 유효
     private final Integer VALID_STATE = 0;
     private final Integer MANIPULATED_STATE = 1;
     private final Integer EXPIRED_STATE = 2;
