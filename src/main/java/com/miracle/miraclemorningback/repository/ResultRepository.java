@@ -19,7 +19,7 @@ import com.miracle.miraclemorningback.entity.ResultEntity;
 public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
 
         // 특정 사용자의 특정 기간 기록 검색
-        @Query("SELECT re FROM ResultEntity re WHERE re.memberEntity = :member_entity AND YEAR(re.createdAt) = :year AND MONTH(re.createdAt) = :month ORDER BY re.doneAt ASC, re.routineEntity.routineName ASC")
+        @Query("SELECT re FROM ResultEntity re WHERE re.memberEntity = :member_entity AND YEAR(re.createdAt) = :year AND MONTH(re.createdAt) = :month")
         List<ResultEntity> findAllByIdAndYearAndMonth(
                         @Param("member_entity") MemberEntity memberEntity,
                         @Param("year") Integer year,

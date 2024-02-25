@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String refreshToken = refreshTokenEntity.getRefreshToken();
 
                 System.out.println("클라이언트 refreshToken: " + clientRefreshToken);
-                System.out.println("서버 refreshToken" + refreshToken);
+                System.out.println("서버 refreshToken: " + refreshToken);
 
                 if (clientRefreshToken == null || !refreshToken.equals(clientRefreshToken)) {
                     throw new IllegalArgumentException("유효하지 않은 refreshToken");
