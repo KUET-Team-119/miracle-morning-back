@@ -95,4 +95,10 @@ public class ResultController {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         return resultService.getRoutineAchievement(memberName);
     }
+
+    // 사용자별 통계 정보 조회
+    @GetMapping("api/admin/members/statistics")
+    public ResponseEntity<Object> getMemberStatistics() {
+        return resultService.getMemberStatistics();
+    }
 }

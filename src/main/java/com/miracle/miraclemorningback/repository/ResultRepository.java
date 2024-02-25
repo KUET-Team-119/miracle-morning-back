@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.miracle.miraclemorningback.dto.MemberStatisticsDto;
 import com.miracle.miraclemorningback.dto.RoutineAchievementDto;
 import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
@@ -65,4 +66,8 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
         // 최근 1달 루틴별 달성률
         @Query("SELECT NEW com.miracle.miraclemorningback.dto.RoutineAchievementDto(ro.routineName, CEIL(COALESCE((COUNT(CASE WHEN re.doneAt IS NOT NULL THEN 1 END) / COUNT(re.resultId) * 100), 0))) FROM ResultEntity re JOIN re.routineEntity ro WHERE re.memberEntity = :member_entity AND FUNCTION('DATEDIFF', CURRENT_DATE, re.createdAt) <= 30 GROUP BY ro.routineName")
         List<RoutineAchievementDto> getRoutineAchievement(@Param("member_entity") MemberEntity memberEntity);
+
+        // 사용자별 통계 정보 조회
+        @Query("SELECT NEW com.miracle.miraclemorningback.dto.MemberStatisticsDto(re.memberEntity.memberId, re.memberEntity.memberName, COUNT(CASE WHEN re.doneAt IS NOT NULL THEN 1 END), COUNT(re.resultId)) FROM ResultEntity re GROUP BY re.memberEntity.memberId, re.memberEntity.memberName")
+        List<MemberStatisticsDto> getMemberStatistics();
 }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.miracle.miraclemorningback.dto.DayOfWeekAchievementDto;
+import com.miracle.miraclemorningback.dto.MemberStatisticsDto;
 import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
 import com.miracle.miraclemorningback.dto.ResultResponseDto;
@@ -344,5 +345,13 @@ public class ResultService {
 
                 // ResponseEntity를 사용하여 응답 반환
                 return ResponseEntity.ok().body(resultResponseDto);
+        }
+
+        // 사용자별 통계 정보 조회
+        @Transactional
+        public ResponseEntity<Object> getMemberStatistics() {
+                List<MemberStatisticsDto> memberStatisticsDto = resultRepository.getMemberStatistics();
+
+                return ResponseEntity.ok().body(memberStatisticsDto);
         }
 }
