@@ -82,14 +82,14 @@ public class ResultController {
         return resultService.getAllTodayRoutines();
     }
 
-    // 최근 1달 요일별 달성률
+    // 이번 달 요일별 달성률
     @GetMapping("/api/results/week")
     public ResponseEntity<Object> getDayOfWeekAchievement(Authentication authentication) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         return resultService.getDayOfWeekAchievement(memberName);
     }
 
-    // 최근 1달 루틴별 달성률
+    // 이번 달 루틴별 달성률
     @GetMapping("api/results/routines")
     public ResponseEntity<Object> getRoutineAchievement(Authentication authentication) {
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();

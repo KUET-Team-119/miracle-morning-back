@@ -231,7 +231,7 @@ public class ResultService {
                 return ResponseEntity.ok().body(todayRoutinesDto);
         }
 
-        // 최근 1달 요일별 달성률
+        // 이번 달 요일별 달성률
         @Transactional
         public ResponseEntity<Object> getDayOfWeekAchievement(String memberName) {
 
@@ -261,7 +261,7 @@ public class ResultService {
                 return ResponseEntity.ok().body(listOfDayOfWeekAchievementDto);
         }
 
-        // 최근 1달 루틴별 달성률
+        // 이번 달 루틴별 달성률
         @Transactional
         public ResponseEntity<Object> getRoutineAchievement(String memberName) {
 

@@ -57,14 +57,14 @@ public interface ResultRepository extends JpaRepository<ResultEntity, Long> {
         @Query("SELECT NEW com.miracle.miraclemorningback.dto.TodayRoutinesDto(re.resultId, ro.routineId, ro.routineName, re.memberEntity.memberName, ro.dayOfWeek, ro.certification, ro.startTime, ro.endTime, re.createdAt, re.doneAt, true) FROM ResultEntity re JOIN re.routineEntity ro WHERE DATE(re.createdAt) = CURRENT_DATE AND re.doneAt IS NOT NULL")
         List<TodayRoutinesDto> getAllActivatedAndCompleteRoutines();
 
-        // 최근 1달 요일별 달성률
-        @Query("SELECT CEIL(COALESCE((COUNT(CASE WHEN re.doneAt IS NOT NULL THEN 1 END) / COUNT(re.resultId) * 100), 0)) FROM ResultEntity re WHERE re.memberEntity = :member_entity AND FUNCTION('DATEDIFF', CURRENT_DATE, re.createdAt) <= 30 AND FUNCTION('WEEKDAY', re.createdAt) = :day_of_week")
+        // 이번 달 요일별 달성률
+        @Query("SELECT CEIL(COALESCE((COUNT(CASE WHEN re.doneAt IS NOT NULL THEN 1 END) / COUNT(re.resultId) * 100), 0)) FROM ResultEntity re WHERE re.memberEntity = :member_entity AND YEAR(re.createdAt) = YEAR(CURRENT_DATE) AND MONTH(re.createdAt) = MONTH(CURRENT_DATE) AND FUNCTION('WEEKDAY', re.createdAt) = :day_of_week")
         Integer getDayOfWeekAchievement(
                         @Param("member_entity") MemberEntity memberEntity,
                         @Param("day_of_week") int dayOfWeek);
 
-        // 최근 1달 루틴별 달성률
-        @Query("SELECT NEW com.miracle.miraclemorningback.dto.RoutineAchievementDto(ro.routineName, CEIL(COALESCE((COUNT(CASE WHEN re.doneAt IS NOT NULL THEN 1 END) / COUNT(re.resultId) * 100), 0))) FROM ResultEntity re JOIN re.routineEntity ro WHERE re.memberEntity = :member_entity AND FUNCTION('DATEDIFF', CURRENT_DATE, re.createdAt) <= 30 GROUP BY ro.routineName")
+        // 이번 달 루틴별 달성률
+        @Query("SELECT NEW com.miracle.miraclemorningback.dto.RoutineAchievementDto(ro.routineName, CEIL(COALESCE((COUNT(CASE WHEN re.doneAt IS NOT NULL THEN 1 END) / COUNT(re.resultId) * 100), 0))) FROM ResultEntity re JOIN re.routineEntity ro WHERE re.memberEntity = :member_entity AND YEAR(re.createdAt) = YEAR(CURRENT_DATE) AND MONTH(re.createdAt) = MONTH(CURRENT_DATE) GROUP BY ro.routineName")
         List<RoutineAchievementDto> getRoutineAchievement(@Param("member_entity") MemberEntity memberEntity);
 
         // 사용자별 통계 정보 조회

@@ -168,9 +168,9 @@ public class MemberService {
                         } else {
                                 RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
                                                 .success(false)
-                                                .message("인증에 실패했습니다.")
+                                                .message("해당하는 리소스가 없습니다.")
                                                 .build();
-                                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(requestSuccessDto);
+                                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
                         }
                 }
         }
@@ -213,8 +213,9 @@ public class MemberService {
 
                         // 쿠키 생성
                         Cookie cookie = new Cookie("refreshToken", refreshToken);
-                        cookie.setMaxAge(60 * 2); // 2분 동안 유효
+                        cookie.setMaxAge(60 * 60 * 24 * 7); // 일주일 동안 유효
                         cookie.setPath("/"); // 쿠키 경로 설정
+                        cookie.setHttpOnly(true); // JS에서 사용하지 못하도록 설정
                         response.addCookie(cookie); // 응답 헤더에 쿠키 추가
 
                         // 헤더에 쿠키 정보 포함하여 응답
