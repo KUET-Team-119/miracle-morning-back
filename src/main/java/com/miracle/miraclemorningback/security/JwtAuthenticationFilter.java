@@ -77,6 +77,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String newAccessToken = jwtTokenProvider.generateAccessToken(
                         memberId, memberEntity.getMemberName(), memberEntity.getRole());
 
+                refreshTokenEntity = RefreshTokenEntity.builder()
+                        .refreshToken(refreshToken)
+                        .accessToken(newAccessToken)
+                        .memberId(memberEntity.getMemberId())
+                        .build();
+
+                refreshTokenRepository.save(refreshTokenEntity);
+
                 // 새로 생성된 accessToken을 응답 헤더에 추가
                 response.setHeader("Authorization", "Bearer " + newAccessToken);
             }
