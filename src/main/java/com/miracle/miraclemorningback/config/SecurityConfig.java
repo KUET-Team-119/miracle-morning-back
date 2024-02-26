@@ -1,10 +1,14 @@
-package com.miracle.miraclemorningback.security;
+package com.miracle.miraclemorningback.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.miracle.miraclemorningback.jwt.JwtAccessDeniedHandler;
+import com.miracle.miraclemorningback.jwt.JwtAuthenticationEntryPoint;
+import com.miracle.miraclemorningback.jwt.JwtAuthenticationFilter;
+import com.miracle.miraclemorningback.jwt.JwtTokenProvider;
 import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.RefreshTokenRepository;
 

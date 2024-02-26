@@ -1,9 +1,10 @@
-package com.miracle.miraclemorningback.security;
+package com.miracle.miraclemorningback.jwt;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.miracle.miraclemorningback.Util.CookieUtil;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.RefreshTokenEntity;
 import com.miracle.miraclemorningback.repository.MemberRepository;
@@ -79,6 +80,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String newAccessToken = jwtTokenProvider.generateAccessToken(
                         memberId, memberEntity.getMemberName(), memberEntity.getRole());
 
+                // 새로 생성된 accessToken을 응답 헤더에 추가
+                response.setHeader("Authorization", "Bearer " + newAccessToken);
+
+                // 새로운 refreshToken 생성
                 String newRefreshToken = jwtTokenProvider.generateRefreshToken();
 
                 refreshTokenEntity = RefreshTokenEntity.builder()
@@ -88,11 +93,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .build();
                 refreshTokenRepository.save(refreshTokenEntity);
 
-                cookie.setValue(newRefreshToken); // 쿠키에 새 refreshToken 값 할당
-                response.addCookie(cookie); // 응답 헤더에 쿠키 추가
-
-                // 새로 생성된 accessToken을 응답 헤더에 추가
-                response.setHeader("Authorization", "Bearer " + newAccessToken);
+                // 기존 쿠키 제거 및 새로운 쿠키 생성
+                CookieUtil.deleteRefreshTokenCookie(cookie);
+                CookieUtil.generateRefreshTokenCookie(response, newRefreshToken);
             }
         } catch (RedisConnectionFailureException e) {
             SecurityContextHolder.clearContext();
@@ -103,10 +106,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-    // // HttpServletRequest에서 쿠키에서 refreshToken을 가져오는 메서드
-    // private String getRefreshTokenFromCookie(HttpServletRequest request) {
-    // Cookie cookie = WebUtils.getCookie(request, "refreshToken");
-    // return cookie != null ? cookie.getValue() : null;
-    // }
 }

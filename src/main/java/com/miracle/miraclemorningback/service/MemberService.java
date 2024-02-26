@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.miracle.miraclemorningback.dto.TokenDto;
+import com.miracle.miraclemorningback.Util.CookieUtil;
 import com.miracle.miraclemorningback.dto.MemberRequestDto;
 import com.miracle.miraclemorningback.dto.MemberResponseDto;
 import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.RefreshTokenEntity;
 import com.miracle.miraclemorningback.entity.Role;
+import com.miracle.miraclemorningback.jwt.JwtTokenProvider;
 import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.RefreshTokenRepository;
-import com.miracle.miraclemorningback.security.JwtTokenProvider;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -211,12 +211,8 @@ public class MemberService {
 
                         refreshTokenRepository.save(refreshTokenEntity);
 
-                        // 쿠키 생성
-                        Cookie cookie = new Cookie("refreshToken", refreshToken);
-                        cookie.setMaxAge(60 * 2); // TODO (14일로 변경 예정) 2분 동안 유효
-                        cookie.setPath("/"); // 쿠키 경로 설정
-                        cookie.setHttpOnly(true); // JS에서 사용하지 못하도록 설정
-                        response.addCookie(cookie); // 응답 헤더에 쿠키 추가
+                        // refreshToken이 담긴 쿠키 생성
+                        CookieUtil.generateRefreshTokenCookie(response, refreshToken);
 
                         // 헤더에 쿠키 정보 포함하여 응답
                         return ResponseEntity.ok().body(tokenDto);

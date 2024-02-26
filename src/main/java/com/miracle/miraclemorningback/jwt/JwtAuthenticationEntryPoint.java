@@ -1,4 +1,4 @@
-package com.miracle.miraclemorningback.security;
+package com.miracle.miraclemorningback.jwt;
 
 import java.io.IOException;
 

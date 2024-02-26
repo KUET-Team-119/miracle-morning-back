@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "refreshToken", timeToLive = 60 * 2) // TODO (14일로 변경 예정) 2분 동안 유효
+@RedisHash(value = "refreshToken", timeToLive = 60 * 5) // TODO (14일로 변경 예정) 5분 동안 유효
 public class RefreshTokenEntity {
 
     @Id

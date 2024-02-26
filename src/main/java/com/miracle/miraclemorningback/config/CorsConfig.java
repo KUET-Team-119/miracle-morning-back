@@ -1,4 +1,4 @@
-package com.miracle.miraclemorningback.security;
+package com.miracle.miraclemorningback.config;
 
 import java.util.List;
 
