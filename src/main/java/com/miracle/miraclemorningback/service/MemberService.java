@@ -204,15 +204,15 @@ public class MemberService {
                                         .build();
 
                         RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder()
+                                        .memberId(memberEntity.getMemberId())
                                         .refreshToken(refreshToken)
                                         .accessToken(accessToken)
-                                        .memberId(memberEntity.getMemberId())
                                         .build();
 
                         refreshTokenRepository.save(refreshTokenEntity);
 
-                        // refreshToken이 담긴 쿠키 생성
-                        CookieUtil.generateRefreshTokenCookie(response, refreshToken);
+                        // // refreshToken이 담긴 쿠키 생성
+                        // CookieUtil.generateRefreshTokenCookie(response, refreshToken);
 
                         // 헤더에 쿠키 정보 포함하여 응답
                         return ResponseEntity.ok().body(tokenDto);
