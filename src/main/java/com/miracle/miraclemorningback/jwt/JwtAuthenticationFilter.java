@@ -93,8 +93,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .build();
                 refreshTokenRepository.save(refreshTokenEntity);
 
-                // 기존 쿠키 제거 및 새로운 쿠키 생성
-                // CookieUtil.deleteRefreshTokenCookie(response, cookie);
+                // 새로운 쿠키 생성
                 CookieUtil.generateRefreshTokenCookie(response, newRefreshToken);
             }
         } catch (RedisConnectionFailureException e) {
