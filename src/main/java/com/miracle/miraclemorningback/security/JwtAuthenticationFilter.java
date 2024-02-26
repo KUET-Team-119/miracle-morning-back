@@ -58,10 +58,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.findByAccessToken(token)
                         .orElseThrow(() -> new IllegalArgumentException("토큰을 찾을 수 없습니다."));
 
-                // 클라이언트의 refreshToken 가져오기
-                String clientRefreshToken = getRefreshTokenFromCookie(request);
-
                 String refreshToken = refreshTokenEntity.getRefreshToken();
+
+                // HttpServletRequest에서 refreshToken 쿠키 가져오기
+                Cookie cookie = WebUtils.getCookie(request, "refreshToken");
+                // 쿠키에서 refreshToken 값 가져오기
+                String clientRefreshToken = cookie != null ? cookie.getValue() : null;
 
                 System.out.println("클라이언트 refreshToken: " + clientRefreshToken);
                 System.out.println("서버 refreshToken: " + refreshToken);
@@ -77,13 +79,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String newAccessToken = jwtTokenProvider.generateAccessToken(
                         memberId, memberEntity.getMemberName(), memberEntity.getRole());
 
-                refreshTokenEntity = RefreshTokenEntity.builder()
-                        .refreshToken(refreshToken)
-                        .accessToken(newAccessToken)
-                        .memberId(memberEntity.getMemberId())
-                        .build();
+                String newRefreshToken = jwtTokenProvider.generateRefreshToken();
 
+                refreshTokenEntity = RefreshTokenEntity.builder()
+                        .memberId(memberEntity.getMemberId())
+                        .refreshToken(newRefreshToken)
+                        .accessToken(newAccessToken)
+                        .build();
                 refreshTokenRepository.save(refreshTokenEntity);
+
+                cookie.setValue(newRefreshToken); // 쿠키에 새 refreshToken 값 할당
+                response.addCookie(cookie); // 응답 헤더에 쿠키 추가
 
                 // 새로 생성된 accessToken을 응답 헤더에 추가
                 response.setHeader("Authorization", "Bearer " + newAccessToken);
@@ -98,9 +104,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // HttpServletRequest에서 쿠키에서 refreshToken을 가져오는 메서드
-    private String getRefreshTokenFromCookie(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, "refreshToken");
-        return cookie != null ? cookie.getValue() : null;
-    }
+    // // HttpServletRequest에서 쿠키에서 refreshToken을 가져오는 메서드
+    // private String getRefreshTokenFromCookie(HttpServletRequest request) {
+    // Cookie cookie = WebUtils.getCookie(request, "refreshToken");
+    // return cookie != null ? cookie.getValue() : null;
+    // }
 }

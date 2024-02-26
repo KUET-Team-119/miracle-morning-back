@@ -14,18 +14,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "refreshToken", timeToLive = 60 * 60 * 24 * 7) // 일주일 동안 유효
+@RedisHash(value = "refreshToken", timeToLive = 60 * 2) // TODO (14일로 변경 예정) 2분 동안 유효
 public class RefreshTokenEntity {
 
     @Id
+    private Long memberId;
+
     private String refreshToken;
 
     @Indexed
     private String accessToken;
-
-    private Long memberId;
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
 }

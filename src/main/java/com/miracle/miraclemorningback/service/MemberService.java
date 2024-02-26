@@ -213,7 +213,7 @@ public class MemberService {
 
                         // 쿠키 생성
                         Cookie cookie = new Cookie("refreshToken", refreshToken);
-                        cookie.setMaxAge(60 * 60 * 24 * 7); // 일주일 동안 유효
+                        cookie.setMaxAge(60 * 2); // TODO (14일로 변경 예정) 2분 동안 유효
                         cookie.setPath("/"); // 쿠키 경로 설정
                         cookie.setHttpOnly(true); // JS에서 사용하지 못하도록 설정
                         response.addCookie(cookie); // 응답 헤더에 쿠키 추가
