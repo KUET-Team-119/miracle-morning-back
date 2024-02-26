@@ -20,6 +20,7 @@ public class RefreshTokenEntity {
     @Id
     private Long memberId;
 
+    @Indexed
     private String refreshToken;
 
     @Indexed
