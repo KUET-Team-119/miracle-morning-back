@@ -12,7 +12,8 @@ public class CookieUtil {
         response.addCookie(cookie); // 응답 헤더에 쿠키 추가
     }
 
-    public static void deleteRefreshTokenCookie(Cookie cookie) {
+    public static void deleteRefreshTokenCookie(HttpServletResponse response, Cookie cookie) {
         cookie.setMaxAge(0);
+        response.addCookie(cookie); // 응답 헤더에 제거할 쿠키 추가
     }
 }
