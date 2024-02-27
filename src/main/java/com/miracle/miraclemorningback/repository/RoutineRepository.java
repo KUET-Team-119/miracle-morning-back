@@ -16,7 +16,7 @@ import java.util.List;
 public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
         List<RoutineEntity> findAllByMemberEntity(MemberEntity memberEntity);
 
-        List<RoutineEntity> findAllByRoutineName(String routineName);
+        Boolean existsByRoutineNameAndMemberEntity(String routineName, MemberEntity memberEntity);
 
         // 루틴 수정
         @Modifying

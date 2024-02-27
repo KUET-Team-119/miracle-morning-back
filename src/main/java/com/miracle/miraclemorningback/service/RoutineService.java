@@ -49,65 +49,24 @@ public class RoutineService {
         // 루틴 추가
         @Transactional
         public ResponseEntity<Object> addRoutine(String memberName, RoutineRequestDto requestDto) {
-                List<RoutineEntity> routineEntityList = routineRepository
-                                .findAllByRoutineName(requestDto.getRoutineName());
 
-                if (!routineEntityList.isEmpty()) { // 같은 이름을 가진 루틴이 있는 경우
-                        // 동일한 사용자가 중복된 루틴을 추가하는지 확인
-                        for (RoutineEntity routineEntity : routineEntityList) {
-                                String existingMemberName = routineEntity.getMemberEntity().getMemberName();
-                                if (existingMemberName.equals(memberName)) {
-                                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
-                                                        .success(false)
-                                                        .message("이미 존재하는 리소스입니다.")
-                                                        .build();
-                                        return ResponseEntity.status(HttpStatus.CONFLICT).body(requestSuccessDto);
-                                }
-                        }
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElse(null);
 
-                        MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElse(null);
-
-                        if (memberEntity == null) {
-                                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
-                                                .success(false)
-                                                .message("해당하는 리소스가 없습니다.")
-                                                .build();
-                                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
-                        }
-
-                        // 존재하지 않은 사용자, 중복되지 않은 루틴명인 경우 -> 루틴 추가 로직 수행
-                        RoutineEntity routineEntity = RoutineEntity.builder()
-                                        .routineName(requestDto.getRoutineName())
-                                        .dayOfWeek(requestDto.getDayOfWeek())
-                                        .certification(requestDto.getCertification())
-                                        .startTime(requestDto.getStartTime())
-                                        .endTime(requestDto.getEndTime())
-                                        .isActivated(requestDto.getIsActivated())
-                                        .build();
-
-                        routineEntity.setMemberEntity(memberEntity);
-
-                        routineRepository.save(routineEntity);
-
+                if (memberEntity == null) {
                         RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
-                                        .success(true)
-                                        .message("요청이 성공적으로 처리되었습니다.")
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
                                         .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
 
-                        return ResponseEntity.ok().body(requestSuccessDto);
-                } else { // 같은 이름을 가진 루틴이 없는 경우
-
-                        // 존재하는 사용자인지 확인
-                        MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElse(null);
-
-                        if (memberEntity == null) {
-                                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
-                                                .success(false)
-                                                .message("해당하는 리소스가 없습니다.")
-                                                .build();
-                                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
-                        }
-
+                if (routineRepository.existsByRoutineNameAndMemberEntity(requestDto.getRoutineName(), memberEntity)) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("이미 존재하는 리소스입니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body(requestSuccessDto);
+                } else {
                         // 존재하지 않은 사용자, 중복되지 않은 루틴명인 경우 -> 루틴 추가 로직 수행
                         RoutineEntity routineEntity = RoutineEntity.builder()
                                         .routineName(requestDto.getRoutineName())
