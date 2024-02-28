@@ -48,7 +48,7 @@ public class ResultService {
         // 전체 기록 조회
         @Transactional(readOnly = true)
         public ResponseEntity<Object> getResults() {
-                List<ResultResponseDto> listOfResults = resultRepository.findAll().stream()
+                List<ResultResponseDto> resultResponseDto = resultRepository.findAll().stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineName(resultEntity.getRoutineEntity().getRoutineName())
@@ -58,7 +58,7 @@ public class ResultService {
                                                 .build())
                                 .toList();
 
-                return ResponseEntity.ok().body(listOfResults);
+                return ResponseEntity.ok().body(resultResponseDto);
         }
 
         // 루틴 인증을 위한 기록 수정
@@ -126,7 +126,7 @@ public class ResultService {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
                 }
 
-                List<ResultResponseDto> listOfResultResponseDto = resultRepository
+                List<ResultResponseDto> resultResponseDto = resultRepository
                                 .findAllByIdAndYearAndMonth(memberEntity, year, month).stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
@@ -140,7 +140,7 @@ public class ResultService {
                                                 .build())
                                 .toList();
 
-                return ResponseEntity.ok().body(listOfResultResponseDto);
+                return ResponseEntity.ok().body(resultResponseDto);
         }
 
         // 기록 삭제
@@ -168,7 +168,7 @@ public class ResultService {
         // 오늘 날짜의 기록 조회
         @Transactional
         public ResponseEntity<Object> getTodayResults() {
-                List<ResultResponseDto> listOfTodayResults = resultRepository.getCompleteAndTodayResults().stream()
+                List<ResultResponseDto> resultResponseDto = resultRepository.getCompleteAndTodayResults().stream()
                                 .map(resultEntity -> ResultResponseDto.builder()
                                                 .resultId(resultEntity.getResultId())
                                                 .routineId(resultEntity.getRoutineEntity().getRoutineId())
@@ -180,7 +180,7 @@ public class ResultService {
                                                 .build())
                                 .toList();
 
-                return ResponseEntity.ok().body(listOfTodayResults);
+                return ResponseEntity.ok().body(resultResponseDto);
         }
 
         // 특정 사용자의 오늘 날짜의 기록 조회

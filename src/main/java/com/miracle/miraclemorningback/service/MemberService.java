@@ -107,6 +107,7 @@ public class MemberService {
                                 .role(memberEntity.getRole())
                                 .createdAt(memberEntity.getCreatedAt())
                                 .build();
+
                 return ResponseEntity.ok().body(memberResponseDto);
         }
 
@@ -130,20 +131,18 @@ public class MemberService {
                 } else {
                         memberRepository.updateMemberRole(requestDto.getMemberId(), requestDto.getRole());
 
-                        MemberResponseDto memberResponseDto = MemberResponseDto.builder()
-                                        .memberId(memberEntity.getMemberId())
-                                        .memberName(memberEntity.getMemberName())
-                                        .password(memberEntity.getPassword())
-                                        .role(memberEntity.getRole())
-                                        .createdAt(memberEntity.getCreatedAt())
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(true)
+                                        .message("요청이 성공적으로 처리되었습니다.")
                                         .build();
-                        return ResponseEntity.ok().body(memberResponseDto);
+
+                        return ResponseEntity.ok().body(requestSuccessDto);
                 }
         }
 
         // 회원 삭제
         @Transactional
-        public ResponseEntity<Object> deleteMember(Long memberId, String password, String requester) {
+        public ResponseEntity<Object> deleteMember(Long memberId, String password, String memberName) {
                 MemberEntity memberEntity = memberRepository.findById(memberId).orElse(null);
                 if (memberEntity == null) {
                         RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
@@ -158,7 +157,7 @@ public class MemberService {
                                         .build();
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(requestSuccessDto);
                 } else {
-                        if (requester.equals(su) || password.equals(memberEntity.getPassword())) {
+                        if (memberName.equals(su) || password.equals(memberEntity.getPassword())) {
                                 memberRepository.deleteById(memberId);
                                 RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
                                                 .success(true)
@@ -218,7 +217,10 @@ public class MemberService {
                         return ResponseEntity.ok().body(tokenDto);
                 } else {
                         // 승인되지 않은 사용자인 경우 FORBIDDEN 상태 코드를 반환
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("승인되지 않은 사용자입니다.");
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder().success(false)
+                                        .message("승인되지 않은 사용자입니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(requestSuccessDto);
                 }
         }
 }

@@ -53,8 +53,8 @@ public class MemberController {
     public ResponseEntity<Object> deleteMember(@PathVariable Long memberId,
             @RequestHeader(value = "Password", required = true) String password,
             Authentication authentication) {
-        String requester = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
-        return memberService.deleteMember(memberId, password, requester);
+        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        return memberService.deleteMember(memberId, password, memberName);
     }
 
     // 로그인

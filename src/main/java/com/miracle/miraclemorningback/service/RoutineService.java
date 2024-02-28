@@ -28,7 +28,7 @@ public class RoutineService {
         // 전체 루틴 조회
         @Transactional(readOnly = true)
         public ResponseEntity<Object> getRoutines() {
-                List<RoutineResponseDto> listOfRoutines = routineRepository.findAll().stream()
+                List<RoutineResponseDto> routineResponseDto = routineRepository.findAll().stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
@@ -43,7 +43,7 @@ public class RoutineService {
                                                 .build())
                                 .toList();
 
-                return ResponseEntity.ok().body(listOfRoutines);
+                return ResponseEntity.ok().body(routineResponseDto);
         }
 
         // 루틴 추가
@@ -105,7 +105,7 @@ public class RoutineService {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
                 }
 
-                List<RoutineResponseDto> listOfRoutineResponseDto = routineRepository
+                List<RoutineResponseDto> routineResponseDto = routineRepository
                                 .findAllByMemberEntity(memberEntity).stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
@@ -121,7 +121,7 @@ public class RoutineService {
                                                 .build())
                                 .toList();
 
-                return ResponseEntity.ok().body(listOfRoutineResponseDto);
+                return ResponseEntity.ok().body(routineResponseDto);
         }
 
         // 루틴 정보 수정
