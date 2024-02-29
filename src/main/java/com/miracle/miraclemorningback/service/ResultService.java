@@ -8,8 +8,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -77,13 +75,9 @@ public class ResultService {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
                 }
 
-                if (file != null) {
-                        // 파일 업로드 시간
-                        LocalDateTime dateTime = LocalDateTime.now();
-                        String timeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(dateTime);
-
+                if (file != null) { // 파일이 있는 경우(인증)
                         // 파일명: 닉네임 + 루틴명 + 업로드 시간 + 원본 파일명
-                        String fileName = memberName + "_" + requestDto.getRoutineName() + "_" + timeStamp
+                        String fileName = memberName + "_" + requestDto.getRoutineName() + "_" + requestDto.getDoneAt()
                                         + "_" + file.getOriginalFilename();
 
                         // 파일 경로
@@ -99,8 +93,8 @@ public class ResultService {
                                         .build();
 
                         return ResponseEntity.ok().body(requestSuccessDto);
-                } else {
-                        // 기록 업데이트
+                } else { // 파일이 있는 경우(인증 취소)
+                         // 기록 업데이트
                         resultRepository.updateResult(requestDto.getResultId(), null, null);
 
                         RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
