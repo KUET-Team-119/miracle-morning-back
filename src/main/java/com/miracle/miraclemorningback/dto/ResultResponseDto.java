@@ -17,7 +17,7 @@ public class ResultResponseDto {
     private String memberName;
     private LocalDateTime createdAt;
     private LocalDateTime doneAt;
-    private LocalDateTime memberJoinDate;
+    // private LocalDateTime memberJoinDate;
     private String fileBase64;
 
     @Builder
@@ -29,7 +29,7 @@ public class ResultResponseDto {
             String memberName,
             LocalDateTime createdAt,
             LocalDateTime doneAt,
-            LocalDateTime memberJoinDate,
+            // LocalDateTime memberJoinDate,
             String fileBase64) {
         this.resultId = resultId;
         this.routineId = routineId;
@@ -38,7 +38,7 @@ public class ResultResponseDto {
         this.memberName = memberName;
         this.createdAt = createdAt;
         this.doneAt = doneAt;
-        this.memberJoinDate = memberJoinDate;
+        // this.memberJoinDate = memberJoinDate;
         this.fileBase64 = fileBase64;
     }
 }

@@ -171,7 +171,7 @@ public class ResultService {
                                                 .memberName(resultEntity.getMemberEntity().getMemberName())
                                                 .doneAt(resultEntity.getDoneAt())
                                                 .createdAt(resultEntity.getCreatedAt())
-                                                .memberJoinDate(resultEntity.getMemberEntity().getCreatedAt())
+                                                // .memberJoinDate(resultEntity.getMemberEntity().getCreatedAt())
                                                 .build())
                                 .toList();
 

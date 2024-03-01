@@ -19,7 +19,6 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> { //
     Boolean existsByMemberName(String memberName);
 
     // 회원 권한 수정
-    // TODO member_id가 안되는 원인 찾기
     @Modifying
     @Query("UPDATE MemberEntity m SET m.role = :role WHERE m.memberId = :memberId")
     void updateMemberRole(@Param("memberId") Long memberId,
