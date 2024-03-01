@@ -85,32 +85,6 @@ public class MemberService {
                 return ResponseEntity.ok().body(requestSuccessDto);
         }
 
-        // 특정 회원 검색
-        @Transactional
-        public ResponseEntity<Object> getMember(String memberName) {
-
-                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElse(null);
-
-                // 사용자가 존재하지 않으면 UNAUTHORIZED 상태 코드를 반환
-                if (memberEntity == null) {
-                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
-                                        .success(false)
-                                        .message("해당하는 리소스가 없습니다.")
-                                        .build();
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
-                }
-
-                MemberResponseDto memberResponseDto = MemberResponseDto.builder()
-                                .memberId(memberEntity.getMemberId())
-                                .memberName(memberEntity.getMemberName())
-                                .password(memberEntity.getPassword())
-                                .role(memberEntity.getRole())
-                                .createdAt(memberEntity.getCreatedAt())
-                                .build();
-
-                return ResponseEntity.ok().body(memberResponseDto);
-        }
-
         // 회원 권한 수정
         @Transactional
         public ResponseEntity<Object> updateMemberRole(MemberRequestDto requestDto) {

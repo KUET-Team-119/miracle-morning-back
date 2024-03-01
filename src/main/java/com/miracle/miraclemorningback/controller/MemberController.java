@@ -36,12 +36,6 @@ public class MemberController {
         return memberService.registerMember(requestDto);
     }
 
-    // 특정 회원 검색
-    @GetMapping("/api/admin/member/{memberName}")
-    public ResponseEntity<Object> getMember(@PathVariable String memberName) {
-        return memberService.getMember(memberName);
-    }
-
     // 회원 권한 수정
     @PatchMapping("/api/admin/member")
     public ResponseEntity<Object> updateMember(@RequestBody MemberRequestDto requestDto) {

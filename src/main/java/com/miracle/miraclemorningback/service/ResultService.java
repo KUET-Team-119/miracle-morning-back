@@ -106,6 +106,47 @@ public class ResultService {
                 }
         }
 
+        // 기록 삭제
+        @Transactional
+        public ResponseEntity<Object> deleteResult(Long resultId) {
+                if (!resultRepository.existsById(resultId)) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                } else {
+                        resultRepository.deleteById(resultId);
+
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(true)
+                                        .message("요청을 성공적으로 처리했습니다.")
+                                        .build();
+
+                        return ResponseEntity.ok().body(requestSuccessDto);
+                }
+        }
+
+        // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
+        @Transactional
+        public ResponseEntity<Object> getAllTodayRoutines() {
+                List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
+                List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
+                List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
+
+                // 모든 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
+                incompleteRoutines = resultRepository.getAllActivatedAndIncompleteRoutines();
+
+                // 모든 사용자의 루틴 중 활성화되고 인증된 루틴 조회
+                completeRoutines = resultRepository.getAllActivatedAndCompleteRoutines();
+
+                todayRoutinesDto.addAll(incompleteRoutines);
+                todayRoutinesDto.addAll(completeRoutines);
+
+                return ResponseEntity.ok().body(todayRoutinesDto);
+        }
+
         // 특정 사용자의 특정 기간 기록 검색
         @Transactional
         public ResponseEntity<Object> getResultsByDate(Long memberId, Integer year, Integer month) {
@@ -135,95 +176,6 @@ public class ResultService {
                                 .toList();
 
                 return ResponseEntity.ok().body(resultResponseDto);
-        }
-
-        // 기록 삭제
-        @Transactional
-        public ResponseEntity<Object> deleteResult(Long resultId) {
-                if (!resultRepository.existsById(resultId)) {
-                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
-                                        .success(false)
-                                        .message("해당하는 리소스가 없습니다.")
-                                        .build();
-
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
-                } else {
-                        resultRepository.deleteById(resultId);
-
-                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
-                                        .success(true)
-                                        .message("요청을 성공적으로 처리했습니다.")
-                                        .build();
-
-                        return ResponseEntity.ok().body(requestSuccessDto);
-                }
-        }
-
-        // 오늘 날짜의 기록 조회
-        @Transactional
-        public ResponseEntity<Object> getTodayResults() {
-                List<ResultResponseDto> resultResponseDto = resultRepository.getCompleteAndTodayResults().stream()
-                                .map(resultEntity -> ResultResponseDto.builder()
-                                                .resultId(resultEntity.getResultId())
-                                                .routineId(resultEntity.getRoutineEntity().getRoutineId())
-                                                .routineName(resultEntity.getRoutineEntity().getRoutineName())
-                                                .memberId(resultEntity.getMemberEntity().getMemberId())
-                                                .memberName(resultEntity.getMemberEntity().getMemberName())
-                                                .createdAt(resultEntity.getCreatedAt())
-                                                .doneAt(resultEntity.getDoneAt())
-                                                .build())
-                                .toList();
-
-                return ResponseEntity.ok().body(resultResponseDto);
-        }
-
-        // 특정 사용자의 오늘 날짜의 기록 조회
-        @Transactional
-        public ResponseEntity<Object> getTodayRoutines(String memberName) {
-
-                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElseGet(null);
-
-                if (memberEntity == null) {
-                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
-                                        .success(false)
-                                        .message("해당하는 리소스가 없습니다.")
-                                        .build();
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
-                }
-
-                List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
-                List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
-                List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
-
-                // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = resultRepository.getActivatedAndIncompleteRoutines(memberEntity);
-
-                // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = resultRepository.getActivatedAndCompleteRoutines(memberEntity);
-
-                todayRoutinesDto.addAll(incompleteRoutines);
-                todayRoutinesDto.addAll(completeRoutines);
-
-                return ResponseEntity.ok().body(todayRoutinesDto);
-        }
-
-        // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
-        @Transactional
-        public ResponseEntity<Object> getAllTodayRoutines() {
-                List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
-                List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
-                List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
-
-                // 모든 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = resultRepository.getAllActivatedAndIncompleteRoutines();
-
-                // 모든 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = resultRepository.getAllActivatedAndCompleteRoutines();
-
-                todayRoutinesDto.addAll(incompleteRoutines);
-                todayRoutinesDto.addAll(completeRoutines);
-
-                return ResponseEntity.ok().body(todayRoutinesDto);
         }
 
         // 이번 달 요일별 달성률

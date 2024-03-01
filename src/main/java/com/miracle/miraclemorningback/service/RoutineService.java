@@ -173,15 +173,4 @@ public class RoutineService {
                         return ResponseEntity.ok().body(requestSuccessDto);
                 }
         }
-
-        /*
-         * 1차 배포에는 사용자 닉네임 변경 기능 제외
-         * // 루틴의 사용자 닉네임 변경
-         * 
-         * @Transactional
-         * public void updateMemberName(String memberName, RoutineRequestDto requestDto)
-         * throws Exception {
-         * routineRepository.updateMemberName(memberName, requestDto.getMemberName());
-         * }
-         */
 }

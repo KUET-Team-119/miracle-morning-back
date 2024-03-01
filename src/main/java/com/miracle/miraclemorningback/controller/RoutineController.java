@@ -53,17 +53,4 @@ public class RoutineController {
     public ResponseEntity<Object> deleteRoutine(@PathVariable Long routineId) {
         return routineService.deleteRoutine(routineId);
     }
-
-    /*
-     * 1차 배포에는 사용자 닉네임 변경 기능 제외
-     * // 루틴의 사용자 닉네임 변경
-     * 
-     * @PutMapping("/api/routine/nickname/{memberName}")
-     * public void updateNickname(@PathVariable String memberName,
-     * 
-     * @RequestBody RoutineRequestDto requestDto)
-     * throws Exception {
-     * routineService.updateMemberName(memberName, requestDto);
-     * }
-     */
 }

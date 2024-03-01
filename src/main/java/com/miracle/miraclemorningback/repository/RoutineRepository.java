@@ -31,5 +31,4 @@ public interface RoutineRepository extends JpaRepository<RoutineEntity, Long> {
         // 활성화되고 실천 요일이 유효한 모든 루틴 가져오기
         @Query("SELECT ro FROM RoutineEntity ro WHERE ro.isActivated = true AND SUBSTRING(ro.dayOfWeek, CAST(FUNCTION('WEEKDAY', CURRENT_DATE) AS int) + 1, 1) = '1'")
         List<RoutineEntity> getActivatedAndValidDayOfWeekRoutines();
-
 }
