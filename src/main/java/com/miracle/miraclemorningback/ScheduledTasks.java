@@ -72,7 +72,7 @@ public class ScheduledTasks {
         }
     }
 
-    @Scheduled(cron = "0 0 0 0 * *") // 매일 자정에 작동
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 작동
     // 인증되지 않은 루틴 기록 생성
     public void generateIncompleteResults() {
         routineRepository.getActivatedAndValidDayOfWeekRoutines().forEach(routineEntity -> {
