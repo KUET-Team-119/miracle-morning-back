@@ -12,7 +12,7 @@ public class RoutineRequestDto {
     private Long routineId;
     private String routineName;
     private String memberName;
-    private String strategy;
+    private String dayOfWeek;
     private String certification;
     private Time startTime;
     private Time endTime;

@@ -1,0 +1,87 @@
+version: "3.9"
+services:
+  miracle_morning_mysql:
+    container_name: miracle_morning_mysql
+    image: mysql
+    restart: always
+    environment:
+      LC_ALL: "C.UTF-8" # MySQL의 locale 설정
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      TZ: Asia/Seoul
+    expose:
+      - 3306
+    volumes:
+      - ./miracle-morning-mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./miracle-morning-mysql/conf.d:/etc/mysql/conf.d
+      - ./miracle-morning-mysql/data:/var/lib/mysql
+    healthcheck: # MySQL이 실행된 이후 Springboot가 실행되도록 설정
+      test: ["CMD", "mysqladmin", "ping", "-h", "miracle_morning_mysql"]
+      interval: 3s
+      timeout: 20s
+      retries: 10
+    networks:
+      - miracle_morning_network
+
+  miracle_morning_redis:
+    container_name: miracle_morning_redis
+    image: redis:alpine
+    entrypoint: ["redis-server", "--port", "6379"]
+    expose:
+      - 6379
+    healthcheck: # Redis가 실행된 이후 Springboot가 실행되도록 설정
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 20s
+      retries: 10
+    networks:
+      - miracle_morning_network
+
+  miracle_morning_back:
+    container_name: miracle_morning_back
+    image: choridev/miracle-morning-back
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 8080
+    volumes:
+      - ./miracle-morning-back/images:/home/images
+    depends_on: # MySQL, Redis가 실행된 이후 Springboot가 실행되도록 설정
+      miracle_morning_mysql:
+        condition: service_healthy
+      miracle_morning_redis:
+        condition: service_healthy
+    networks:
+      - miracle_morning_network
+
+  miracle_morning_front:
+    container_name: miracle_morning_front
+    image: choridev/miracle-morning-front
+    # volumes:
+    # SSL 인증서 관련
+    # - ./data/certbot/conf:/etc/letsencrypt
+    # - ./data/certbot/www:/var/www/certbot
+    restart: always
+    ports:
+      - 80:80
+      # SSL 인증서 관련
+      # - 443:443
+    depends_on:
+      - miracle_morning_back
+    # SSL 인증서 관련
+    # command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    networks:
+      - miracle_morning_network
+
+  # SSL 인증서 관련 컨테이너
+  # certbot:
+  #   image: certbot/certbot
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./data/certbot/conf:/etc/letsencrypt
+  #     - ./data/certbot/www:/var/www/certbot
+  #  entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  #  networks:
+  #     - miracle_morning_network
+networks:
+  miracle_morning_network:

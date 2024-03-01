@@ -1,37 +1,39 @@
 package com.miracle.miraclemorningback.service;
 
 import java.util.List;
-import java.util.ArrayList;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.miracle.miraclemorningback.dto.RoutineDeleteSuccessResponseDto;
+import com.miracle.miraclemorningback.dto.RequestSuccessDto;
 import com.miracle.miraclemorningback.dto.RoutineRequestDto;
 import com.miracle.miraclemorningback.dto.RoutineResponseDto;
-import com.miracle.miraclemorningback.dto.TodayRoutinesDto;
+import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.RoutineEntity;
+import com.miracle.miraclemorningback.repository.MemberRepository;
 import com.miracle.miraclemorningback.repository.RoutineRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service // 스프링이 관리해주는 객체, 스프링 빈
-@RequiredArgsConstructor // controller와 같이 final 멤버 변수 생성자를 만드는 역할
+@RequiredArgsConstructor
 public class RoutineService {
 
-        @Autowired
-        private RoutineRepository routineRepository;
+        private final RoutineRepository routineRepository;
+
+        private final MemberRepository memberRepository;
 
         // 전체 루틴 조회
         @Transactional(readOnly = true)
-        public List<RoutineResponseDto> getRoutines() {
-                return routineRepository.findAll().stream()
+        public ResponseEntity<Object> getRoutines() {
+                List<RoutineResponseDto> routineResponseDto = routineRepository.findAll().stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
+                                                .memberName(routineEntity.getMemberEntity().getMemberName())
+                                                .dayOfWeek(routineEntity.getDayOfWeek())
                                                 .certification(routineEntity.getCertification())
                                                 .startTime(routineEntity.getStartTime())
                                                 .endTime(routineEntity.getEndTime())
@@ -41,48 +43,75 @@ public class RoutineService {
                                                 .build())
                                 .toList();
 
-                // 빌더 패턴 이전
-                // return
-                // routineRepository.findAll().stream().map(RoutineResponseDto::new).toList();
+                return ResponseEntity.ok().body(routineResponseDto);
         }
 
         // 루틴 추가
         @Transactional
-        public RoutineResponseDto addRoutine(String memberName, RoutineRequestDto requestDto) {
-                RoutineEntity routineEntity = RoutineEntity.builder()
-                                .routineName(requestDto.getRoutineName())
-                                .memberName(memberName)
-                                .strategy(requestDto.getStrategy())
-                                .certification(requestDto.getCertification())
-                                .startTime(requestDto.getStartTime())
-                                .endTime(requestDto.getEndTime())
-                                .isActivated(requestDto.getIsActivated())
-                                .build();
-                routineRepository.save(routineEntity);
+        public ResponseEntity<Object> addRoutine(String memberName, RoutineRequestDto requestDto) {
 
-                return RoutineResponseDto.builder()
-                                .routineId(routineEntity.getRoutineId())
-                                .routineName(routineEntity.getRoutineName())
-                                .memberName(routineEntity.getMemberName())
-                                .strategy(routineEntity.getStrategy())
-                                .certification(routineEntity.getCertification())
-                                .startTime(routineEntity.getStartTime())
-                                .endTime(routineEntity.getEndTime())
-                                .isActivated(routineEntity.getIsActivated())
-                                .createdAt(routineEntity.getCreatedAt())
-                                .modifiedAt(routineEntity.getModifiedAt())
-                                .build();
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElse(null);
+
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
+                if (routineRepository.existsByRoutineNameAndMemberEntity(requestDto.getRoutineName(), memberEntity)) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("이미 존재하는 리소스입니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body(requestSuccessDto);
+                } else {
+                        // 존재하지 않은 사용자, 중복되지 않은 루틴명인 경우 -> 루틴 추가 로직 수행
+                        RoutineEntity routineEntity = RoutineEntity.builder()
+                                        .routineName(requestDto.getRoutineName())
+                                        .dayOfWeek(requestDto.getDayOfWeek())
+                                        .certification(requestDto.getCertification())
+                                        .startTime(requestDto.getStartTime())
+                                        .endTime(requestDto.getEndTime())
+                                        .isActivated(requestDto.getIsActivated())
+                                        .build();
+
+                        routineEntity.setMemberEntity(memberEntity);
+
+                        routineRepository.save(routineEntity);
+
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(true)
+                                        .message("요청이 성공적으로 처리되었습니다.")
+                                        .build();
+
+                        return ResponseEntity.ok().body(requestSuccessDto);
+                }
         }
 
         // 특정 회원 루틴 검색
         @Transactional
-        public List<RoutineResponseDto> getRoutine(String memberName) {
-                return routineRepository.findAllByMemberName(memberName).stream()
+        public ResponseEntity<Object> getRoutine(String memberName) {
+
+                MemberEntity memberEntity = memberRepository.findByMemberName(memberName).orElse(null);
+
+                // 사용자가 존재하지 않으면 UNAUTHORIZED 상태 코드를 반환
+                if (memberEntity == null) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스가 없습니다.")
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
+                List<RoutineResponseDto> routineResponseDto = routineRepository
+                                .findAllByMemberEntity(memberEntity).stream()
                                 .map(routineEntity -> RoutineResponseDto.builder()
                                                 .routineId(routineEntity.getRoutineId())
                                                 .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
+                                                .memberName(routineEntity.getMemberEntity().getMemberName())
+                                                .dayOfWeek(routineEntity.getDayOfWeek())
                                                 .certification(routineEntity.getCertification())
                                                 .startTime(routineEntity.getStartTime())
                                                 .endTime(routineEntity.getEndTime())
@@ -91,184 +120,57 @@ public class RoutineService {
                                                 .modifiedAt(routineEntity.getModifiedAt())
                                                 .build())
                                 .toList();
+
+                return ResponseEntity.ok().body(routineResponseDto);
         }
 
         // 루틴 정보 수정
         @Transactional
-        public RoutineResponseDto updateRoutine(RoutineRequestDto requestDto) throws Exception {
-                RoutineEntity routineEntity = routineRepository.findById(requestDto.getRoutineId()).orElseThrow(
-                                // 아이디가 존재하지 않으면 예외 처리
-                                () -> new IllegalArgumentException("존재하지 않은 루틴입니다."));
+        public ResponseEntity<Object> updateRoutine(RoutineRequestDto requestDto) {
 
-                routineRepository.updateSetting(
+                if (!routineRepository.existsById(requestDto.getRoutineId())) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스를 찾을 수 없습니다.")
+                                        .build();
+
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                }
+
+                routineRepository.updateRoutine(
                                 requestDto.getRoutineId(),
-                                requestDto.getRoutineName(),
-                                requestDto.getStrategy(),
+                                requestDto.getDayOfWeek(),
                                 requestDto.getCertification(),
                                 requestDto.getStartTime(),
                                 requestDto.getEndTime(),
                                 requestDto.getIsActivated());
 
-                return RoutineResponseDto.builder()
-                                .routineId(routineEntity.getRoutineId())
-                                .routineName(routineEntity.getRoutineName())
-                                .memberName(routineEntity.getMemberName())
-                                .strategy(routineEntity.getStrategy())
-                                .certification(routineEntity.getCertification())
-                                .startTime(routineEntity.getStartTime())
-                                .endTime(routineEntity.getEndTime())
-                                .isActivated(routineEntity.getIsActivated())
-                                .createdAt(routineEntity.getCreatedAt())
-                                .modifiedAt(routineEntity.getModifiedAt())
+                RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                .success(true)
+                                .message("요청이 성공적으로 처리되었습니다.")
                                 .build();
+
+                return ResponseEntity.ok().body(requestSuccessDto);
         }
 
         // 루틴 삭제
         @Transactional
-        public RoutineDeleteSuccessResponseDto deleteRoutine(Long routineId)
-                        throws Exception {
-                routineRepository.findById(routineId).orElseThrow(
-                                // 아이디가 존재하지 않으면 예외 처리
-                                () -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+        public ResponseEntity<Object> deleteRoutine(Long routineId) {
+                if (!routineRepository.existsById(routineId)) {
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(false)
+                                        .message("해당하는 리소스를 찾을 수 없습니다.")
+                                        .build();
 
-                routineRepository.deleteById(routineId);
-                return RoutineDeleteSuccessResponseDto.builder().success(true).build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestSuccessDto);
+                } else {
+                        routineRepository.deleteById(routineId);
+                        RequestSuccessDto requestSuccessDto = RequestSuccessDto.builder()
+                                        .success(true)
+                                        .message("요청이 성공적으로 처리되었습니다.")
+                                        .build();
+
+                        return ResponseEntity.ok().body(requestSuccessDto);
+                }
         }
-
-        /*
-         * 1차 배포에는 사용자 닉네임 변경 기능 미적용
-         * // 루틴의 사용자 닉네임 변경
-         * 
-         * @Transactional
-         * public void updateMemberName(String memberName, RoutineRequestDto requestDto)
-         * throws Exception {
-         * routineRepository.updateMemberName(memberName, requestDto.getMemberName());
-         * }
-         */
-
-        // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-        @Transactional
-        public List<RoutineResponseDto> getActivatedAndIncompleteRoutines(String memberName) {
-                return routineRepository.getActivatedAndIncompleteRoutines(memberName).stream()
-                                .map(routineEntity -> RoutineResponseDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .isActivated(routineEntity.getIsActivated())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .modifiedAt(routineEntity.getModifiedAt())
-                                                .build())
-                                .toList();
-        }
-
-        // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-        @Transactional
-        public List<RoutineResponseDto> getActivatedAndCompleteRoutines(String memberName) {
-                return routineRepository.getActivatedAndCompleteRoutines(memberName).stream()
-                                .map(routineEntity -> RoutineResponseDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .isActivated(routineEntity.getIsActivated())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .modifiedAt(routineEntity.getModifiedAt())
-                                                .build())
-                                .toList();
-        }
-
-        // 특정 사용자의 오늘 날짜의 기록만 조회
-        @Transactional
-        public List<TodayRoutinesDto> getTodayRoutines(String memberName) {
-
-                List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
-                List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
-                List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
-
-                // 특정 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = routineRepository.getActivatedAndIncompleteRoutines(memberName).stream()
-                                .map(routineEntity -> TodayRoutinesDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .complete(false)
-                                                .build())
-                                .toList();
-
-                // 특정 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = routineRepository.getActivatedAndCompleteRoutines(memberName).stream()
-                                .map(routineEntity -> TodayRoutinesDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .complete(true)
-                                                .build())
-                                .toList();
-
-                todayRoutinesDto.addAll(incompleteRoutines);
-                todayRoutinesDto.addAll(completeRoutines);
-
-                return todayRoutinesDto;
-        }
-
-        // 모든 사용자의 오늘 날짜의 기록만 조회
-        @Transactional
-        public List<TodayRoutinesDto> getAllTodayRoutines() {
-                List<TodayRoutinesDto> todayRoutinesDto = new ArrayList<>();
-                List<TodayRoutinesDto> incompleteRoutines = new ArrayList<>();
-                List<TodayRoutinesDto> completeRoutines = new ArrayList<>();
-
-                // 모든 사용자의 루틴 중 활성화되고 인증되지 않은 루틴 조회
-                incompleteRoutines = routineRepository.getAllActivatedAndIncompleteRoutines().stream()
-                                .map(routineEntity -> TodayRoutinesDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .complete(false)
-                                                .build())
-                                .toList();
-
-                // 모든 사용자의 루틴 중 활성화되고 인증된 루틴 조회
-                completeRoutines = routineRepository.getAllActivatedAndCompleteRoutines().stream()
-                                .map(routineEntity -> TodayRoutinesDto.builder()
-                                                .routineId(routineEntity.getRoutineId())
-                                                .routineName(routineEntity.getRoutineName())
-                                                .memberName(routineEntity.getMemberName())
-                                                .strategy(routineEntity.getStrategy())
-                                                .certification(routineEntity.getCertification())
-                                                .startTime(routineEntity.getStartTime())
-                                                .endTime(routineEntity.getEndTime())
-                                                .createdAt(routineEntity.getCreatedAt())
-                                                .complete(true)
-                                                .build())
-                                .toList();
-
-                todayRoutinesDto.addAll(incompleteRoutines);
-                todayRoutinesDto.addAll(completeRoutines);
-
-                return todayRoutinesDto;
-        }
-
 }

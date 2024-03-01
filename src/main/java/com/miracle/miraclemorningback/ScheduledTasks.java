@@ -10,18 +10,36 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.miracle.miraclemorningback.entity.ResultEntity;
+import com.miracle.miraclemorningback.repository.MemberRepository;
+import com.miracle.miraclemorningback.repository.ResultRepository;
+import com.miracle.miraclemorningback.repository.RoutineRepository;
+
+import lombok.RequiredArgsConstructor;
+
 @Component
-public class ScheduledTasks { // TODO 실제로 작동하는지 확인 필요!!
+@RequiredArgsConstructor
+public class ScheduledTasks {
+
+    private final MemberRepository memberRepository;
+
+    private final RoutineRepository routineRepository;
+
+    private final ResultRepository resultRepository;
+
+    // 인증 사진 저장 경로
+    @Value("${images.path}")
+    private String DIR_PATH;
 
     @Scheduled(cron = "0 0 4 * * *") // 매일 새벽 4시에 작동
     public void LegacyFilesDelete() {
 
         // 파일이 있는 디렉토리 경로
-        Path directoryPath = Paths.get(
-                "/home/chori/workspace/project/miracle-morning/miracle-morning-back/src/main/resources/proofImage");
+        Path directoryPath = Paths.get(DIR_PATH);
 
         // 삭제할 기간 (5일 전 파일 삭제)
         int daysBeforeDeletion = 5;
@@ -52,5 +70,18 @@ public class ScheduledTasks { // TODO 실제로 작동하는지 확인 필요!!
         } catch (IOException e) {
             System.err.println("파일 삭제 중 오류가 발생했습니다: " + e.getMessage());
         }
+    }
+
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 작동
+    // 인증되지 않은 루틴 기록 생성
+    public void generateIncompleteResults() {
+        routineRepository.getActivatedAndValidDayOfWeekRoutines().forEach(routineEntity -> {
+            ResultEntity resultEntity = ResultEntity.builder()
+                    .build();
+            resultEntity.setRoutineEntity(routineEntity);
+            resultEntity
+                    .setMemberEntity(memberRepository.findById(routineEntity.getMemberEntity().getMemberId()).get());
+            resultRepository.save(resultEntity);
+        });
     }
 }

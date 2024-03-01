@@ -1,21 +1,19 @@
 package com.miracle.miraclemorningback.controller;
 
 import java.io.IOException;
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.miracle.miraclemorningback.dto.ResultDeleteSuccessResponseDto;
 import com.miracle.miraclemorningback.dto.ResultRequestDto;
-import com.miracle.miraclemorningback.dto.ResultResponseDto;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.service.ResultService;
 
@@ -25,48 +23,75 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResultController {
 
-    @Autowired
-    private ResultService resultService;
+    private final ResultService resultService;
 
     // 전체 기록 조회
-    @GetMapping("/api/results")
-    public List<ResultResponseDto> getResults() {
+    @GetMapping("/api/all/results")
+    public ResponseEntity<Object> getResults() {
         return resultService.getResults();
     }
 
     // 기록 추가
-    @PostMapping("/api/result")
-    public ResultResponseDto addResult(Authentication authentication, @RequestPart("data") ResultRequestDto requestDto,
-            @RequestPart("file") MultipartFile file) throws IOException {
+    @PatchMapping("/api/results")
+    public ResponseEntity<Object> updateResult(Authentication authentication,
+            @RequestPart("data") ResultRequestDto requestDto,
+            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
 
-        // TODO 인증 객체 쓸 수 있는지 확인
         String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
 
-        return resultService.addResult(memberName, requestDto, file);
-    }
-
-    // 특정 기간 기록 검색
-    // TODO resultId에서 날짜 데이터로 변경 / 쿼리 파라미터 형식으로 바꾸는 방향도 고려
-    @GetMapping("/api/result/{date}")
-    public ResultResponseDto getResult(@PathVariable Long resultId) {
-        return resultService.getResult(resultId);
+        return resultService.updateResult(memberName, requestDto, file);
     }
 
     // 기록 삭제
     @DeleteMapping("/api/result/{resultId}")
-    public ResultDeleteSuccessResponseDto deleteResult(@PathVariable Long resultId) throws Exception {
+    public ResponseEntity<Object> deleteResult(@PathVariable Long resultId) {
         return resultService.deleteResult(resultId);
     }
 
-    // 오늘 날짜의 기록만 조회
-    @GetMapping("/api/result/today")
-    public List<ResultResponseDto> getTodayResult() {
-        return resultService.getTodayResult();
+    // 모든 사용자의 오늘 날짜의 루틴 완료 여부 조회
+    @GetMapping("/api/all/routines/today")
+    public ResponseEntity<Object> getAllTodayRoutines(Authentication authentication) {
+        return resultService.getAllTodayRoutines();
     }
 
-    // // 인증 사진 다운
-    // @GetMapping("/api/result/proofFiles")
-    // public List<ResultResponseDto> getProofFiles() throws IOException {
-    // return resultService.getProofFiles();
-    // }
+    // 특정 사용자의 특정 기간 기록 검색
+    @GetMapping("/api/results")
+    public ResponseEntity<Object> getResultsByDate(
+            @RequestParam("member-id") Long memberId,
+            @RequestParam("year") Integer year,
+            @RequestParam("month") Integer month) {
+        return resultService.getResultsByDate(memberId, year, month);
+    }
+
+    // 이번 달 요일별 달성률
+    @GetMapping("/api/results/week")
+    public ResponseEntity<Object> getDayOfWeekAchievement(Authentication authentication) {
+        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        return resultService.getDayOfWeekAchievement(memberName);
+    }
+
+    // 이번 달 루틴별 달성률
+    @GetMapping("api/results/routines")
+    public ResponseEntity<Object> getRoutineAchievement(Authentication authentication) {
+        String memberName = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        return resultService.getRoutineAchievement(memberName);
+    }
+
+    // 사용자가 인증한 기록 중 오늘 날짜의 기록 조회
+    @GetMapping("/api/results/today")
+    public ResponseEntity<Object> getCompleteAndTodayResults() {
+        return resultService.getCompleteAndTodayResults();
+    }
+
+    // 사용자가 인증한 기록 중 오늘을 포함해서 4일 전까지의 기록 조회
+    @GetMapping("/api/admin/results/recent")
+    public ResponseEntity<Object> getCompleteAndRecentResults() {
+        return resultService.getCompleteAndRecentResults();
+    }
+
+    // 사용자별 통계 정보 조회
+    @GetMapping("api/admin/members/statistics")
+    public ResponseEntity<Object> getMemberStatistics() {
+        return resultService.getMemberStatistics();
+    }
 }

@@ -1,6 +1,5 @@
 package com.miracle.miraclemorningback.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,11 +9,13 @@ import com.miracle.miraclemorningback.entity.MemberEntity;
 import com.miracle.miraclemorningback.entity.UserDetailsImpl;
 import com.miracle.miraclemorningback.repository.MemberRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String memberName) throws UsernameNotFoundException {
